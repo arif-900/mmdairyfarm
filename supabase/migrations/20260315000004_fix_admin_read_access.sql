@@ -54,5 +54,57 @@ USING (
   public.has_role(auth.uid(), 'staff')
 );
 
+-- =====================
+-- ORDER_FEEDBACK TABLE
+-- =====================
+-- Allow admins and staff to read all feedback
+DROP POLICY IF EXISTS "Admins can view all feedback" ON public.order_feedback;
+CREATE POLICY "Admins can view all feedback"
+ON public.order_feedback FOR SELECT
+USING (
+  public.has_role(auth.uid(), 'admin') OR
+  public.has_role(auth.uid(), 'superadmin') OR
+  public.has_role(auth.uid(), 'staff')
+);
+
+-- =====================
+-- ANNOUNCEMENTS TABLE
+-- =====================
+-- Allow admins and staff to manage announcements
+DROP POLICY IF EXISTS "Admins can manage announcements" ON public.announcements;
+CREATE POLICY "Admins can manage announcements"
+ON public.announcements FOR ALL
+USING (
+  public.has_role(auth.uid(), 'admin') OR
+  public.has_role(auth.uid(), 'superadmin') OR
+  public.has_role(auth.uid(), 'staff')
+);
+
+-- =====================
+-- USER_ROLES TABLE
+-- =====================
+-- Allow admins and staff to view all roles (needed for finding delivery boys)
+DROP POLICY IF EXISTS "Admins and Staff can view all roles" ON public.user_roles;
+CREATE POLICY "Admins and Staff can view all roles"
+ON public.user_roles FOR SELECT
+USING (
+  auth.uid() = user_id OR 
+  public.has_role(auth.uid(), 'admin') OR 
+  public.has_role(auth.uid(), 'staff')
+);
+
+-- =====================
+-- PRODUCTS TABLE
+-- =====================
+-- Ensure admins and staff can manage products
+DROP POLICY IF EXISTS "Admins can manage products" ON public.products;
+CREATE POLICY "Admins can manage products"
+ON public.products FOR ALL
+USING (
+  public.has_role(auth.uid(), 'admin') OR
+  public.has_role(auth.uid(), 'superadmin') OR
+  public.has_role(auth.uid(), 'staff')
+);
+
 -- Reload PostgREST schema cache
 NOTIFY pgrst, 'reload schema';
