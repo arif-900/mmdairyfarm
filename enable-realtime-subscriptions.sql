@@ -1,0 +1,15 @@
+-- Enable realtime for subscriptions if not already added
+-- 1. Check if it's already in the publication, and if not, add it
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime'
+    AND schemaname = 'public'
+    AND tablename = 'subscriptions'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.subscriptions;
+  END IF;
+END;
+$$;
