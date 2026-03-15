@@ -288,7 +288,7 @@ const DeliveryDashboard = () => {
     const deliveredTodayCount = orders.filter(o => 
         o.assigned_to === user?.id && 
         o.status === 'delivered' && 
-        new Date(o.updated_at) >= today
+        new Date((o as any).updated_at || o.created_at) >= today
     ).length;
 
     const myPendingCount = orders.filter(o => 

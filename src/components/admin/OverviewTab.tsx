@@ -30,75 +30,70 @@ export function OverviewTab() {
         try {
             setLoading(true);
 
-            ```
-// Fetch Orders
-const { data: ordersData, error: ordersError } = await supabase
-  .from("orders")
-  .select("*")
-  .order("created_at", { ascending: false });
+            // Fetch Orders
+            const { data: ordersData, error: ordersError } = await supabase
+                .from("orders")
+                .select("*")
+                .order("created_at", { ascending: false });
 
-if (ordersError) {
-  console.error("Error fetching orders:", ordersError);
-} else if (ordersData) {
-  setOrders(ordersData);
-}
+            if (ordersError) {
+                console.error("Error fetching orders:", ordersError);
+            } else if (ordersData) {
+                setOrders(ordersData);
+            }
 
-// Fetch Order Items
-const { data: itemsData, error: itemsError } = await supabase
-  .from("order_items")
-  .select("*");
+            // Fetch Order Items
+            const { data: itemsData, error: itemsError } = await supabase
+                .from("order_items")
+                .select("*");
 
-if (itemsError) {
-  console.error("Error fetching order items:", itemsError);
-} else if (itemsData) {
-  setOrderItems(itemsData);
-}
+            if (itemsError) {
+                console.error("Error fetching order items:", itemsError);
+            } else if (itemsData) {
+                setOrderItems(itemsData);
+            }
 
-// Fetch Active Subscriptions
-const { data: subsData, error: subsError } = await (supabase as any)
-  .from("subscriptions")
-  .select("id, product_id, status, quantity")
-  .eq("status", "active")
-  .limit(5);
+            // Fetch Active Subscriptions
+            const { data: subsData, error: subsError } = await (supabase as any)
+                .from("subscriptions")
+                .select("id, product_id, status, quantity")
+                .eq("status", "active")
+                .limit(5);
 
-if (subsError) {
-  console.error("Error fetching subscriptions:", subsError);
-  return;
-}
+            if (subsError) {
+                console.error("Error fetching subscriptions:", subsError);
+            } else if (subsData && subsData.length > 0) {
+                const productIds = [
+                    ...new Set(subsData.map((s: any) => s.product_id).filter(Boolean)),
+                ];
 
-if (subsData && subsData.length > 0) {
-  const productIds = [
-    ...new Set(subsData.map((s: any) => s.product_id).filter(Boolean)),
-  ];
+                let productsMap: Record<string, any> = {};
 
-  let productsMap: Record<string, any> = {};
+                if (productIds.length > 0) {
+                    const { data: pData, error: productError } = await (supabase as any)
+                        .from("products")
+                        .select("id, name")
+                        .in("id", productIds);
 
-  if (productIds.length > 0) {
-    const { data: pData, error: productError } = await (supabase as any)
-      .from("products")
-      .select("id, name")
-      .in("id", productIds);
+                    if (productError) {
+                        console.error("Error fetching products:", productError);
+                    }
 
-    if (productError) {
-      console.error("Error fetching products:", productError);
-    }
+                    if (pData) {
+                        productsMap = pData.reduce((acc: any, p: any) => {
+                            acc[p.id] = p;
+                            return acc;
+                        }, {});
+                    }
+                }
 
-    if (pData) {
-      productsMap = pData.reduce((acc: any, p: any) => {
-        acc[p.id] = p;
-        return acc;
-      }, {});
-    }
-  }
+                const mappedSubs = subsData.map((s: any) => ({
+                    ...s,
+                    products: s.product_id ? productsMap[s.product_id] : null,
+                }));
 
-  const mappedSubs = subsData.map((s: any) => ({
-    ...s,
-    products: s.product_id ? productsMap[s.product_id] : null,
-  }));
-
-  setSubscriptions(mappedSubs);
-}
-```
+                setSubscriptions(mappedSubs);
+            }
 
         } catch (err) {
             console.error("Dashboard fetch error:", err);
@@ -225,8 +220,8 @@ if (subsData && subsData.length > 0) {
 
     const trendData = Object.values(dailyDataMap);
 
-    const totalMonthlyRevenue = trendData.reduce(
-        (sum: number, day: any) => sum + day.Revenue,
+    const totalMonthlyRevenue = (trendData as { Revenue: number }[]).reduce(
+        (sum: number, day) => sum + (day.Revenue || 0),
         0
     );
 
