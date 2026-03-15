@@ -176,7 +176,7 @@ const StaffDashboard = () => {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => navigate("/delivery/dashboard")} className="hidden md:flex">
+                        <Button variant="outline" size="sm" onClick={() => navigate("/delivery/dashboard")} className="flex">
                             <Package className="h-4 w-4 mr-2" />
                             Delivery Mode
                         </Button>

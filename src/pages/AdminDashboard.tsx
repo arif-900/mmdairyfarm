@@ -236,10 +236,16 @@ const AdminDashboard = () => {
               <p className="text-sm text-muted-foreground">Order Management</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => navigate("/delivery/dashboard")} className="flex">
+              <Package className="h-4 w-4 mr-2" />
+              Delivery Mode
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -272,7 +278,7 @@ const AdminDashboard = () => {
           </div>
           {/* Revenue */}
           <div className="bg-[#8B5CF6] rounded-xl p-4 text-white shadow flex flex-col justify-between h-[100px]">
-            <IndianRupee className="h-5 w-5 opacity-80" />
+            <TrendingUp className="h-5 w-5 opacity-80" />
             <div>
               <p className="text-xs font-medium opacity-90">Revenue</p>
               <p className="text-2xl font-bold leading-tight">₹{stats.revenue.toFixed(0)}</p>
@@ -300,13 +306,13 @@ const AdminDashboard = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <TabsList className="bg-[#f0ece1] flex justify-start gap-1 p-1 h-12 rounded-lg min-w-max">
-              {isAdmin && <TabsTrigger value="overview" className="rounded-md px-4 whitespace-nowrap">Overview</TabsTrigger>}
+              {isAdmin ? <TabsTrigger value="overview" className="rounded-md px-4 whitespace-nowrap">Overview</TabsTrigger> : null}
               <TabsTrigger value="orders" className="rounded-md px-4 whitespace-nowrap">Orders</TabsTrigger>
               <TabsTrigger value="subscriptions" className="rounded-md px-4 whitespace-nowrap">Subs</TabsTrigger>
               <TabsTrigger value="products" className="rounded-md px-4 whitespace-nowrap">Products</TabsTrigger>
-              {isSuperAdmin && <TabsTrigger value="staff" className="rounded-md px-4 whitespace-nowrap">Staff</TabsTrigger>}
-              {isAdmin && <TabsTrigger value="delivery" className="rounded-md px-4 whitespace-nowrap">Delivery Boys</TabsTrigger>}
-              {isAdmin && <TabsTrigger value="commissions" className="rounded-md px-4 whitespace-nowrap">Commissions</TabsTrigger>}
+              {isSuperAdmin ? <TabsTrigger value="staff" className="rounded-md px-4 whitespace-nowrap">Staff</TabsTrigger> : null}
+              {isAdmin ? <TabsTrigger value="delivery" className="rounded-md px-4 whitespace-nowrap">Delivery Boys</TabsTrigger> : null}
+              {isAdmin ? <TabsTrigger value="commissions" className="rounded-md px-4 whitespace-nowrap">Commissions</TabsTrigger> : null}
               <TabsTrigger value="chat" className="rounded-md px-4 whitespace-nowrap">Chat</TabsTrigger>
               <TabsTrigger value="feedback" className="rounded-md px-4 whitespace-nowrap">Feedback</TabsTrigger>
               <TabsTrigger value="announcements" className="rounded-md px-4 whitespace-nowrap">Announce</TabsTrigger>
