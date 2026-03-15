@@ -366,8 +366,9 @@ export function DeliveryBoysTab() {
                 </Dialog>
             </div>
 
-            <div className="bg-card border rounded-xl overflow-hidden shadow-sm">
-                <Table>
+            <div className="bg-card border rounded-xl overflow-x-auto shadow-sm">
+                <div className="min-w-[600px]">
+                    <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Delivery Boy</TableHead>
@@ -428,7 +429,8 @@ export function DeliveryBoysTab() {
                             ))
                         )}
                     </TableBody>
-                </Table>
+                    </Table>
+                </div>
             </div>
         </div>
     );

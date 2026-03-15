@@ -5,7 +5,7 @@ import path from "path";
 export default defineConfig({
   base: "/",   // ⭐ important for Vercel
   server: {
-    host: "::",
+    host: true,
     port: 8080,
     hmr: {
       overlay: false,

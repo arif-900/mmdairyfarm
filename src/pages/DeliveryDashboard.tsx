@@ -320,7 +320,7 @@ const DeliveryDashboard = () => {
 
             {/* Premium Header */}
             <div className="sticky top-0 z-50 bg-white/60 backdrop-blur-3xl border-b border-slate-200/50 px-4 py-7 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
-                <div className="max-w-lg mx-auto space-y-6">
+                <div className="max-w-2xl mx-auto space-y-6">
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 ring-4 ring-primary/5">
@@ -498,7 +498,7 @@ const DeliveryDashboard = () => {
             </div>
 
             {/* Main Content Area */}
-            <div className="max-w-lg mx-auto px-4 pt-6">
+            <div className="max-w-2xl mx-auto px-4 mt-8 space-y-8">
                 {/* Secondary Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-6">
                     <div className="bg-white rounded-3xl p-4 border border-slate-200/60 shadow-sm flex items-center justify-between">

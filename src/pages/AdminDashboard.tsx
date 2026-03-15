@@ -245,7 +245,7 @@ const AdminDashboard = () => {
 
       <main className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {/* Total Orders */}
           <div className="bg-[#3B82F6] rounded-xl p-4 text-white shadow flex flex-col justify-between h-[100px]">
             <ShoppingCart className="h-5 w-5 opacity-80" />
@@ -378,7 +378,8 @@ const AdminDashboard = () => {
             </div>
 
             {/* Orders Table */}
-            <div className="border rounded-xl overflow-hidden bg-card">
+            <div className="border rounded-xl overflow-x-auto bg-card scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+              <div className="min-w-[800px]">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -442,6 +443,7 @@ const AdminDashboard = () => {
                   </TableBody>
                 </Table>
               )}
+              </div>
             </div>
           </TabsContent>
 

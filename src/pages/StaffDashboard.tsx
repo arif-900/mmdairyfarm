@@ -250,7 +250,8 @@ const StaffDashboard = () => {
                             </Button>
                         </div>
 
-                        <div className="border rounded-xl overflow-hidden bg-card">
+                        <div className="border rounded-xl overflow-x-auto bg-card scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                            <div className="min-w-[800px]">
                             {loading ? (
                                 <div className="flex items-center justify-center py-12">
                                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -296,6 +297,7 @@ const StaffDashboard = () => {
                                     </TableBody>
                                 </Table>
                             )}
+                            </div>
                         </div>
                     </TabsContent>
 
