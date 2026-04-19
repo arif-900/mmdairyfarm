@@ -25,24 +25,29 @@ async function getProducts() {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('id, name, price, description, unit_type, is_active, stock_status')
+      .select('id, name, price, base_price_per_kg, description, unit, unit_type, is_active, available_weights')
       .eq('is_active', true);
 
-    if (error) throw error;
+    if (error) {
+      console.error('[DATABASE_ERROR:getProducts]', error);
+      throw error;
+    }
 
     return {
       source: 'database',
       timestamp: new Date().toISOString(),
       products: data.map(p => ({
         name: p.name,
-        price: `₹${p.price} per ${p.unit_type || 'unit'}`,
+        price: p.base_price_per_kg ? `₹${p.base_price_per_kg} per kg` : `₹${p.price} per ${p.unit || 'unit'}`,
         description: p.description,
-        status: p.stock_status || 'available'
+        unit: p.unit || p.unit_type,
+        options: p.available_weights ? `${p.available_weights.join(', ')}ml/g available` : null,
+        status: 'In Stock'
       }))
     };
   } catch (err) {
     console.error('[Tool:getProducts]', err.message);
-    return { error: 'Failed to fetch products from database' };
+    return { error: `Failed to fetch products: ${err.message}` };
   }
 }
 
