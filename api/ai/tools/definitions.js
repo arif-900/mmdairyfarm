@@ -6,12 +6,18 @@ export const GEMINI_TOOLS = [
     functionDeclarations: [
       {
         name:        "getWebsiteInfo",
-        description: "Fetches current business details, contact info, delivery areas, and product price lists of MM Dairy Farm.",
-        parameters: {
-          type: "object",
-          properties: {},
-          required: []
-        }
+        description: "Fetches core business identity and basic contact links for MM Dairy Farm.",
+        parameters: { type: "object", properties: {}, required: [] }
+      },
+      {
+        name:        "getProducts",
+        description: "Fetches the current list of available products, real-time prices, and stock status from the database.",
+        parameters: { type: "object", properties: {}, required: [] }
+      },
+      {
+        name:        "getAppSettings",
+        description: "Fetches global business settings like delivery ranges, contact numbers, and operation timings from the database.",
+        parameters: { type: "object", properties: {}, required: [] }
       }
     ]
   }

@@ -1,5 +1,6 @@
 // api/ai/tools/executor.js
 // Logic for executing tools called by Gemini.
+import { supabase } from '../../_lib/config/supabaseClient.js';
 
 /**
  * Main entry point for tool execution.
@@ -8,38 +9,79 @@ export async function executeTool(name, args) {
   switch (name) {
     case 'getWebsiteInfo':
       return getWebsiteInfo();
+    case 'getProducts':
+      return getProducts();
+    case 'getAppSettings':
+      return getAppSettings();
     default:
       return { error: `Tool ${name} not found` };
   }
 }
 
 /**
- * Provides static business information.
+ * Fetches the current active product list from Supabase.
+ */
+async function getProducts() {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select('id, name, price, description, unit_type, is_active, stock_status')
+      .eq('is_active', true);
+
+    if (error) throw error;
+
+    return {
+      source: 'database',
+      timestamp: new Date().toISOString(),
+      products: data.map(p => ({
+        name: p.name,
+        price: `₹${p.price} per ${p.unit_type || 'unit'}`,
+        description: p.description,
+        status: p.stock_status || 'available'
+      }))
+    };
+  } catch (err) {
+    console.error('[Tool:getProducts]', err.message);
+    return { error: 'Failed to fetch products from database' };
+  }
+}
+
+/**
+ * Fetches global application settings from Supabase.
+ */
+async function getAppSettings() {
+  try {
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('key, value, description');
+
+    if (error) throw error;
+
+    const settings = {};
+    data.forEach(item => {
+      settings[item.key] = item.value;
+    });
+
+    return {
+      source: 'database',
+      timestamp: new Date().toISOString(),
+      settings
+    };
+  } catch (err) {
+    console.error('[Tool:getAppSettings]', err.message);
+    return { error: 'Failed to fetch settings from database' };
+  }
+}
+
+/**
+ * Provides core business identity and basic links.
  */
 function getWebsiteInfo() {
   return {
     business: 'MM Dairy Farm',
     locations: ['Bhanakacherla', 'Nandyal', 'Andhra Pradesh'],
     tagline: 'Farm-fresh milk at your doorstep',
-    contacts: {
-      whatsapp:   '+91 63098 35752', // Updated
-      email:      'mmvalidairyfarm@gmail.com',
-      website:    'https://mmdairyfarm.com'
-    },
-    products: [
-      { name: 'Buffalo Milk', price: '₹85 / Litre',  features: 'Thick, fresh, creamy' },
-      { name: 'Cow Milk',     price: '₹60 / Litre',  features: 'Healthy, pure' },
-      { name: 'Fresh Curd',   price: '₹100 / KG',     features: 'Traditional homemade style' },
-      { name: 'Pure Ghee',    price: '₹1400 / KG',    features: 'Bilona method, aromatic' },
-      { name: 'Paneer',       price: '₹270 / KG',     features: 'Fresh, soft' }
-    ],
-    delivery: {
-      timing: 'Every morning (5:00 AM - 8:00 AM)',
-      radius: '50 km around Nandyal',
-      fees: '0-5km: Free, 5-10km: ₹30, 10-20km: ₹50, 20-50km: ₹100'
-    },
-    paymentMethods: ['Cash on Delivery (COD)', 'UPI', 'Cards', 'Net Banking'],
-    onlinePaymentFee: '1.5% convenience fee applies to razorpay online transactions',
-    contact: 'WhatsApp: +91 63098 35752' // Updated
+    portal: 'https://mmdairyfarm.com',
+    info: 'MM Dairy Farm specializes in pure, farm-fresh buffalo and cow milk, delivered daily. Use the getProducts tool for current prices.'
   };
 }
