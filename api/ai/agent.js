@@ -67,6 +67,15 @@ export async function processMessage(message, userId = null, history = []) {
       result = await chat.sendMessage(currentMessage);
     } catch (err) {
       console.error('[Agent] Gemini API error:', err.message);
+      
+      // Handle Quota Exceeded (429) gracefully with a friendly message
+      if (err.message.includes('429') || err.message.toLowerCase().includes('quota')) {
+        return {
+          reply: "Our AI assistant is temporarily resting due to high demand (Daily limit reached). 🥛 Please reach out to us on WhatsApp: +91 63098 35752 and we'll help you personally!",
+          toolsUsed: []
+        };
+      }
+      
       throw new Error(`AI unavailable: ${err.message}`);
     }
 
