@@ -24,9 +24,9 @@ interface ConversationEntry {
 
 // ── Config ───────────────────────────────────────────────────────────────────
 
-// AI Agent microservice URL — set VITE_AI_AGENT_URL in your .env
-// Falls back to localhost:3001 for development
-// Production-ready routing — use relative path for Vercel
+// AI Agent Unified URL — set VITE_AI_AGENT_URL in your .env
+// Defaults to "/api" for production-ready relative routing.
+// Locally proxies to your Unified Backend (port 5001).
 const AI_AGENT_URL = import.meta.env.VITE_AI_AGENT_URL || "/api";
 
 const WELCOME_MSG = "Hi! I'm the MM Dairy Farm assistant 🥛 How can I help you today?";
@@ -179,21 +179,9 @@ export function ChatWidget() {
         await sendMessage(text, history);
     }, [input, isLoading, buildHistory, sendMessage]);
 
-    // ── Quick chip tap ───────────────────────────────────────────────────────
-    const sendChip = useCallback(async (chip: string) => {
-        if (isLoading) return;
-        const userMsg: Message = { id: uid(), role: "user", content: chip };
-        const history = buildHistory();
-        setMessages(prev => [...prev, userMsg]);
-        setIsLoading(true);
-        await sendMessage(chip, history);
-    }, [isLoading, buildHistory, sendMessage]);
-
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
     };
-
-    const CHIPS = ["What products do you have?", "Track my order", "Delivery info", "Payment options"];
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
@@ -240,20 +228,7 @@ export function ChatWidget() {
                             </div>
                         ))}
 
-                        {/* Suggestion chips — only shown on first open */}
-                        {messages.length === 1 && !isLoading && (
-                            <div className="flex flex-wrap gap-2 pt-1">
-                                {CHIPS.map(chip => (
-                                    <button
-                                        key={chip}
-                                        onClick={() => sendChip(chip)}
-                                        className="text-xs px-3 py-1.5 rounded-full border border-primary/40 text-primary bg-white hover:bg-primary/5 transition-colors"
-                                    >
-                                        {chip}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+
 
                         {isLoading && (
                             <div className="flex justify-start">

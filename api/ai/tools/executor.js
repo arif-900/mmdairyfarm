@@ -35,8 +35,8 @@ function getWebsiteInfo() {
     ],
     delivery: {
       timing: 'Every morning (5:00 AM - 8:00 AM)',
-      radius: '65 km around Nandyal',
-      cost: 'FREE home delivery'
+      radius: '50 km around Nandyal',
+      fees: '0-5km: Free, 5-10km: ₹30, 10-20km: ₹50, 20-50km: ₹100'
     },
     paymentMethods: ['Cash on Delivery (COD)', 'UPI', 'Cards', 'Net Banking'],
     onlinePaymentFee: '1.5% convenience fee applies to razorpay online transactions',
