@@ -112,9 +112,23 @@ const AdminDashboard = () => {
           }
         }
 
+        // Fetch Order Items for these orders
+        const orderIds = fetchedOrders.map((o: any) => o.id);
+        const { data: itemsData } = await supabase
+          .from("order_items")
+          .select("*")
+          .in("order_id", orderIds);
+
+        const itemsMap = (itemsData || []).reduce((acc: any, item: any) => {
+          if (!acc[item.order_id]) acc[item.order_id] = [];
+          acc[item.order_id].push(item);
+          return acc;
+        }, {});
+
         const mergedOrders = fetchedOrders.map((item: any) => ({
           ...item,
           profiles: item.user_id ? profilesMap[item.user_id] || null : null,
+          order_items: itemsMap[item.id] || [],
         })) as Order[];
         setOrders(mergedOrders);
       } else {
@@ -436,6 +450,7 @@ const AdminDashboard = () => {
                       <TableHead>Order ID</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Customer</TableHead>
+                      <TableHead>Products</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
@@ -458,6 +473,15 @@ const AdminDashboard = () => {
                             <p className="text-xs text-muted-foreground truncate max-w-[200px]">
                               {order.shipping_address}
                             </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1 max-w-[200px]">
+                            {(order as any).order_items?.map((item: any) => (
+                              <span key={item.id} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-forest/5 text-forest text-[10px] font-black rounded-md border border-forest/10 uppercase tracking-tighter">
+                                {item.product_name} <span className="opacity-60 text-[9px] font-black">×{item.quantity}</span>
+                              </span>
+                            ))}
                           </div>
                         </TableCell>
                         <TableCell className="font-semibold">

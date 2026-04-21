@@ -163,6 +163,9 @@ export type Database = {
           product_id: string
           product_name: string
           quantity: number
+          selected_weight: number | null
+          unit_type: string | null
+          variant_label: string | null
         }
         Insert: {
           created_at?: string
@@ -172,6 +175,9 @@ export type Database = {
           product_id: string
           product_name: string
           quantity: number
+          selected_weight?: number | null
+          unit_type?: string | null
+          variant_label?: string | null
         }
         Update: {
           created_at?: string
@@ -181,6 +187,9 @@ export type Database = {
           product_id?: string
           product_name?: string
           quantity?: number
+          selected_weight?: number | null
+          unit_type?: string | null
+          variant_label?: string | null
         }
         Relationships: [
           {

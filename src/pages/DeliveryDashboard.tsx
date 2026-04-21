@@ -76,6 +76,9 @@ interface OrderItem {
     product_name: string;
     quantity: number;
     price_at_order: number;
+    selected_weight?: number | null;
+    unit_type?: string | null;
+    variant_label?: string | null;
 }
 
 type StatusFilter = "all" | "processing" | "picked_up" | "out_for_delivery" | "delivered";
@@ -1017,7 +1020,15 @@ const OrderCard = ({
             <div className="flex flex-wrap gap-2">
               {items.map((item: any) => (
                 <div key={item.id} className={cn("px-3 py-1.5 rounded-xl border text-[11px] font-bold flex flex-col gap-0.5", isUnassigned ? "bg-white/5 border-white/10 text-slate-300" : "bg-white border-slate-200 text-slate-700")}>
-                  <div>{item.product_name} <span className="text-primary ml-1">×{item.quantity}</span></div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-primary font-black">×{item.quantity}</span>
+                    <span>{item.product_name}</span>
+                    {(item.variant_label || (item.selected_weight && item.unit_type)) && (
+                      <span className="opacity-60 text-[0.9em]">
+                        ({item.variant_label || `${item.selected_weight}${item.unit_type}`})
+                      </span>
+                    )}
+                  </div>
                   {item.delivery_days > 0 && (
                     <div className="text-[9px] font-black uppercase text-emerald-500 flex items-center gap-1 opacity-80">
                       <Truck className="w-2.5 h-2.5" />

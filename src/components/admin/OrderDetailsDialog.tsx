@@ -36,6 +36,9 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   price_at_order: number;
+  selected_weight?: number;
+  unit_type?: string;
+  variant_label?: string;
 }
 
 interface OrderDetailsDialogProps {
@@ -427,6 +430,11 @@ export const OrderDetailsDialog = ({
                     <div className="flex-1">
                       <p className="font-black text-forest text-sm uppercase tracking-tight">{item.product_name || "Product"}</p>
                       <p className="text-[10px] text-muted-foreground font-bold mt-0.5 uppercase tracking-widest">
+                        {item.variant_label || (item.selected_weight && item.unit_type) ? (
+                          <span className="text-forest mr-2 px-1.5 py-0.5 bg-forest/5 rounded border border-forest/10">
+                            {item.variant_label || `${item.selected_weight}${item.unit_type}`}
+                          </span>
+                        ) : null}
                         Qty: {item.quantity} · Rate: ₹{Number(item.price_at_order).toFixed(0)}
                       </p>
                     </div>

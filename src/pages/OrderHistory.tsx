@@ -37,6 +37,9 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   price_at_order: number;
+  selected_weight?: number;
+  unit_type?: string;
+  variant_label?: string;
 }
 
 interface Order {
@@ -116,7 +119,7 @@ const OrderHistory = () => {
           const orderIds = validOrdersData.map(o => o.id);
           const { data: itemsData, error: itemsError } = await supabase
             .from("order_items")
-            .select("id, order_id, product_name, quantity, price_at_order")
+            .select("id, order_id, product_name, quantity, price_at_order, selected_weight, unit_type, variant_label")
             .in("order_id", orderIds);
 
           if (itemsError) {
@@ -535,8 +538,15 @@ const OrderHistory = () => {
                                     {item.quantity}
                                   </div>
                                   <div>
-                                    <p className="font-extrabold text-slate-900 tracking-tight">{item.product_name || "Product"}</p>
-                                    <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Unit: ₹{Number(item.price_at_order).toFixed(0)}</p>
+                                    <p className="font-extrabold text-slate-900 tracking-tight">
+                                      {item.product_name || "Product"}
+                                      {(item.variant_label || (item.selected_weight && item.unit_type)) && (
+                                        <span className="ml-1.5 text-primary opacity-80 text-[0.85em]">
+                                          ({item.variant_label || `${item.selected_weight}${item.unit_type}`})
+                                        </span>
+                                      )}
+                                    </p>
+                                    <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Rate: ₹{Number(item.price_at_order).toFixed(0)}</p>
                                   </div>
                                 </div>
                                 <p className="font-black text-slate-900 tracking-tight text-lg">

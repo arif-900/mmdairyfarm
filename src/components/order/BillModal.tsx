@@ -19,6 +19,9 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   price_at_order: number;
+  selected_weight?: number;
+  unit_type?: string;
+  variant_label?: string;
 }
 
 interface Order {
@@ -179,7 +182,14 @@ export const BillModal: React.FC<BillModalProps> = ({ order, isOpen, onClose }) 
                     {order.order_items.map((item) => (
                       <tr key={item.id} className="border-b border-slate-100">
                         <td className="py-5">
-                          <p className="text-sm font-bold text-slate-900 mb-0.5">{item.product_name}</p>
+                          <p className="text-sm font-bold text-slate-900 mb-0.5">
+                            {item.product_name}
+                            {(item.variant_label || (item.selected_weight && item.unit_type)) && (
+                              <span className="text-primary font-bold ml-1.5 opacity-80">
+                                ({item.variant_label || `${item.selected_weight}${item.unit_type}`})
+                              </span>
+                            )}
+                          </p>
                           <p className="text-[10px] text-slate-400 font-medium italic">SKU: {item.id.slice(0, 6).toUpperCase()}</p>
                         </td>
                         <td className="py-5 text-sm text-slate-600 text-center font-bold">{item.quantity}</td>

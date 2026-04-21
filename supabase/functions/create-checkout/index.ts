@@ -210,6 +210,9 @@ serve(async (req) => {
       quantity: Number(i.quantity),
       price_at_order: Number(i.price),
       delivery_days: Number(i.delivery_days ?? 0),
+      selected_weight: i.selected_weight,
+      unit_type: i.unit_type,
+      variant_label: i.variant_label,
     }));
 
     const { error: itemError } = await supabase

@@ -21,6 +21,9 @@ interface OrderItem {
   product_name: string;
   quantity: number;
   price_at_order: number;
+  selected_weight?: number;
+  unit_type?: string;
+  variant_label?: string;
 }
 
 interface Order {
@@ -37,6 +40,7 @@ interface Order {
   shipping_fee?: number | null;
   discount_amount?: number | null;
   promo_code?: string | null;
+  order_items?: OrderItem[];
 }
 
 interface ShippingLabelModalProps {
@@ -221,6 +225,11 @@ export const ShippingLabelModal: React.FC<ShippingLabelModalProps> = ({ order, i
                           <tr key={item.id} className="border-b border-black/10 last:border-0">
                             <td className="p-1.5 border-r-[2px] border-black">
                               {idx + 1}. {item.product_name}
+                              {(item.variant_label || (item.selected_weight && item.unit_type)) && (
+                                <span className="ml-1 font-black">
+                                  ({item.variant_label || `${item.selected_weight}${item.unit_type}`})
+                                </span>
+                              )}
                             </td>
                             <td className="p-1.5 border-r-[2px] border-black text-center font-bold">{item.quantity}</td>
                             <td className="p-1.5 text-center font-bold">₹{Number(item.price_at_order) * Number(item.quantity)}</td>
