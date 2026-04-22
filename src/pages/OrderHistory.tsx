@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle, Trash2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];
 
@@ -71,6 +73,7 @@ const statusConfig: Record<OrderStatus, { label: string; variant: "default" | "s
 };
 
 const OrderHistory = () => {
+  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -346,13 +349,10 @@ const OrderHistory = () => {
       {/* Header */}
       <section className="bg-primary text-primary-foreground section-padding">
         <div className="container-main">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
+          <CircularBackButton 
+            onClick={() => navigate("/")} 
+            className="mb-8"
+          />
           <div className="flex items-center justify-between mb-6">
             <h1 className="font-display text-3xl md:text-4xl font-bold">My Orders</h1>
             <Button
@@ -370,7 +370,6 @@ const OrderHistory = () => {
           </p>
         </div>
       </section>
-
       {/* Orders List */}
       <section className="section-padding">
         <div className="container-main max-w-4xl">
@@ -422,8 +421,8 @@ const OrderHistory = () => {
                               <Package className="w-6 h-6" />
                             </div>
                             <div>
-                              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Order Ref</p>
-                              <h3 className="text-xl font-black tracking-tighter text-slate-900 font-mono">#{order.id.slice(0, 8).toUpperCase()}</h3>
+                               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Order Ref</p>
+                               <h3 className="text-xl font-black tracking-tighter text-slate-900 font-mono">#{order.id.slice(0, 8).toUpperCase()}</h3>
                             </div>
                           </div>
                           <div className="flex flex-wrap gap-4 pt-1">

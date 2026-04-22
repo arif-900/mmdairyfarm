@@ -4,8 +4,11 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 
 const FAQ = () => {
+    const navigate = useNavigate();
     const [openIndex, setOpenIndex] = useState<string | null>(null);
 
     const faqCategories = [
@@ -74,13 +77,10 @@ const FAQ = () => {
                 </div>
 
                 <div className="container-main relative z-10 pl-5">
-                    <Link
-                        to="/"
-                        className="inline-flex items-center gap-2 text-white/60 hover:text-golden mb-12 transition-all hover:translate-x-[-4px]"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        <span className="text-sm font-medium uppercase tracking-widest">Return to Home</span>
-                    </Link>
+                    <CircularBackButton 
+                        onClick={() => navigate("/")} 
+                        className="mb-12"
+                    />
                     <div className="max-w-3xl">
                         <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
                             {"Frequently Asked Questions".split(" ").map((word, wIdx, words) => (

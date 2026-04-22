@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Star, Plus, Minus, ShoppingBag, Leaf, Award, Zap, Calendar, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { calculatePrice, formatWeight } from "@/utils/pricing";
@@ -15,6 +15,9 @@ const ProductCard = (product: ProductCardProps) => {
   const { addItem } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const isSubscriptionContext = searchParams.get("context") === "subscription";
   
   const [selectedWeight, setSelectedWeight] = useState<number>(availableWeights?.[0] || 1000);
   const [quantity, setQuantity] = useState(1);
@@ -219,6 +222,20 @@ const ProductCard = (product: ProductCardProps) => {
                 BUY
               </Button>
           </div>
+
+          <Button 
+            disabled={isOutOfStock}
+            onClick={() => {
+              navigate(`/subscriptions?productId=${id}&weight=${selectedWeight}&unitType=${unitType || 'ml'}&quantity=${quantity}&add-config=true`);
+            }}
+            className={cn(
+              "h-14 rounded-2xl border-b-4 text-white font-black text-xs uppercase tracking-widest shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 w-full",
+              isSubscriptionContext ? "bg-indigo-600 hover:bg-indigo-700 border-indigo-800 shadow-indigo-600/20" : "bg-emerald-600 hover:bg-emerald-700 border-emerald-800 shadow-emerald-600/20"
+            )}
+          >
+            <Calendar className="w-4 h-4" />
+            {isSubscriptionContext ? "ADD TO SUBSCRIPTION" : "START SUBSCRIPTION"}
+          </Button>
 
           <div className="bg-primary/5 rounded-2xl p-3 flex items-center justify-between border border-primary/10">
              <span className="text-[10px] font-black uppercase tracking-widest text-primary/60">Total Amount</span>

@@ -55,6 +55,7 @@ import {
 import { OrderProgressStepper } from "@/components/delivery/OrderProgressStepper";
 import { DeliveryStatsCard } from "@/components/delivery/DeliveryStatsCard";
 import { SmartScannerModal } from "@/components/shared/SmartScannerModal";
+import { SubscriptionsDeliveryList } from "@/components/delivery/SubscriptionsDeliveryList";
 import {
   Dialog,
   DialogContent,
@@ -547,7 +548,7 @@ const DeliveryDashboard = () => {
                         </div>
                         <div>
                             <h1 className={cn("font-black text-slate-900 tracking-tight leading-none mb-1 transition-all", isScrolled ? "text-lg" : "text-xl")}>
-                                {isScrolled ? "Dashboard" : (profile?.full_name || 'Partner')}
+                                {isScrolled ? "Today's Route" : (profile?.full_name || 'Partner')}
                             </h1>
                             {!isScrolled && (
                               <div className="flex items-center gap-2">
@@ -636,8 +637,8 @@ const DeliveryDashboard = () => {
                 </div>
 
                 {/* Main Action Tabs */}
-                <Tabs defaultValue="active" className="w-full space-y-6">
-                  <TabsList className="w-full bg-white border border-slate-200 p-1.5 h-16 rounded-[24px] shadow-sm grid grid-cols-3">
+                <Tabs defaultValue="available" className="w-full space-y-6">
+                  <TabsList className="w-full bg-white border border-slate-200 p-1.5 h-auto md:h-16 rounded-[24px] shadow-sm grid grid-cols-3 md:grid-cols-5 gap-1">
                     <TabsTrigger 
                       value="available" 
                       className="rounded-[18px] data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs uppercase tracking-widest gap-2"
@@ -667,6 +668,13 @@ const DeliveryDashboard = () => {
                     >
                       <HandCoins className="h-4 w-4" />
                       <span className="hidden sm:inline">Payments</span>
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="subscriptions" 
+                      className="rounded-[18px] data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg font-black text-xs uppercase tracking-widest gap-2"
+                    >
+                      <CalendarIcon className="h-4 w-4" />
+                      <span className="hidden sm:inline">Today's Route</span>
                     </TabsTrigger>
                   </TabsList>
 
@@ -765,6 +773,10 @@ const DeliveryDashboard = () => {
 
                   <TabsContent value="payments" className="mt-0">
                     <LedgerList entries={ledgerEntries} />
+                  </TabsContent>
+
+                  <TabsContent value="subscriptions" className="mt-0">
+                    <SubscriptionsDeliveryList date={selectedDate} />
                   </TabsContent>
                 </Tabs>
             </main>

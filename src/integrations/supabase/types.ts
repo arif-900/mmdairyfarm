@@ -112,6 +112,7 @@ export type Database = {
           lng: number
           label: string
           is_default: boolean
+          area_name: string | null
           created_at: string
         }
         Insert: {
@@ -127,6 +128,7 @@ export type Database = {
           lng: number
           label?: string
           is_default?: boolean
+          area_name?: string | null
           created_at?: string
         }
         Update: {
@@ -142,6 +144,7 @@ export type Database = {
           lng?: number
           label?: string
           is_default?: boolean
+          area_name?: string | null
           created_at?: string
         }
         Relationships: [
@@ -423,6 +426,145 @@ export type Database = {
           created_at?: string
         }
         Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          id: string
+          user_id: string
+          address: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          address: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          address?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          }
+        ]
+      }
+      subscription_items: {
+        Row: {
+          id: string
+          subscription_id: string
+          product_id: string
+          quantity: number
+          plan_type: "daily" | "alternate" | "weekly" | "monthly"
+          delivery_time: "morning" | "evening"
+          start_date: string
+          end_date: string | null
+          next_delivery_date: string
+          status: "active" | "paused" | "cancelled"
+          pause_from: string | null
+          pause_to: string | null
+          price_per_unit: number
+          payment_status: "paid" | "pending"
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          subscription_id: string
+          product_id: string
+          quantity: number
+          plan_type: "daily" | "alternate" | "weekly" | "monthly"
+          delivery_time: "morning" | "evening"
+          start_date: string
+          end_date?: string | null
+          next_delivery_date: string
+          status?: "active" | "paused" | "cancelled"
+          pause_from?: string | null
+          pause_to?: string | null
+          price_per_unit: number
+          payment_status?: "paid" | "pending"
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          subscription_id?: string
+          product_id?: string
+          quantity?: number
+          plan_type?: "daily" | "alternate" | "weekly" | "monthly"
+          delivery_time?: "morning" | "evening"
+          start_date?: string
+          end_date?: string | null
+          next_delivery_date?: string
+          status?: "active" | "paused" | "cancelled"
+          pause_from?: string | null
+          pause_to?: string | null
+          price_per_unit?: number
+          payment_status?: "paid" | "pending"
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_items_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      deliveries: {
+        Row: {
+          id: string
+          subscription_item_id: string
+          delivery_date: string
+          status: "pending" | "delivered" | "skipped"
+          notes: string | null
+          is_subscription: boolean | null
+          delivery_boy_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          subscription_item_id: string
+          delivery_date: string
+          status?: "pending" | "delivered" | "skipped"
+          notes?: string | null
+          is_subscription?: boolean | null
+          delivery_boy_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          subscription_item_id?: string
+          delivery_date?: string
+          status?: "pending" | "delivered" | "skipped"
+          notes?: string | null
+          is_subscription?: boolean | null
+          delivery_boy_id?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deliveries_subscription_item_id_fkey"
+            columns: ["subscription_item_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_items"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

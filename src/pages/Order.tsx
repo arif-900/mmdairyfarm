@@ -4,7 +4,8 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ShoppingBag, Loader2, ShieldCheck, MapPin, CreditCard, Wallet, ArrowRight, ArrowLeft, AlertCircle, Map, CheckCircle2 } from "lucide-react";
+import { ShoppingBag, Loader2, ShieldCheck, MapPin, CreditCard, Wallet, ArrowRight, AlertCircle, Map, CheckCircle2 } from "lucide-react";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -314,13 +315,16 @@ const Order = () => {
         <section className="bg-white border-b border-slate-100 pt-16 pb-8 px-6">
           <div className="container-main max-w-4xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
-              <div>
-                <h1 className="font-display text-4xl font-black text-slate-900 tracking-tighter italic uppercase">
-                  Checkout
-                </h1>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">
-                  Secure Industrial-Grade Connection • SSL Active
-                </p>
+              <div className="flex items-center gap-6">
+                <CircularBackButton onClick={step > 1 ? prevStep : () => navigate("/products")} />
+                <div>
+                  <h1 className="font-display text-4xl font-black text-slate-900 tracking-tighter italic uppercase">
+                    Checkout
+                  </h1>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">
+                    Secure Industrial-Grade Connection • SSL Active
+                  </p>
+                </div>
               </div>
               <CheckoutStepper currentStep={step} />
             </div>

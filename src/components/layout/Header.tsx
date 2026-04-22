@@ -16,7 +16,8 @@ const Header = () => {
     const navLinks = [
         { path: "/", label: "Home" },
         { path: "/products", label: "Products" },
-        { path: "/faq", label: "FAQ" },
+        { path: "/subscriptions", label: "Subscription" },
+        { path: "/wallet", label: "Wallet" },
         { path: "/orders", label: "My Orders" },
     ];
 
@@ -73,21 +74,6 @@ const Header = () => {
                                 <div className="text-right flex flex-col items-end">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Logged as</p>
                                     <p className="text-xs font-black text-slate-900 truncate max-w-[120px]">{user.email}</p>
-                                    {profile !== null && (
-                                        <div className="flex items-center gap-2 mt-1 px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full shadow-lg shadow-amber-200/50 group/coin cursor-help transition-all hover:scale-105 active:scale-95">
-                                            <div className="relative w-5 h-5 rounded-full overflow-hidden border border-white/40 shadow-inner">
-                                                <img 
-                                                    src="/favicon.png" 
-                                                    className="w-full h-full object-cover animate-spin-slow group-hover/coin:animate-none" 
-                                                    alt="Coin"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent" />
-                                            </div>
-                                            <span className="text-[10px] font-black tracking-wider text-white drop-shadow-sm">
-                                                {profile.reward_coins || 0} <span className="opacity-80">COINS</span>
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                                 <Button variant="ghost" size="icon" onClick={signOut} className="rounded-xl hover:bg-rose-50 hover:text-rose-600 border border-transparent hover:border-rose-100">
                                     <LogOut className="w-5 h-5" />
@@ -129,27 +115,6 @@ const Header = () => {
                                 </Link>
                             ))}
                             <div className="pt-6 border-t border-slate-100 flex flex-col gap-4">
-                                {user && profile && (
-                                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-amber-100/50 rounded-2xl border border-amber-200/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-full bg-amber-500 p-0.5 shadow-lg shadow-amber-200 relative overflow-hidden">
-                                                <img 
-                                                    src="/favicon.png" 
-                                                    className="w-full h-full object-cover rounded-full" 
-                                                    alt="Reward Coin"
-                                                />
-                                                <div className="absolute inset-0 border-2 border-amber-400/50 rounded-full shadow-inner" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Your Rewards</p>
-                                                <p className="text-lg font-black text-slate-900 leading-none mt-1">{profile.reward_coins || 0} Coins</p>
-                                            </div>
-                                        </div>
-                                        <Link to="/orders" onClick={() => setIsMenuOpen(false)}>
-                                            <Button size="sm" variant="ghost" className="text-amber-700 font-bold hover:bg-amber-100">View History</Button>
-                                        </Link>
-                                    </div>
-                                )}
                                 <div className="grid grid-cols-2 gap-4">
                                     {user ? (
                                         <Button variant="outline" className="rounded-2xl h-14 font-black text-xs uppercase" onClick={signOut}>

@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Contact = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,13 +34,10 @@ const Contact = () => {
     <Layout>
       <section className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground section-padding">
         <div className="container-main">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
+          <CircularBackButton 
+            onClick={() => navigate("/")} 
+            className="mb-8"
+          />
           <div>
             <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
             <p className="text-primary-foreground/90 text-lg max-w-2xl">

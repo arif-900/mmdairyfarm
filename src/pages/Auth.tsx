@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Mail, Lock, User, LogIn } from "lucide-react";
 import { z } from "zod";
 import { getDashboardByRole } from "@/utils/routeUtils";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email" }).max(255),
@@ -332,13 +333,8 @@ const Auth = () => {
                 </p>
               </div>
 
-              <div className="mt-4 text-center">
-                <Link
-                  to="/"
-                  className="text-sm text-muted-foreground hover:text-primary"
-                >
-                  ← Back to home
-                </Link>
+              <div className="mt-8 flex justify-center border-t border-slate-100 pt-6">
+                <CircularBackButton onClick={() => navigate("/")} />
               </div>
             </div>
           </div>

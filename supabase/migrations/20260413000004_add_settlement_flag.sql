@@ -4,6 +4,8 @@ ADD COLUMN IF NOT EXISTS settlement_requested BOOLEAN DEFAULT FALSE;
 
 -- Update RLS for profiles to allow admins/staff to update this flag
 -- Assuming an 'app_role' enum exists based on types.ts
+DROP POLICY IF EXISTS "Admins and staff can update settlement_requested" ON public.profiles;
+
 CREATE POLICY "Admins and staff can update settlement_requested"
 ON public.profiles
 FOR UPDATE

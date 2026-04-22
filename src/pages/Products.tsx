@@ -2,22 +2,31 @@ import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
 import { useStoreProducts } from "@/data/products";
 import { Loader2 } from "lucide-react";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
+  const navigate = useNavigate();
   const { products, loading } = useStoreProducts();
 
   return (
     <Layout>
       {/* Page Header */}
-      <section className="bg-primary text-primary-foreground section-padding">
-        <div className="container-main text-center">
-          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 animate-slide-up">
-            Our Products
-          </h1>
-          <p className="text-primary-foreground/80 text-lg max-w-xl mx-auto animate-fade-in">
-            Fresh, natural dairy products made with love and traditional methods.
-            Delivered straight from our farm to your table.
-          </p>
+      <section className="bg-primary text-primary-foreground section-padding pb-8">
+        <div className="container-main">
+          <CircularBackButton 
+            onClick={() => navigate("/")} 
+            className="mb-8 bg-white !text-primary hover:bg-white/90 shadow-xl" 
+          />
+          <div className="text-center">
+            <h1 className="font-display text-5xl md:text-6xl font-black italic tracking-tighter uppercase mb-4 animate-slide-up">
+              Our <span className="opacity-60">Products</span>
+            </h1>
+            <p className="text-primary-foreground/70 text-lg max-w-xl mx-auto font-medium">
+              Fresh, natural dairy products made with love and traditional methods. 
+              Delivered straight from our farm to your table.
+            </p>
+          </div>
         </div>
       </section>
 

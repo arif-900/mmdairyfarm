@@ -2,116 +2,260 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CalendarHeart, Power, PowerOff } from "lucide-react";
+import { 
+  Loader2, 
+  CalendarHeart, 
+  Power, 
+  Filter, 
+  RefreshCw, 
+  BarChart, 
+  Bike, 
+  CheckCircle2, 
+  User, 
+  Eye, 
+  MapPin, 
+  Clock, 
+  AlertCircle,
+  Truck,
+  CreditCard,
+  Calendar,
+  Trash2,
+  ChevronRight
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import { Label } from "@/components/ui/label";
+import { format, addDays, isAfter, isBefore, differenceInDays } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { formatWeight } from "@/utils/pricing";
+import { cn } from "@/lib/utils";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 interface SubscriptionItem {
     id: string;
+    subscription_id: string;
     product_id: string;
     quantity: number;
-    frequency: string;
+    selected_weight: number | null;
+    unit_type: string | null;
+    plan_type: string;
     start_date: string;
+    end_date: string | null;
+    next_delivery_date: string | null;
     status: string;
-    delivery_address: string;
+    price_per_unit: number;
+    payment_status: string;
     created_at: string;
+    assigned_rider_id: string | null;
+    subscriptions: {
+       address: string;
+       user_id: string;
+    } | null;
     profiles: { full_name: string; phone: string } | null;
-    products: { name: string } | null;
+    products: { name: string; image_url?: string } | null;
+    assigned_rider?: { full_name: string } | null;
+}
+
+interface Rider {
+    user_id: string;
+    full_name: string;
+}
+
+interface Delivery {
+    id: string;
+    delivery_date: string;
+    status: string;
+    notes: string | null;
 }
 
 export function SubscriptionsTab() {
-    const [subscriptionsList, setSubscriptionsList] = useState<SubscriptionItem[]>([]);
+    const [itemsList, setItemsList] = useState<SubscriptionItem[]>([]);
+    const [riders, setRiders] = useState<Rider[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState<string>("all");
     const { toast } = useToast();
 
-    useEffect(() => {
-        fetchSubscriptions();
-
-        // Subscribe to realtime updates
-        const channel = supabase
-            .channel("admin-subscriptions")
-            .on(
-                "postgres_changes",
-                {
-                    event: "*",
-                    schema: "public",
-                    table: "subscriptions",
-                },
-                (payload) => {
-                    console.log("Realtime subscription update:", payload);
-                    fetchSubscriptions();
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, []);
+    // Dialog state
+    const [selectedItem, setSelectedItem] = useState<SubscriptionItem | null>(null);
+    const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+    const [isFetchingDeliveries, setIsFetchingDeliveries] = useState(false);
 
     const fetchSubscriptions = async () => {
         try {
             setIsLoading(true);
-            const { data: subsData, error: subsError } = await (supabase as any)
-                .from("subscriptions")
-                .select("id, user_id, product_id, quantity, frequency, start_date, status, delivery_address, created_at")
+            
+            // 1. Fetch Riders First
+            const { data: rolesData } = await supabase
+                .from("user_roles")
+                .select("user_id")
+                .eq("role", "delivery_boy" as any);
+            
+            const riderIds = rolesData?.map(r => r.user_id) || [];
+            if (riderIds.length > 0) {
+                const { data: riderProfiles } = await supabase
+                    .from("profiles")
+                    .select("user_id, full_name")
+                    .in("user_id", riderIds);
+                setRiders(riderProfiles || []);
+            }
+
+            // 2. Fetch Subscriptions
+            const { data: subsData, error: subsError } = await supabase
+                .from("subscription_items")
+                .select(`
+                   id, subscription_id, product_id, quantity, selected_weight, unit_type, plan_type, start_date, end_date, next_delivery_date, status, price_per_unit, payment_status, created_at, assigned_rider_id,
+                   subscriptions ( address, user_id ),
+                   products ( name, image_url )
+                `)
                 .order("created_at", { ascending: false });
 
             if (subsError) throw subsError;
 
-            const subscriptions = subsData || [];
+            const items = subsData || [];
 
-            if (subscriptions.length > 0) {
-                // Fetch profiles manually
-                const userIds = [...new Set(subscriptions.map((s: any) => s.user_id).filter(Boolean))];
+            if (items.length > 0) {
+                // Fetch profiles manually based on parent user_id
+                const userIds = [...new Set(items.map((i: any) => i.subscriptions?.user_id).filter(Boolean))];
                 let profilesMap: Record<string, any> = {};
                 if (userIds.length > 0) {
-                    const { data: profilesData } = await (supabase as any)
+                    const { data: profilesData } = await supabase
                         .from("profiles")
-                        .select("id, full_name, phone")
-                        .in("id", userIds);
+                        .select("user_id, full_name, phone")
+                        .in("user_id", userIds);
 
                     if (profilesData) {
                         profilesMap = profilesData.reduce((acc: any, profile: any) => {
-                            acc[profile.id] = profile;
-                            return acc;
-                        }, {});
-                    }
-                }
-
-                // Fetch products manually
-                const productIds = [...new Set(subscriptions.map((s: any) => s.product_id).filter(Boolean))];
-                let productsMap: Record<string, any> = {};
-                if (productIds.length > 0) {
-                    const { data: productsData } = await (supabase as any)
-                        .from("products")
-                        .select("id, name")
-                        .in("id", productIds);
-
-                    if (productsData) {
-                        productsMap = productsData.reduce((acc: any, product: any) => {
-                            acc[product.id] = product;
+                            acc[profile.user_id] = profile;
                             return acc;
                         }, {});
                     }
                 }
 
                 // Merge Data
-                const mergedData = subscriptions.map((sub: any) => ({
-                    ...sub,
-                    profiles: sub.user_id ? profilesMap[sub.user_id] || null : null,
-                    products: sub.product_id ? productsMap[sub.product_id] || null : null,
-                }));
+                const mergedData = items.map((sub: any) => {
+                    const rider = riders.find(r => r.user_id === sub.assigned_rider_id);
+                    return {
+                        ...sub,
+                        profiles: sub.subscriptions?.user_id ? profilesMap[sub.subscriptions.user_id] || null : null,
+                        assigned_rider: rider || null
+                    };
+                });
 
-                setSubscriptionsList(mergedData);
+                setItemsList(mergedData as any);
             } else {
-                setSubscriptionsList([]);
+                setItemsList([]);
             }
         } catch (error: any) {
-            console.error("Error fetching subscriptions:", error);
+            console.error("DEBUG: Subscriptions Tab Error:", error);
             toast({
                 title: "Failed to load subscriptions",
-                description: error.message,
+                description: error.message || "Unknown schema error",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchDeliveries = async (itemId: string) => {
+        try {
+            setIsFetchingDeliveries(true);
+            const { data, error } = await supabase
+                .from("deliveries")
+                .select("*")
+                .eq("subscription_item_id", itemId)
+                .order("delivery_date", { ascending: false })
+                .limit(10);
+            
+            if (error) throw error;
+            setDeliveries(data || []);
+        } catch (error: any) {
+            console.error("Error fetching deliveries:", error);
+        } finally {
+            setIsFetchingDeliveries(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubscriptions();
+    }, []);
+
+    useEffect(() => {
+        if (selectedItem) {
+            fetchDeliveries(selectedItem.id);
+        }
+    }, [selectedItem]);
+
+    const handleAssignRider = async (itemId: string, riderId: string) => {
+        try {
+            const finalRiderId = riderId === "none" ? null : riderId;
+
+            // 1. Update the parent subscription item
+            const { error: subError } = await supabase
+                .from("subscription_items")
+                .update({ assigned_rider_id: finalRiderId })
+                .eq("id", itemId);
+
+            if (subError) throw subError;
+
+            // 2. Synchronize existing pending deliveries for today and future
+            const today = new Date().toISOString().split('T')[0];
+            const { data: updateData, error: deliveryError } = await supabase
+                .from("deliveries")
+                .update({ delivery_boy_id: finalRiderId })
+                .eq("subscription_item_id", itemId)
+                .eq("status", "pending")
+                .gte("delivery_date", today)
+                .select(); // Added .select() to see what was updated
+
+            console.log(`Sync Result for Item ${itemId}:`, updateData);
+
+            if (deliveryError) {
+                console.error("Error syncing deliveries:", deliveryError);
+                // We don't throw here to avoid blocking the main assignment, but it's good to log
+            }
+
+            toast({ title: "Rider Assigned & Synced", description: "Future deliveries updated successfully." });
+            fetchSubscriptions();
+        } catch (error: any) {
+            toast({ title: "Assignment Failed", description: error.message, variant: "destructive" });
+        }
+    };
+
+    const handleCancelSubscription = async (itemId: string) => {
+        const confirmCancel = window.confirm(
+            "Are you sure you want to cancel this subscription and refund the remaining balance to the customer's wallet (Milk Coins)?"
+        );
+        if (!confirmCancel) return;
+
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabase.rpc("refund_subscription_to_wallet", {
+                p_item_id: itemId
+            });
+
+            if (error) throw error;
+            
+            const result = data as any;
+            if (!result.success) throw new Error(result.message);
+
+            toast({
+                title: "Subscription Cancelled",
+                description: `₹${result.refunded_amount} was successfully credited to the customer's wallet for ${result.remaining_deliveries} unused deliveries.`,
+            });
+            fetchSubscriptions();
+            setSelectedItem(null);
+        } catch (err: any) {
+            console.error("Cancel Error:", err);
+            toast({
+                title: "Cancellation Failed",
+                description: err.message || "Could not process the cancellation refund.",
                 variant: "destructive",
             });
         } finally {
@@ -122,106 +266,518 @@ export function SubscriptionsTab() {
     const handleToggleStatus = async (id: string, currentStatus: string) => {
         try {
             const newStatus = currentStatus === "active" ? "paused" : "active";
-            const { error } = await (supabase as any)
-                .from("subscriptions")
+            const { error } = await supabase
+                .from("subscription_items")
                 .update({ status: newStatus })
                 .eq("id", id);
 
             if (error) throw error;
-
             fetchSubscriptions();
-            toast({ title: `Subscription \${newStatus}` });
+            toast({ title: `Subscription Item ${newStatus}` });
         } catch (error: any) {
-            toast({
-                title: "Error updating status",
-                description: error.message,
-                variant: "destructive",
-            });
+            toast({ title: "Error updating status", description: error.message, variant: "destructive" });
         }
     };
 
+    const handleSyncTodayDrops = async () => {
+        try {
+            setIsLoading(true);
+            const today = new Date().toISOString().split('T')[0];
+            
+            // 1. Fetch ALL active items
+            const { data: items, error: fetchError } = await supabase
+                .from("subscription_items")
+                .select("*")
+                .eq("status", "active");
+
+            if (fetchError) throw fetchError;
+            if (!items || items.length === 0) {
+                toast({ title: "No Active Subscriptions", description: "You need active subscribers to sync a route." });
+                return;
+            }
+
+            // 2. Fetch ALL deliveries for today to avoid duplicates
+            const { data: existingDeliveries } = await supabase
+                .from("deliveries")
+                .select("subscription_item_id, delivery_slot")
+                .eq("delivery_date", today);
+
+            const existingMap = new Set(existingDeliveries?.map(d => `${d.subscription_item_id}-${d.delivery_slot}`) || []);
+
+            const newDeliveries: any[] = [];
+            const updates: any[] = [];
+
+            for (const item of items) {
+                // Safeguard against expired
+                if (item.end_date && item.end_date < today) {
+                    updates.push({ id: item.id, status: 'cancelled' });
+                    
+                    // Clean up any stray pending deliveries for this expired subscription
+                    const { error: cleanupError } = await supabase
+                        .from("deliveries")
+                        .update({ status: 'skipped', notes: 'Subscription Period Ended' })
+                        .eq("subscription_item_id", item.id)
+                        .eq("status", "pending");
+                        
+                    if (cleanupError) console.error("Cleanup error:", cleanupError);
+                    continue;
+                }
+
+                // Handle 'both' slots vs single slot
+                const slots = item.delivery_time === 'both' ? ['morning', 'evening'] : [item.delivery_time];
+                let createdAny = false;
+
+                slots.forEach(slot => {
+                    const key = `${item.id}-${slot}`;
+                    if (!existingMap.has(key)) {
+                        newDeliveries.push({
+                            subscription_item_id: item.id,
+                            delivery_date: today,
+                            status: 'pending',
+                            delivery_slot: slot,
+                            is_subscription: true,
+                            delivery_boy_id: item.assigned_rider_id
+                        });
+                        createdAny = true;
+                    }
+                });
+
+                // ONLY update next_delivery_date if it was actually today or in the past
+                // OR if we just created today's missing drop and the date was today.
+                if (createdAny || item.next_delivery_date <= today) {
+                    const nextDate = new Date(today);
+                    if (item.plan_type === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+                    else if (item.plan_type === 'alternate') nextDate.setDate(nextDate.getDate() + 2);
+                    else if (item.plan_type === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+                    else if (item.plan_type === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+                    else nextDate.setDate(nextDate.getDate() + 1);
+
+                    updates.push({
+                        id: item.id,
+                        next_delivery_date: nextDate.toISOString().split('T')[0]
+                    });
+                }
+            }
+
+            // 2. Perform DB operations
+            if (newDeliveries.length > 0) {
+                const { error: insError } = await supabase.from("deliveries").insert(newDeliveries);
+                if (insError) throw insError;
+            }
+
+            if (updates.length > 0) {
+                // Use individual updates to avoid upsert issues with NOT NULL columns like 'quantity'
+                for (const update of updates) {
+                    const { error: upsError } = await supabase
+                        .from("subscription_items")
+                        .update({ next_delivery_date: update.next_delivery_date })
+                        .eq("id", update.id);
+                    
+                    if (upsError) {
+                        console.error(`Failed to update item ${update.id}:`, upsError);
+                    }
+                }
+            }
+
+            if (newDeliveries.length === 0) {
+                toast({ title: "Already Synced", description: "All drops for today are already in the database." });
+            } else {
+                toast({ 
+                    title: "Sync Successful!", 
+                    description: `Generated ${newDeliveries.length} missing drops for today.` 
+                });
+            }
+            fetchSubscriptions();
+
+        } catch (error: any) {
+            console.error("Sync Error:", error);
+            toast({ title: "Sync Failed", description: error.message, variant: "destructive" });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    const isExpiringSoon = (endDate: string | null) => {
+        if (!endDate) return false;
+        const days = differenceInDays(new Date(endDate), new Date());
+        return days >= 0 && days <= 3;
+    };
+
+    const filtered = statusFilter === 'all' ? itemsList : itemsList.filter(s => s.status === statusFilter);
+
+    // Stats
+    const total = itemsList.length;
+    const active = itemsList.filter(s => s.status === 'active').length;
+    const unassigned = itemsList.filter(s => s.status === 'active' && !s.assigned_rider_id).length;
+    const expiring = itemsList.filter(s => s.status === 'active' && isExpiringSoon(s.end_date)).length;
+
     return (
         <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <CalendarHeart className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold text-gray-800">Active Subscriptions</h3>
-                    </div>
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+               <Card className="bg-emerald-50/50 border-emerald-100 shadow-sm rounded-2xl overflow-hidden relative">
+                   <CardContent className="p-4 flex items-center gap-3 relative z-10">
+                       <div className="w-10 h-10 rounded-xl bg-white border border-emerald-100 flex items-center justify-center shadow-sm">
+                           <CalendarHeart className="w-5 h-5 text-emerald-600" />
+                       </div>
+                       <div>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Total Plans</p>
+                           <p className="text-xl font-black text-slate-900 leading-none">{total}</p>
+                       </div>
+                   </CardContent>
+               </Card>
+               <Card className="bg-blue-50/50 border-blue-100 shadow-sm rounded-2xl overflow-hidden relative">
+                   <CardContent className="p-4 flex items-center gap-3 relative z-10">
+                       <div className="w-10 h-10 rounded-xl bg-white border border-blue-100 flex items-center justify-center shadow-sm">
+                           <Power className="w-5 h-5 text-blue-600" />
+                       </div>
+                       <div>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Active</p>
+                           <p className="text-xl font-black text-slate-900 leading-none">{active}</p>
+                       </div>
+                   </CardContent>
+               </Card>
+               <Card className={cn(
+                   "shadow-sm rounded-2xl overflow-hidden relative",
+                   unassigned > 0 ? "bg-rose-50/50 border-rose-100" : "bg-emerald-50/20 border-emerald-100"
+               )}>
+                   <CardContent className="p-4 flex items-center gap-3 relative z-10">
+                       <div className={cn(
+                           "w-10 h-10 rounded-xl bg-white border flex items-center justify-center shadow-sm",
+                           unassigned > 0 ? "border-rose-100" : "border-emerald-100"
+                       )}>
+                           <Bike className={cn("w-5 h-5", unassigned > 0 ? "text-rose-500" : "text-emerald-500")} />
+                       </div>
+                       <div>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Missing Rider</p>
+                           <p className={cn("text-xl font-black leading-none", unassigned > 0 ? "text-rose-600" : "text-emerald-600")}>
+                               {unassigned}
+                           </p>
+                       </div>
+                   </CardContent>
+               </Card>
+               <Card className={cn(
+                   "shadow-sm rounded-2xl overflow-hidden relative",
+                   expiring > 0 ? "bg-amber-50/50 border-amber-100" : "bg-slate-50/20 border-slate-100"
+               )}>
+                   <CardContent className="p-4 flex items-center gap-3 relative z-10">
+                       <div className={cn(
+                           "w-10 h-10 rounded-xl bg-white border flex items-center justify-center shadow-sm",
+                           expiring > 0 ? "border-amber-100" : "border-slate-100"
+                       )}>
+                           <AlertCircle className={cn("w-5 h-5", expiring > 0 ? "text-amber-500" : "text-slate-300")} />
+                       </div>
+                       <div>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Expiring Soon</p>
+                           <p className={cn("text-xl font-black leading-none", expiring > 0 ? "text-amber-600" : "text-slate-400")}>
+                               {expiring}
+                           </p>
+                       </div>
+                   </CardContent>
+               </Card>
+            </div>
 
+            <div className="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-[24px] border border-slate-100 shadow-sm">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[180px] h-11 rounded-xl bg-slate-50 border-slate-100 font-bold uppercase text-[10px] tracking-widest">
+                        <Filter className="w-3 h-3 mr-2 text-slate-400" />
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl shadow-2xl border-slate-100">
+                        <SelectItem value="all">All Items</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="paused">Paused</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                </Select>
+                <div className="flex-1" />
+                <Button 
+                    variant="outline" 
+                    onClick={handleSyncTodayDrops} 
+                    disabled={isLoading} 
+                    className="h-11 rounded-xl px-6 border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all font-black uppercase text-[10px] tracking-widest gap-2"
+                >
+                    <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin")} />
+                    Generate Today's Route
+                </Button>
+
+                <Button 
+                    variant="outline" 
+                    onClick={fetchSubscriptions} 
+                    disabled={isLoading} 
+                    className="h-11 rounded-xl px-6 border-slate-100 hover:bg-slate-50 transition-all font-black uppercase text-[10px] tracking-widest"
+                >
+                    <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin")} />
+                    Refresh List
+                </Button>
+            </div>
+
+            <div className="bg-white rounded-[32px] shadow-xl shadow-emerald-900/5 border border-slate-100 overflow-hidden">
                 {isLoading ? (
-                    <div className="p-8 flex justify-center text-primary">
-                        <Loader2 className="h-8 w-8 animate-spin" />
+                    <div className="p-20 flex justify-center text-emerald-600">
+                        <Loader2 className="h-10 w-10 animate-spin" />
                     </div>
-                ) : subscriptionsList.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                        <CalendarHeart className="h-12 w-12 mx-auto text-gray-300 mb-2" />
-                        <p>No active subscriptions found.</p>
+                ) : filtered.length === 0 ? (
+                    <div className="p-20 text-center text-slate-300">
+                        <CalendarHeart className="h-16 w-16 mx-auto opacity-20 mb-4" />
+                        <p className="font-black uppercase text-xs tracking-widest">No matching subscriptions</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <Table>
-                            <TableHeader>
+                            <TableHeader className="bg-slate-50/50 border-b border-slate-100">
                                 <TableRow>
-                                    <TableHead>Customer</TableHead>
-                                    <TableHead>Product</TableHead>
-                                    <TableHead>Start Date</TableHead>
-                                    <TableHead>Delivery Address</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Action</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Customer & Product</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Shipment Details</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Assigned Rider</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Status</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {subscriptionsList.map((item) => (
-                                    <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
-                                        <TableCell>
-                                            {item.profiles ? (
-                                                <div>
-                                                    <p className="font-medium text-foreground">{item.profiles.full_name}</p>
-                                                    <p className="text-xs text-muted-foreground">{item.profiles.phone}</p>
-                                                </div>
-                                            ) : (
-                                                <span className="text-muted-foreground italic">Unknown Customer</span>
+                                {filtered.map((item) => {
+                                    const expiring = isExpiringSoon(item.end_date) && item.status === 'active';
+                                    return (
+                                    <TableRow key={item.id} className="hover:bg-slate-50/30 transition-colors border-b border-slate-50 last:border-0 group">
+                                        <TableCell className="px-6 py-5">
+                                            <div className="flex items-center gap-4">
+                                               <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+                                                  <User className="w-5 h-5 text-slate-400" />
+                                               </div>
+                                               <div className="space-y-0.5">
+                                                  <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">#{item.id.slice(0, 8).toUpperCase()}</p>
+                                                  <div className="flex items-center gap-2">
+                                                    <p className="font-black text-slate-900 uppercase tracking-tight leading-tight">{item.profiles?.full_name || "Unknown"}</p>
+                                                    {expiring && (
+                                                        <Badge className="bg-amber-100 text-amber-700 border-amber-200 text-[8px] font-black uppercase px-2 py-0 h-4">Expires Soon</Badge>
+                                                    )}
+                                                  </div>
+                                                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{item.products?.name}</p>
+                                               </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{item.quantity} Units · {formatWeight(item.selected_weight || 1000, (item.unit_type as any) || 'ml')}</p>
+                                                <Badge variant="secondary" className="bg-slate-100 text-[9px] font-black uppercase tracking-widest px-2 py-0.5">
+                                                    {item.plan_type}
+                                                </Badge>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <Select 
+                                              value={item.assigned_rider_id || "none"} 
+                                              onValueChange={(val) => handleAssignRider(item.id, val)}
+                                            >
+                                              <SelectTrigger className={cn(
+                                                  "h-10 w-[180px] rounded-xl border-dashed font-bold text-[11px] uppercase tracking-wider transition-all",
+                                                  item.assigned_rider_id ? "bg-emerald-50/50 border-emerald-200 text-emerald-700" : "bg-slate-50 border-slate-200 text-slate-400"
+                                              )}>
+                                                  <div className="flex items-center gap-2">
+                                                     {item.assigned_rider_id ? <CheckCircle2 className="w-3 h-3" /> : <Bike className="w-3 h-3" />}
+                                                     <SelectValue placeholder="Assign Rider" />
+                                                  </div>
+                                              </SelectTrigger>
+                                              <SelectContent className="rounded-xl shadow-2xl border-slate-100">
+                                                  <SelectItem value="none" className="text-slate-400 font-bold uppercase text-[10px]">-- Unassigned --</SelectItem>
+                                                  {riders.map(rider => (
+                                                      <SelectItem key={rider.user_id} value={rider.user_id} className="font-black uppercase text-[10px] tracking-widest">
+                                                          {rider.full_name}
+                                                      </SelectItem>
+                                                  ))}
+                                              </SelectContent>
+                                            </Select>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <Badge className={cn(
+                                                "uppercase text-[9px] font-black tracking-widest px-3 py-1 rounded-lg border-none",
+                                                item.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 
+                                                item.status === 'paused' ? 'bg-amber-100 text-amber-700' : 
+                                                item.status === 'cancelled' || isBefore(new Date(item.end_date || ''), new Date()) ? 'bg-rose-100 text-rose-700' :
+                                                'bg-slate-100 text-slate-500'
+                                            )}>
+                                                {isBefore(new Date(item.end_date || ''), new Date()) ? 'EXPIRED' : item.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5 text-right flex items-center justify-end gap-2">
+                                            <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                onClick={() => setSelectedItem(item)}
+                                                className="h-9 w-9 p-0 rounded-xl bg-slate-50 border-slate-100 text-slate-600 hover:bg-white hover:border-emerald-200 hover:text-emerald-600 transition-all"
+                                            >
+                                                <Eye className="w-4 h-4" />
+                                            </Button>
+
+                                            {item.status !== 'cancelled' && (
+                                              <Button 
+                                                  variant="outline" 
+                                                  size="sm" 
+                                                  onClick={() => handleToggleStatus(item.id, item.status)}
+                                                  className={cn(
+                                                     "h-9 px-4 rounded-xl font-black uppercase text-[10px] tracking-widest transition-all",
+                                                     item.status === 'active' ? 'text-amber-600 border-amber-100 hover:bg-amber-50' : 'text-emerald-600 border-emerald-100 hover:bg-emerald-50'
+                                                  )}
+                                              >
+                                                  {item.status === 'active' ? 'Pause' : 'Resume'}
+                                              </Button>
                                             )}
                                         </TableCell>
-                                        <TableCell>
-                                            <p className="font-medium text-foreground">{item.products?.name || 'Unknown'}</p>
-                                            <p className="text-xs text-muted-foreground">Qty: {item.quantity} / {item.frequency}</p>
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground whitespace-nowrap">
-                                            {format(new Date(item.start_date), "dd MMM yyyy")}
-                                        </TableCell>
-                                        <TableCell>
-                                            <p className="text-sm truncate max-w-[200px]" title={item.delivery_address}>{item.delivery_address}</p>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className={`text-[10px] uppercase px-2 py-0.5 rounded-full font-bold \${
-                          item.status === 'active' ? 'bg-green-100 text-green-700' : 
-                          item.status === 'paused' ? 'bg-orange-100 text-orange-700' : 
-                          'bg-red-100 text-red-700'
-                      }`}>
-                                                {item.status}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleToggleStatus(item.id, item.status)}
-                                                title={item.status === 'active' ? "Pause Subscription" : "Resume Subscription"}
-                                            >
-                                                {item.status === 'active' ? <PowerOff className="h-4 w-4 mr-1 text-orange-500" /> : <Power className="h-4 w-4 mr-1 text-green-500" />}
-                                                {item.status === 'active' ? "Pause" : "Resume"}
-                                            </Button>
-                                        </TableCell>
                                     </TableRow>
-                                ))}
+                                    );
+                                })}
                             </TableBody>
                         </Table>
                     </div>
                 )}
             </div>
+
+            {/* --- DETAILS DIALOG --- */}
+            <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+                <DialogContent className="max-w-md rounded-[28px] p-0 overflow-hidden border-none shadow-2xl">
+                    {selectedItem && (
+                        <div className="flex flex-col">
+                            <div className="bg-emerald-950 p-5 text-white relative">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                                <DialogHeader>
+                                    <div className="flex items-center gap-4 mb-1">
+                                        <div className="w-16 h-16 bg-white/10 rounded-xl p-2 border border-white/10 backdrop-blur-sm shrink-0">
+                                            <img src={selectedItem.products?.image_url || "/placeholder.svg"} alt="" className="w-full h-full object-contain" />
+                                        </div>
+                                        <div>
+                                            <DialogTitle className="text-xl font-black uppercase tracking-tighter mb-0.5">{selectedItem.products?.name}</DialogTitle>
+                                            <div className="flex items-center gap-2">
+                                                 <Badge className="bg-emerald-500 text-slate-950 font-black uppercase text-[8px] tracking-widest border-none h-4 px-1.5 leading-none">
+                                                    {selectedItem.status}
+                                                 </Badge>
+                                                 <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">#{selectedItem.id.slice(0,8)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </DialogHeader>
+                            </div>
+
+                            <div className="p-4 space-y-4 bg-slate-50/50">
+                                {/* Timeline section */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="space-y-2">
+                                        <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                            <Label className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-0.5">
+                                                <User className="w-2.5 h-2.5" /> Customer
+                                            </Label>
+                                            <div className="space-y-0">
+                                                <p className="text-[11px] font-black text-slate-800 uppercase tracking-tight">{selectedItem.profiles?.full_name}</p>
+                                                <p className="text-[9px] font-bold text-emerald-600 leading-none">{selectedItem.profiles?.phone}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                            <Label className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-0.5">
+                                                <MapPin className="w-2.5 h-2.5" /> Deliver To
+                                            </Label>
+                                            <p className="text-[9px] font-bold text-slate-600 leading-tight italic">
+                                                {selectedItem.subscriptions?.address}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                            <Label className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-0.5">
+                                                <Clock className="w-2.5 h-2.5" /> Schedule
+                                            </Label>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div>
+                                                    <p className="text-[7px] font-bold text-slate-400 uppercase">Cycle</p>
+                                                    <p className="text-[9px] font-black text-slate-800 capitalize leading-none">{selectedItem.plan_type}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[7px] font-bold text-slate-400 uppercase">Qty</p>
+                                                    <p className="text-[9px] font-black text-slate-800 leading-none">{selectedItem.quantity}x</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-3 bg-white rounded-xl border border-slate-100 shadow-sm relative overflow-hidden">
+                                            {isExpiringSoon(selectedItem.end_date) && (
+                                                <div className="absolute top-0 right-0 py-0.5 px-2 bg-amber-500 text-white font-black text-[7px] uppercase tracking-widest rounded-bl-lg">Soon</div>
+                                            )}
+                                            <Label className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-0.5">
+                                                <Calendar className="w-2.5 h-2.5" /> Expiration
+                                            </Label>
+                                            <p className={cn(
+                                                "text-[10px] font-black",
+                                                isExpiringSoon(selectedItem.end_date) ? "text-amber-600" : "text-slate-800"
+                                            )}>
+                                                {selectedItem.end_date ? format(new Date(selectedItem.end_date), "dd MMM yyyy") : "No End Date"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {/* Delivery History (Drops) */}
+                                <div className="space-y-3 pt-2 border-t border-slate-100">
+                                    <div className="flex items-center justify-between">
+                                        <h4 className="text-[8px] font-black uppercase tracking-widest text-slate-400 ml-1">Recent History</h4>
+                                        {isFetchingDeliveries && <Loader2 className="w-2.5 h-2.5 animate-spin text-slate-400" />}
+                                    </div>
+
+                                    {deliveries.length === 0 ? (
+                                        <div className="py-4 text-center text-slate-300 italic border border-dashed border-slate-100 rounded-xl">
+                                            <p className="text-[8px] font-bold uppercase">No drops recorded</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-1.5 overflow-y-auto max-h-[120px] pr-2 scrollbar-thin scrollbar-thumb-slate-200">
+                                            {deliveries.map(drop => (
+                                                <div key={drop.id} className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className={cn(
+                                                            "w-1.5 h-1.5 rounded-full",
+                                                            drop.status === 'delivered' ? "bg-emerald-500 shadow-lg" : "bg-slate-300"
+                                                        )} />
+                                                        <p className="text-[9px] font-black text-slate-800">{format(new Date(drop.delivery_date), "eee, d MMM")}</p>
+                                                    </div>
+                                                    <div className="flex flex-col items-end gap-1">
+                                                        <Badge className={cn(
+                                                            "text-[7px] font-black uppercase border-none px-1.5 h-4 rounded-sm flex items-center justify-center",
+                                                            drop.status === 'delivered' ? "bg-emerald-100 text-emerald-700" : 
+                                                            drop.status === 'skipped' ? "bg-rose-100 text-rose-700" : "bg-slate-100 text-slate-500"
+                                                        )}>
+                                                            {drop.status}
+                                                        </Badge>
+                                                        {drop.notes && (
+                                                            <p className="text-[7px] font-bold text-slate-400 italic bg-slate-50 px-1.5 py-0.5 rounded-sm border border-slate-100">
+                                                                "{drop.notes}"
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="p-3 bg-white border-t border-slate-100 flex justify-between items-center gap-2">
+                                {selectedItem.status !== 'cancelled' && (
+                                    <Button 
+                                        variant="outline"
+                                        onClick={() => handleCancelSubscription(selectedItem.id)}
+                                        disabled={isLoading}
+                                        className="h-8 px-4 rounded-lg border-rose-100 text-rose-600 hover:bg-rose-50 font-black uppercase text-[8px] tracking-widest active:scale-95 transition-all gap-1.5"
+                                    >
+                                        <Trash2 className="w-2.5 h-2.5" /> Refund & Cancel
+                                    </Button>
+                                )}
+                                <Button onClick={() => setSelectedItem(null)} className="h-8 px-6 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-white font-black uppercase text-[8px] tracking-widest active:scale-95 transition-all">
+                                    Close Panel
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

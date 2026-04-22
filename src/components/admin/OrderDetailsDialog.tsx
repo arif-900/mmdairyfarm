@@ -248,28 +248,33 @@ export const OrderDetailsDialog = ({
 
   const handleRefund = async () => {
     if (!order) return;
+    
+    const confirmRefund = window.confirm(
+        `Are you sure you want to cancel this order and refund ₹${order.total_amount} to the customer's Milk Wallet (Coins)?`
+    );
+    if (!confirmRefund) return;
+
     setUpdating(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const { data, error } = await supabase.functions.invoke("process-refund", {
-        body: { orderId: order.id },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        }
+      const { data, error } = await supabase.rpc("refund_order_to_wallet", {
+        p_order_id: order.id
       });
 
       if (error) throw error;
+      
+      const result = data as any;
+      if (!result.success) throw new Error(result.message);
 
       toast({
         title: "Refund Processed",
-        description: data.message || "Order has been cancelled and refund initiated.",
+        description: `₹${result.refunded_amount} credited to customer wallet successfully.`,
       });
       onStatusUpdate();
     } catch (err: any) {
       console.error("Refund error:", err);
       toast({
         title: "Refund Failed",
-        description: err.message || "Could not process refund",
+        description: err.message || "Could not process wallet refund",
         variant: "destructive",
       });
     } finally {

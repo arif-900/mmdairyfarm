@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Truck, ShoppingBag, Clock, Calendar } from "lucide-react";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { format, differenceInDays } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
 const PaymentSuccess = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("order_id");
   const [order, setOrder] = useState<any>(null);
@@ -113,6 +116,9 @@ const PaymentSuccess = () => {
           animate="visible"
           className="max-w-md mx-auto w-full text-center space-y-8"
         >
+          <div className="flex justify-center sm:justify-start mb-4">
+            <CircularBackButton onClick={() => navigate("/")} />
+          </div>
 
           {/* Success Icon Animation */}
           <div className="relative mx-auto w-32 h-32 flex items-center justify-center">

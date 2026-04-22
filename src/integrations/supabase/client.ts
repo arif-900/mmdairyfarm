@@ -13,5 +13,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    lockType: 'localstorage', // Stabilize auth locks in development/production
   }
 });

@@ -1,4 +1,5 @@
-import { MapPin, ArrowRight, ArrowLeft, AlertCircle, Truck, Info } from "lucide-react";
+import { MapPin, ArrowRight, AlertCircle, Truck, Info } from "lucide-react";
+import { CircularBackButton } from "../ui/CircularBackButton";
 import { Button } from "@/components/ui/button";
 import AddressSelector from "@/components/order/AddressSelector";
 import { cn } from "@/lib/utils";
@@ -98,14 +99,10 @@ export function DeliveryStep({
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 mt-10">
-          <Button 
-            variant="ghost"
+          <CircularBackButton 
             onClick={onBack}
-            className="flex-1 h-16 rounded-[28px] border-2 border-slate-100 hover:bg-slate-50 text-slate-400 hover:text-slate-800 font-black uppercase tracking-[0.2em] group"
-          >
-            <ArrowLeft className="w-5 h-5 mr-3 group-hover:-translate-x-2 transition-transform" />
-            Back to Summary
-          </Button>
+            className="w-16 h-16"
+          />
           
           {selectedAddress && (
             <Button 

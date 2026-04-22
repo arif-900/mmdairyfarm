@@ -32,6 +32,9 @@ import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
+import Subscriptions from "./pages/Subscriptions";
+import SubscriptionSuccess from "./pages/SubscriptionSuccess";
+import Wallet from "./pages/Wallet";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +85,9 @@ const App = () => (
                   <Route path="/refund" element={<Refund />} />
                   <Route path="/shipping" element={<Shipping />} />
                   <Route path="/faq" element={<FAQ />} />
+                  <Route path="/subscriptions" element={<Subscriptions />} />
+                  <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+                  <Route path="/wallet" element={<Wallet />} />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-cancelled" element={<PaymentCancelled />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />

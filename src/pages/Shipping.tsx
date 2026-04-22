@@ -1,9 +1,11 @@
 import Layout from "@/components/layout/Layout";
 import { ArrowLeft, Truck, Clock, MapPin, PackageCheck, AlertCircle, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 
 const Shipping = () => {
+    const navigate = useNavigate();
     const sections = [
         {
             icon: Clock,
@@ -59,13 +61,10 @@ const Shipping = () => {
                 </div>
 
                 <div className="container-main relative z-10 pl-5">
-                    <Link
-                        to="/"
-                        className="inline-flex items-center gap-2 text-white/50 hover:text-golden mb-12 transition-all hover:translate-x-[-4px] uppercase text-xs font-bold tracking-[0.2em]"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Home
-                    </Link>
+                    <CircularBackButton 
+                        onClick={() => navigate("/")} 
+                        className="mb-12"
+                    />
                     <div className="max-w-3xl">
                         <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
                             {"Shipping & Delivery".split(" ").map((word, wIdx) => (

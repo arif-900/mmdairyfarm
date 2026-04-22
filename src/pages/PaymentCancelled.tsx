@@ -3,9 +3,12 @@ import { useSearchParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
+import { CircularBackButton } from "@/components/ui/CircularBackButton";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 const PaymentCancelled = () => {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("order_id");
 
@@ -25,6 +28,9 @@ const PaymentCancelled = () => {
     <Layout>
       <section className="section-padding min-h-[70vh] flex items-center">
         <div className="container-main text-center max-w-md mx-auto animate-scale-in">
+          <div className="flex justify-center sm:justify-start mb-6">
+            <CircularBackButton onClick={() => navigate("/products")} />
+          </div>
           <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
             <XCircle className="w-10 h-10 text-destructive" />
           </div>
