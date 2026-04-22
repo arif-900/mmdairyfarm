@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle2, Package, Calendar, Clock, Home, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import confetti from "canvas-confetti";
 
 const SubscriptionSuccess = () => {
   const location = useLocation();
@@ -16,19 +17,51 @@ const SubscriptionSuccess = () => {
       return;
     }
 
+    // Fire Confetti (Celebration!)
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    const interval: any = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+    }, 250);
+
     // Play Success Sound
     const isMuted = localStorage.getItem("muteSuccessSound") === "true";
+    
+    console.log("Subscription Success Sound Debug:", { isMuted, product: product.name });
+
     if (!isMuted) {
+      // Pre-load audio object to reduce latency
       const audio = new Audio("/sounds/success.mp3");
-      audio.volume = 0.8; // Slightly softer than primary payment success
+      audio.volume = 1.0;
       audio.preload = "auto";
 
       const playAudio = () => {
         audio.play()
-          .catch((err) => console.warn("Autoplay blocked. Sound pending interaction."));
+          .then(() => {
+            console.log("Success sound played successfully!");
+            window.removeEventListener("click", playAudio);
+          })
+          .catch((err) => {
+            console.warn("Autoplay blocked. Sound will play on next click.");
+          });
       };
 
+      // Play as soon as possible
       const timeout = setTimeout(playAudio, 0);
+
+      // Backup click listener
       window.addEventListener("click", playAudio, { once: true });
 
       return () => {
@@ -36,6 +69,8 @@ const SubscriptionSuccess = () => {
         window.removeEventListener("click", playAudio);
       };
     }
+
+    return () => clearInterval(interval);
   }, [product, config, navigate]);
 
   if (!product || !config) return null;

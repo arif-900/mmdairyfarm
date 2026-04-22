@@ -174,7 +174,23 @@ const Subscriptions = () => {
       title: "Subscription Started!",
       description: `₹${coinsToUse} coins used. Your daily farm fresh goodness is on the way.`
     });
-    navigate("/payment-success?type=subscription");
+
+    navigate("/subscription-success", {
+      state: {
+        product: configProduct,
+        config: {
+          frequency: planType,
+          timing: deliveryTime,
+          startDate,
+          endDate,
+          quantity: selectedQuantity,
+          weight: selectedWeight,
+          unitType
+        },
+        totalAmount: Math.round(finalPayableTotal),
+        totalDeliveries
+      }
+    });
   };
 
   const toggleStatus = async (id: string, currentStatus: string) => {
