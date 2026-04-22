@@ -13,7 +13,8 @@ import {
   UserCheck,
   Package,
   Search,
-  CheckCircle
+  CheckCircle,
+  BarChart4
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
@@ -77,12 +78,16 @@ export function DeliveryTrackingTab() {
       }
 
       // 2. Fetch Delivery Boys
+      const { data: rolesData } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'delivery_boy' as any);
+        
       const { data: staffData } = await supabase
         .from('profiles')
         .select('user_id, full_name')
-        .in('user_id', (
-          await supabase.from('user_roles').select('user_id').eq('role', 'delivery_boys' as any)
-        ).data?.map(r => r.user_id) || []);
+        .in('user_id', rolesData?.map(r => r.user_id) || []);
+        
       setStaff(staffData || []);
 
     } catch (error: any) {
@@ -153,7 +158,7 @@ export function DeliveryTrackingTab() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-50/50 p-6 rounded-[32px] border border-emerald-100">
         <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-600/20">
-                <BarChart3 className="w-7 h-7" />
+                <BarChart4 className="w-7 h-7" />
             </div>
             <div>
                 <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none mb-1">Delivery Report</h2>

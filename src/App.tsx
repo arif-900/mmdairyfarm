@@ -10,6 +10,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./lib/i18n";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
+import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import Order from "./pages/Order";
@@ -77,7 +78,14 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/products" element={<Products />} />
                   <Route path="/order" element={<Order />} />
-                  <Route path="/orders" element={<OrderHistory />} />
+                  <Route
+                    path="/orders"
+                    element={
+                      <ProtectedRoute>
+                        <OrderHistory />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/terms" element={<Terms />} />
@@ -85,9 +93,23 @@ const App = () => (
                   <Route path="/refund" element={<Refund />} />
                   <Route path="/shipping" element={<Shipping />} />
                   <Route path="/faq" element={<FAQ />} />
-                  <Route path="/subscriptions" element={<Subscriptions />} />
+                  <Route
+                    path="/subscriptions"
+                    element={
+                      <ProtectedRoute>
+                        <Subscriptions />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/subscription-success" element={<SubscriptionSuccess />} />
-                  <Route path="/wallet" element={<Wallet />} />
+                  <Route
+                    path="/wallet"
+                    element={
+                      <ProtectedRoute>
+                        <Wallet />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/payment-success" element={<PaymentSuccess />} />
                   <Route path="/payment-cancelled" element={<PaymentCancelled />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />

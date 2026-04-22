@@ -35,7 +35,7 @@ import {
   ScanLine,
   CalendarHeart,
   Truck,
-  BarChart3,
+  BarChart4,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -289,7 +289,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="bg-sky-500 rounded-xl p-4 text-white shadow-lg flex flex-col justify-between hidden md:flex">
-             <BarChart3 className="h-4 w-4 opacity-70" />
+             <BarChart4 className="h-4 w-4 opacity-70" />
             <div>
               <p className="text-[10px] font-black uppercase opacity-70">This Month</p>
               <p className="text-xl font-black">₹{(stats.monthlyRev / 1000).toFixed(1)}k</p>

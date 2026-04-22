@@ -13,6 +13,28 @@ const SubscriptionSuccess = () => {
   useEffect(() => {
     if (!product || !config) {
       navigate("/");
+      return;
+    }
+
+    // Play Success Sound
+    const isMuted = localStorage.getItem("muteSuccessSound") === "true";
+    if (!isMuted) {
+      const audio = new Audio("/sounds/success.mp3");
+      audio.volume = 0.8; // Slightly softer than primary payment success
+      audio.preload = "auto";
+
+      const playAudio = () => {
+        audio.play()
+          .catch((err) => console.warn("Autoplay blocked. Sound pending interaction."));
+      };
+
+      const timeout = setTimeout(playAudio, 0);
+      window.addEventListener("click", playAudio, { once: true });
+
+      return () => {
+        clearTimeout(timeout);
+        window.removeEventListener("click", playAudio);
+      };
     }
   }, [product, config, navigate]);
 

@@ -69,33 +69,8 @@ BEGIN
 END $$;
 
 -- ==========================================
--- 3. RESTRICT STORAGE BUCKET LISTING (Lint 0025)
+-- 3. STORAGE & CHAT AUDIT
 -- ==========================================
--- Prevents broad listing of production_videos contents while maintaining read access.
+-- Triggers a schema cache reload for PostgREST to recognize the new policies.
 
-DO $$ 
-BEGIN 
-    -- Only refine if the bucket exists
-    IF EXISTS (SELECT 1 FROM storage.buckets WHERE id = 'production_videos') THEN
-        -- Drop the broad policies identified by the linter
-        DROP POLICY IF EXISTS "Public Read Access 1uqy65a_0" ON storage.objects;
-        DROP POLICY IF EXISTS "Authenticated Delete Access 1uqy65a_1" ON storage.objects;
-
-        -- Create a secure SELECT policy: Allow reading but NOT broad listing
-        -- For a public bucket, objects are accessible via public URL even without a 
-        -- SELECT policy on storage.objects. Removing the broad policy prevents
-        -- discovery of all files via the API.
-        
-        -- If admins/staff need to list files specifically:
-        CREATE POLICY "Admin/Staff can manage production videos"
-        ON storage.objects FOR ALL
-        TO authenticated
-        USING (
-            bucket_id = 'production_videos' 
-            AND (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'staff'))
-        );
-    END IF;
-END $$;
-
--- Reload schema cache
 NOTIFY pgrst, 'reload schema';
