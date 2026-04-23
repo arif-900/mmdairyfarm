@@ -18,6 +18,17 @@ export const GEMINI_TOOLS = [
         name:        "getAppSettings",
         description: "Fetches global business settings like delivery ranges, contact numbers, and operation timings from the database.",
         parameters: { type: "object", properties: {}, required: [] }
+      },
+      {
+        name:        "getUserSubscriptions",
+        description: "Fetches the current user's active milk subscriptions, including plan types, delivery status, and upcoming delivery dates.",
+        parameters: { 
+          type: "object", 
+          properties: {
+             userId: { type: "string", description: "The ID of the user to fetch subscriptions for. This is provided in the context." }
+          }, 
+          required: ["userId"] 
+        }
       }
     ]
   }

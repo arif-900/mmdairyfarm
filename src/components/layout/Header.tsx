@@ -70,6 +70,26 @@ const Header = () => {
 
                         <CartDrawer />
 
+                        {/* Desktop Auth Button */}
+                        <div className="hidden md:block">
+                            {user ? (
+                                <Button
+                                    onClick={signOut}
+                                    variant="outline"
+                                    className="rounded-xl border-slate-200 hover:bg-slate-50 hover:text-red-500 transition-all font-bold text-xs uppercase tracking-wider h-10 px-5"
+                                >
+                                    <LogOut className="w-4 h-4 mr-2" />
+                                    Logout
+                                </Button>
+                            ) : (
+                                <Link to="/auth">
+                                    <Button className="rounded-xl font-bold text-xs uppercase tracking-wider h-10 px-5 shadow-sm">
+                                        Login
+                                    </Button>
+                                </Link>
+                            )}
+                        </div>
+
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMenuOpen(true)}

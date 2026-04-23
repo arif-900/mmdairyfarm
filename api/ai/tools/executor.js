@@ -13,6 +13,8 @@ export async function executeTool(name, args) {
       return getProducts();
     case 'getAppSettings':
       return getAppSettings();
+    case 'getUserSubscriptions':
+      return getUserSubscriptions(args.userId);
     default:
       return { error: `Tool ${name} not found` };
   }
@@ -89,4 +91,54 @@ function getWebsiteInfo() {
     portal: 'https://mmdairyfarm.com',
     info: 'MM Dairy Farm specializes in pure, farm-fresh buffalo and cow milk, delivered daily. Use the getProducts tool for current prices.'
   };
+}
+
+/**
+ * Fetches user-specific subscriptions.
+ */
+async function getUserSubscriptions(userId) {
+  if (!userId) {
+    return { error: 'No user ID provided. Please ask the user to log in.' };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('subscription_items')
+      .select(`
+        id,
+        quantity,
+        plan_type,
+        delivery_time,
+        next_delivery_date,
+        status,
+        products (name, unit),
+        subscriptions!inner (user_id)
+      `)
+      .eq('subscriptions.user_id', userId);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return { 
+        message: "You don't have any active subscriptions yet. Would you like to check our products and start one?",
+        subscriptions: [] 
+      };
+    }
+
+    return {
+      source: 'database',
+      timestamp: new Date().toISOString(),
+      subscriptions: data.map(item => ({
+        product: item.products?.name,
+        quantity: `${item.quantity} ${item.products?.unit || ''}`,
+        plan: item.plan_type,
+        timing: item.delivery_time,
+        status: item.status,
+        next_delivery: item.next_delivery_date
+      }))
+    };
+  } catch (err) {
+    console.error('[Tool:getUserSubscriptions]', err.message);
+    return { error: `Failed to fetch subscriptions: ${err.message}` };
+  }
 }

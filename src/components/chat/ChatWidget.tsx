@@ -4,7 +4,8 @@
 // Keeps the original UI intact (shadcn/ui components, existing styles).
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { MessageCircle, X, Send, Loader2, MessageSquareWarning } from "lucide-react";
+import { Link } from "react-router-dom";
+import { MessageCircle, X, Send, Loader2, MessageSquareWarning, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -216,57 +217,79 @@ export function ChatWidget() {
 
                     {/* Messages */}
                     <div className="h-80 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-gray-50/50 to-white">
-                        {messages.map(msg => (
-                            <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm text-sm border transition-all duration-300 ${
-                                    msg.role === "user"
-                                        ? "bg-gradient-to-br from-primary to-emerald-600 text-white rounded-tr-none border-primary/20 shadow-primary/10"
-                                        : "bg-white border-slate-100 text-slate-800 rounded-tl-none shadow-slate-200/50"
-                                }`}>
-                                    {renderContent(msg.content)}
+                        {userId ? (
+                            <>
+                                {messages.map(msg => (
+                                    <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                                        <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm text-sm border transition-all duration-300 ${
+                                            msg.role === "user"
+                                                ? "bg-gradient-to-br from-primary to-emerald-600 text-white rounded-tr-none border-primary/20 shadow-primary/10"
+                                                : "bg-white border-slate-100 text-slate-800 rounded-tl-none shadow-slate-200/50"
+                                        }`}>
+                                            {renderContent(msg.content)}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {isLoading && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+                                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                            <span className="text-sm text-gray-500">Typing…</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center text-center p-4 space-y-5 animate-in fade-in duration-500">
+                                <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center shadow-inner mb-2">
+                                    <Lock className="h-8 w-8 text-primary" />
                                 </div>
-                            </div>
-                        ))}
-
-
-
-                        {isLoading && (
-                            <div className="flex justify-start">
-                                <div className="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
-                                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                                    <span className="text-sm text-gray-500">Typing…</span>
+                                <div className="space-y-2">
+                                    <h4 className="font-extrabold text-slate-900 text-lg">Login Required</h4>
+                                    <p className="text-[13.5px] text-slate-500 leading-relaxed max-w-[240px] mx-auto">
+                                        To chat with our <strong>AI Support Agent</strong> and get instant help, please sign in.
+                                    </p>
                                 </div>
+                                <Link to="/auth" onClick={() => setIsOpen(false)} className="w-full pt-4">
+                                    <Button className="w-full rounded-2xl shadow-xl shadow-primary/20 font-bold py-6 text-xs uppercase tracking-[1px] h-auto">
+                                        Sign In Now
+                                    </Button>
+                                </Link>
                             </div>
                         )}
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Email escalation */}
-                    <div className="bg-blue-50 px-4 py-2 border-t border-b border-blue-100 flex items-center justify-between">
-                        <span className="text-xs text-blue-800 flex items-center gap-1">
-                            <MessageSquareWarning className="h-3 w-3" /> Need human help?
-                        </span>
-                        <a href="mailto:mmvalidairyfarm@gmail.com" className="text-xs font-semibold text-blue-700 hover:text-blue-800 underline">
-                            Email Us
-                        </a>
-                    </div>
+                    {/* Email escalation & Input - Only if logged in */}
+                    {userId && (
+                        <>
+                            <div className="bg-blue-50 px-4 py-2 border-t border-b border-blue-100 flex items-center justify-between">
+                                <span className="text-xs text-blue-800 flex items-center gap-1">
+                                    <MessageSquareWarning className="h-3 w-3" /> Need human help?
+                                </span>
+                                <a href="mailto:mmvalidairyfarm@gmail.com" className="text-xs font-semibold text-blue-700 hover:text-blue-800 underline">
+                                    Email Us
+                                </a>
+                            </div>
 
-                    {/* Input */}
-                    <div className="p-3 bg-white flex items-center gap-2 rounded-b-2xl">
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            placeholder="Type your message…"
-                            className="flex-1 bg-gray-50 text-sm border-0 rounded-full px-4 py-2 focus:ring-1 focus:ring-primary focus:outline-none"
-                            value={input}
-                            onChange={e => setInput(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            disabled={isLoading}
-                        />
-                        <Button size="icon" className="rounded-full h-9 w-9 flex-shrink-0" onClick={handleSend} disabled={!input.trim() || isLoading}>
-                            <Send className="h-4 w-4 -ml-0.5" />
-                        </Button>
-                    </div>
+                            <div className="p-3 bg-white flex items-center gap-2 rounded-b-2xl">
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    placeholder="Type your message…"
+                                    className="flex-1 bg-gray-50 text-sm border-0 rounded-full px-4 py-2 focus:ring-1 focus:ring-primary focus:outline-none"
+                                    value={input}
+                                    onChange={e => setInput(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    disabled={isLoading}
+                                />
+                                <Button size="icon" className="rounded-full h-9 w-9 flex-shrink-0" onClick={handleSend} disabled={!input.trim() || isLoading}>
+                                    <Send className="h-4 w-4 -ml-0.5" />
+                                </Button>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </>
