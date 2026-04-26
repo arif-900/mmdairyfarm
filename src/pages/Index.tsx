@@ -6,9 +6,13 @@ import Layout from "@/components/layout/Layout";
 import { MakingOfSection } from "@/components/home/MakingOfSection";
 import heroFarm from "@/assets/hero-farm.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import CircularGallery from "@/components/ui/CircularGallery";
+import { useStoreProducts } from "@/data/products";
+import TextType from "@/components/ui/TextType";
 
 const Index = () => {
   const [promo, setPromo] = useState<{ isActive: boolean, title: string, description: string, promoCode: string } | null>(null);
+  const { products, loading } = useStoreProducts();
 
   useEffect(() => {
     const fetchPromo = async () => {
@@ -100,37 +104,15 @@ const Index = () => {
 
         <div className="relative z-10 container-main section-padding">
           <div className="mb-10 min-h-[50px] md:min-h-[90px] flex items-center">
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 leading-tight flex flex-wrap justify-center md:justify-start">
-              {"WELCOME TO ".split("").map((char, index) => (
-                <span
-                  key={`pre-${index}`}
-                  className="inline-block animate-character-reveal opacity-0"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  {char === " " ? "\u00A0" : char}
-                </span>
-              ))}
-              <span className="text-golden mx-2 flex">
-                {"MMVALI".split("").map((char, index) => (
-                  <span
-                    key={`mid-${index}`}
-                    className="inline-block animate-character-reveal opacity-0"
-                    style={{ animationDelay: `${(index + 15) * 0.05}s` }}
-                  >
-                    {char}
-                  </span>
-                ))}
-              </span>
-              {" DAIRY FARM".split("").map((char, index) => (
-                <span
-                  key={`post-${index}`}
-                  className="inline-block animate-character-reveal opacity-0"
-                  style={{ animationDelay: `${(index + 21) * 0.05}s` }}
-                >
-                  {char === " " ? "\u00A0" : char}
-                </span>
-              ))}
-            </h2>
+            <TextType
+              text="WELCOME TO MMVALI DAIRY FARM"
+              className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 leading-tight uppercase"
+              typingSpeed={70}
+              pauseDuration={3000}
+              cursorCharacter="_"
+              cursorClassName="text-golden ml-2"
+              showCursor={true}
+            />
           </div>
 
           <div className="max-w-2xl animate-slide-up [animation-delay:400ms] opacity-0 [animation-fill-mode:forwards]">
@@ -144,6 +126,50 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Product Showcase Section */}
+      {!loading && products.length > 0 && (
+        <section className="py-20 bg-cream/30 overflow-hidden">
+          <div className="container-main px-4">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+              <div className="flex-1 animate-slide-up">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium mb-6">
+                  <Sparkles className="w-4 h-4" />
+                  <span>ARTISAN EXCELLENCE</span>
+                </div>
+                <h2 className="font-display text-4xl md:text-5xl font-bold mb-6 text-forest">
+                  The Farm's <span className="text-golden">Finest Selection</span>
+                </h2>
+                <p className="text-lg text-earth/80 mb-8 leading-relaxed max-w-xl">
+                  Discover our carefully curated collection of farm-to-table dairy.
+                  Handcrafted using time-honored traditions to ensure unparalleled
+                  purity and exceptional flavor in every drop.
+                </p>
+                <div className="flex gap-4">
+                  <Button variant="accent" size="xl" className="w-full md:w-64" asChild>
+                    <Link to="/products">
+                      Discover The Collection
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex-1 min-h-[500px]">
+                <CircularGallery
+                  items={products.map(p => ({
+                    image: p.image || "",
+                    text: p.name
+                  }))}
+                  bend={3}
+                  textColor="#d4af37"
+                  borderRadius={0.05}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Making of Section */}
       <MakingOfSection />

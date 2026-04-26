@@ -19,7 +19,7 @@ import { Truck, Info } from "lucide-react";
 import { getMaxDeliveryDays, getExpectedDeliveryDate, resolveDeliveryDays } from "@/utils/delivery";
 
 // Modular Checkout Components
-import { CheckoutStepper } from "@/components/checkout/CheckoutStepper";
+import Stepper, { Step } from "@/components/ui/Stepper";
 import { SummaryStep } from "@/components/checkout/SummaryStep";
 import { DeliveryStep } from "@/components/checkout/DeliveryStep";
 import { PaymentStep } from "@/components/checkout/PaymentStep";
@@ -321,70 +321,74 @@ const Order = () => {
                   <h1 className="font-display text-4xl font-black text-slate-900 tracking-tighter italic uppercase">
                     Checkout
                   </h1>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">
-                    Secure Industrial-Grade Connection • SSL Active
-                  </p>
                 </div>
               </div>
-              <CheckoutStepper currentStep={step} />
             </div>
           </div>
         </section>
 
-        <div className="container-main max-w-4xl px-4 mt-12 pb-20">
-          {step === 1 && (
-            <SummaryStep
-              items={activeItems}
-              subtotal={activeSubtotal}
-              promoInput={promoInput}
-              setPromoInput={setPromoInput}
-              checkingPromo={checkingPromo}
-              appliedPromo={appliedPromo}
-              promoMessage={promoMessage}
-              handleApplyPromo={handleApplyPromo}
-              removePromo={removePromo}
-              discountAmount={discountAmount}
-              onNext={nextStep}
-            />
-          )}
+        <div className="container-main max-w-4xl px-4 mt-8 pb-20">
+          <Stepper
+            initialStep={step}
+            onStepChange={setStep}
+            footerClassName="hidden"
+            stepCircleContainerClassName="!bg-transparent !border-none !shadow-none !p-0"
+            stepContainerClassName="mb-12"
+          >
+            <Step>
+              <SummaryStep
+                items={activeItems}
+                subtotal={activeSubtotal}
+                promoInput={promoInput}
+                setPromoInput={setPromoInput}
+                checkingPromo={checkingPromo}
+                appliedPromo={appliedPromo}
+                promoMessage={promoMessage}
+                handleApplyPromo={handleApplyPromo}
+                removePromo={removePromo}
+                discountAmount={discountAmount}
+                onNext={nextStep}
+              />
+            </Step>
 
-          {step === 2 && (
-            <DeliveryStep
-              user={user}
-              selectedAddress={selectedAddress}
-              setSelectedAddress={setSelectedAddress}
-              setIsTemporaryAddress={setIsTemporaryAddress}
-              authLoading={authLoading}
-              distance={distance}
-              distanceError={distanceError}
-              shippingFee={shippingFee}
-              onNext={nextStep}
-              onBack={prevStep}
-              navigate={navigate}
-            />
-          )}
+            <Step>
+              <DeliveryStep
+                user={user}
+                selectedAddress={selectedAddress}
+                setSelectedAddress={setSelectedAddress}
+                setIsTemporaryAddress={setIsTemporaryAddress}
+                authLoading={authLoading}
+                distance={distance}
+                distanceError={distanceError}
+                shippingFee={shippingFee}
+                onNext={nextStep}
+                onBack={prevStep}
+                navigate={navigate}
+              />
+            </Step>
 
-          {step === 3 && (
-            <PaymentStep
-              paymentMethod={paymentMethod}
-              setPaymentMethod={setPaymentMethod}
-              whatsappOptIn={whatsappOptIn}
-              setWhatsappOptIn={setWhatsappOptIn}
-              useCoins={useCoins}
-              setUseCoins={setUseCoins}
-              availableCoins={availableCoins}
-              coinsApplied={coinsApplied}
-              totalAmount={totalAmount}
-              isProcessing={isProcessing}
-              razorpayLoaded={razorpayLoaded}
-              handleSubmit={handleSubmit}
-              onBack={prevStep}
-              selectedAddress={selectedAddress}
-              shippingFee={shippingFee}
-              predictedCoinsEarned={predictedCoinsEarned}
-              expectedDate={expectedDate}
-            />
-          )}
+            <Step>
+              <PaymentStep
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+                whatsappOptIn={whatsappOptIn}
+                setWhatsappOptIn={setWhatsappOptIn}
+                useCoins={useCoins}
+                setUseCoins={setUseCoins}
+                availableCoins={availableCoins}
+                coinsApplied={coinsApplied}
+                totalAmount={totalAmount}
+                isProcessing={isProcessing}
+                razorpayLoaded={razorpayLoaded}
+                handleSubmit={handleSubmit}
+                onBack={prevStep}
+                selectedAddress={selectedAddress}
+                shippingFee={shippingFee}
+                predictedCoinsEarned={predictedCoinsEarned}
+                expectedDate={expectedDate}
+              />
+            </Step>
+          </Stepper>
 
           {/* Trust Indicators */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-30 grayscale transition-all hover:opacity-50 hover:grayscale-0">
