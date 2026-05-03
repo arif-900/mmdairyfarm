@@ -109,18 +109,13 @@ const Index = () => {
             playsInline
             preload="auto"
             poster={heroPoster}
-            className="w-full h-full object-cover blur-[1.5px] scale-105 opacity-0 transition-opacity duration-1000"
+            className="w-full h-full object-cover blur-[3px] scale-105 opacity-0 transition-opacity duration-1000"
             onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
           >
             <source src="/farm.mp4" type="video/mp4" />
           </video>
-          {/* Fallback overlay and atmospheric glows */}
-          <div className="absolute inset-0 bg-black/40" />
-          
-          {/* Atmospheric Colored Blurs */}
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full mix-blend-screen animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-golden/10 blur-[150px] rounded-full mix-blend-screen animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-forest-light/20 blur-[100px] rounded-full mix-blend-screen" />
+          {/* Transparent Backdrop Blur Overlay */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-10" />
         </div>
 
         <div className="relative z-10 container-main section-padding">
