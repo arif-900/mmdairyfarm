@@ -115,7 +115,7 @@ const Index = () => {
             <source src="/farm.mp4" type="video/mp4" />
           </video>
           {/* Transparent Backdrop Blur Overlay */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] z-10" />
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-[4px] z-10" />
         </div>
 
         <div className="relative z-10 container-main section-padding">
