@@ -23,6 +23,7 @@ export interface Product {
   reviewCount?: number;
   deliveryDays?: number;
   originalPrice?: number;
+  backgroundGif?: string;
 }
 
 // Fallbacks for the default demo products
@@ -68,6 +69,7 @@ export const useStoreProducts = () => {
             reviewCount: prod.review_count || 10,
             deliveryDays: prod.delivery_days ?? 0,
             originalPrice: prod.original_price ? Number(prod.original_price) : undefined,
+            backgroundGif: prod.background_gif || null,
           };
         });
 

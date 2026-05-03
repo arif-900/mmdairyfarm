@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     Menu,
     X,
@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const { user, signOut } = useAuth();
     const { totalItems } = useCart();
 
@@ -39,14 +40,14 @@ const Header = () => {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+        <header className="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm">
             <div className="container-main">
                 <div className="flex items-center justify-between h-20 px-4 md:px-8">
 
                     {/* Logo */}
                     <Link to="/" className="flex items-center gap-3">
                         <img src="/favicon.png" className="w-10 h-10 rounded-xl" />
-                        <span className="font-black text-lg">MM Dairy</span>
+                        <span className="font-black text-lg text-slate-900">MM Dairy</span>
                     </Link>
 
                     {/* Desktop Nav */}

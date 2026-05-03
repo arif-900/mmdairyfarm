@@ -95,8 +95,9 @@ export function ProductsTab() {
                 base_price_per_kg: 0,
                 unit_type: "g",
                 available_weights: [250, 500, 1000],
-                original_price: null
-            });
+                original_price: null,
+                background_gif: null
+            } as any);
             setWeightsString("250, 500, 1000");
         }
         setIsDialogOpen(true);
@@ -128,6 +129,7 @@ export function ProductsTab() {
                 unit_type: currentProduct.unit_type || "g",
                 delivery_days: currentProduct.delivery_days ?? 3,
                 original_price: currentProduct.original_price ? Number(currentProduct.original_price) : null,
+                background_gif: (currentProduct as any).background_gif || null,
             };
 
             if (currentProduct.id) {
@@ -478,6 +480,18 @@ export function ProductsTab() {
                                 className="rounded-xl h-12"
                                 placeholder="Paste Unsplash or Direct URL"
                             />
+                        </div>
+
+                        <div className="space-y-2 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+                            <Label htmlFor="background_gif" className="text-xs font-bold uppercase tracking-widest text-indigo-700">Detail Page Background GIF (Optional)</Label>
+                            <Input
+                                id="background_gif"
+                                value={(currentProduct as any)?.background_gif || ""}
+                                onChange={(e) => setCurrentProduct({ ...currentProduct, background_gif: e.target.value } as any)}
+                                className="rounded-xl h-12 border-indigo-200"
+                                placeholder="Paste GIF URL for a premium dynamic background"
+                            />
+                            <p className="text-[9px] text-indigo-600/60 font-medium italic">Animated background for the product detail page</p>
                         </div>
                     </div>
 

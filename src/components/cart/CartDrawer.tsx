@@ -120,6 +120,13 @@ export const CartDrawer = ({ children }: { children?: React.ReactNode }) => {
                 <span className="text-3xl font-black italic tracking-tighter text-slate-900">₹{totalPrice}</span>
               </div>
               <Button 
+                variant="outline"
+                onClick={() => navigate('/cart')} 
+                className="w-full h-12 rounded-2xl font-black text-xs tracking-widest border-2 border-slate-100 hover:bg-slate-50 uppercase mb-2"
+              >
+                View Full Cart
+              </Button>
+              <Button 
                 onClick={() => navigate('/order')} 
                 disabled={totalItems === 0}
                 className="w-full h-16 bg-primary hover:bg-primary/90 text-white rounded-[28px] font-black text-sm tracking-[0.2em] shadow-xl shadow-primary/20 border-b-4 border-indigo-700 active:border-b-0 active:translate-y-1 transition-all uppercase flex items-center justify-between px-8 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-200 disabled:text-slate-500"

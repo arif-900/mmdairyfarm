@@ -13,6 +13,8 @@ import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
 import Order from "./pages/Order";
 import OrderHistory from "./pages/OrderHistory";
 import Auth from "./pages/Auth";
@@ -77,6 +79,8 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/products" element={<Products />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
                   <Route path="/order" element={<Order />} />
                   <Route
                     path="/orders"

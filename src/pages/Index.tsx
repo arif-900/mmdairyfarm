@@ -4,7 +4,6 @@ import { ArrowRight, MessageCircle, Tag, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { MakingOfSection } from "@/components/home/MakingOfSection";
-import heroFarm from "@/assets/hero-farm.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import CircularGallery from "@/components/ui/CircularGallery";
 import { useStoreProducts } from "@/data/products";
@@ -91,13 +90,16 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 z-0">
-          <img
-            src={heroFarm}
-            alt="MMVALI Dairy Farm"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-forest-dark/90 via-forest-dark/70 to-transparent" />
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover blur-[1.5px] scale-105"
+          >
+            <source src="/farm.mp4" type="video/mp4" />
+          </video>
         </div>
 
         <div className="relative z-10 container-main section-padding">
@@ -113,7 +115,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="max-w-2xl animate-slide-up [animation-delay:400ms] opacity-0 [animation-fill-mode:forwards]">
+          <div className="max-w-2xl">
             <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
               Pure Dairy Goodness,{" "}
               <span className="text-golden">Fresh From Our Farm</span>
@@ -130,7 +132,7 @@ const Index = () => {
         <section className="py-20 bg-cream/30 overflow-hidden">
           <div className="container-main px-4">
             <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-              <div className="flex-1 animate-slide-up">
+              <div className="flex-1">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium mb-6">
                   <Sparkles className="w-4 h-4" />
                   <span>ARTISAN EXCELLENCE</span>
