@@ -7,8 +7,9 @@ import { useStoreProducts } from "@/data/products";
 import heroPoster from "@/assets/hero-farm.jpg";
 import TextType from "@/components/ui/TextType";
 import { Suspense, lazy } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import CircularGallery from "@/components/ui/CircularGallery";
+// Optimized Hero & Smoothness Refactor - 2026-05-03
+import { supabase } from "../integrations/supabase/client";
+import CircularGallery from "../components/ui/CircularGallery";
 
 const MakingOfSection = lazy(() => import("@/components/home/MakingOfSection").then(m => ({ default: m.MakingOfSection })));
 
