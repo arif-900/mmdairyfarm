@@ -98,49 +98,37 @@ const Products = () => {
       </section>
 
       {/* Trust & Quality Section */}
-      <section className="py-24 bg-white">
+      <section className="section-padding bg-cream/50">
         <div className="container-main">
-          <div className="bg-slate-900 rounded-[64px] p-12 md:p-20 relative overflow-hidden">
-             {/* Abstract Shapes */}
-             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[120px] -mr-32 -mt-32" />
-             <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[120px] -ml-32 -mb-32" />
-
-             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8">
-                   <h2 className="font-display text-5xl md:text-6xl font-black text-white italic tracking-tighter uppercase leading-[0.9]">
-                      Why Choose Our <span className="text-primary">Farm Fresh</span> Quality?
-                   </h2>
-                   <p className="text-slate-400 text-lg leading-relaxed">
-                      We believe in transparency and traditional methods. Our cattle are part of our family, 
-                      and we ensure they get the best care, which results in the purest milk for you.
-                   </p>
-                   <div className="flex flex-wrap gap-4">
-                      <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-3xl flex items-center gap-4">
-                         <div className="w-10 h-10 bg-primary/20 rounded-2xl flex items-center justify-center">
-                            <span className="text-xl">🥛</span>
-                         </div>
-                         <span className="font-black text-white text-xs uppercase tracking-widest">No Preservatives</span>
-                      </div>
-                      <div className="bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-3xl flex items-center gap-4">
-                         <div className="w-10 h-10 bg-primary/20 rounded-2xl flex items-center justify-center">
-                            <span className="text-xl">🌿</span>
-                         </div>
-                         <span className="font-black text-white text-xs uppercase tracking-widest">Organic Fodder</span>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                   <div className="bg-white rounded-[40px] p-8 space-y-4 shadow-2xl">
-                      <h3 className="font-black text-slate-900 text-xl italic uppercase tracking-tighter">Lab Tested</h3>
-                      <p className="text-slate-500 text-sm leading-relaxed">Every batch is tested for purity and fat content to ensure consistency.</p>
-                   </div>
-                   <div className="bg-primary rounded-[40px] p-8 space-y-4 shadow-2xl shadow-primary/20">
-                      <h3 className="font-black text-white text-xl italic uppercase tracking-tighter">Eco Friendly</h3>
-                      <p className="text-white/80 text-sm leading-relaxed">Glass bottle options and minimal plastic usage in our packaging flow.</p>
-                   </div>
-                </div>
-             </div>
+          <div className="max-w-2xl mx-auto text-center mb-16">
+            <h2 className="font-display text-4xl font-bold text-slate-900 mb-4 uppercase tracking-tight italic">Why Choose Our <span className="text-primary">Farm Fresh</span> Quality?</h2>
+            <p className="text-slate-500 font-medium">
+              We believe in transparency and traditional methods. Our cattle are part of our family, 
+              and we ensure they get the best care, which results in the purest milk for you.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-10 bg-white rounded-[40px] shadow-soft border border-slate-100 hover:shadow-xl transition-all duration-500 group">
+              <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-500">🥛</div>
+              <h3 className="font-black text-slate-900 mb-3 uppercase tracking-tighter italic text-xl">Purity Guaranteed</h3>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                100% pure milk with no preservatives, chemicals or water added. Straight from the farm to your table.
+              </p>
+            </div>
+            <div className="p-10 bg-white rounded-[40px] shadow-soft border border-slate-100 hover:shadow-xl transition-all duration-500 group">
+              <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-500">🌿</div>
+              <h3 className="font-black text-slate-900 mb-3 uppercase tracking-tighter italic text-xl">Natural Feed</h3>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                Our cattle are fed with organic fodder and clean drinking water, ensuring the highest nutritional value.
+              </p>
+            </div>
+            <div className="p-10 bg-white rounded-[40px] shadow-soft border border-slate-100 hover:shadow-xl transition-all duration-500 group">
+              <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-500">⏰</div>
+              <h3 className="font-black text-slate-900 mb-3 uppercase tracking-tighter italic text-xl">Same Day Fresh</h3>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                Milked in the early hours and delivered to your doorstep by morning. Experience true freshness every day.
+              </p>
+            </div>
           </div>
         </div>
       </section>

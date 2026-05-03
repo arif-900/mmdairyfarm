@@ -70,7 +70,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -103,14 +102,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     });
 
-    // Check for errors in the URL fragment (like "Unable to exchange code")
-    const hash = window.location.hash;
-    if (hash.includes("error=server_error")) {
-      console.error("AuthProvider: Detected server error in URL hash:", hash);
+    // Real-time listener for profile changes
+    let profileChannel: any;
+    let roleChannel: any;
+
+    if (user) {
+      profileChannel = supabase
+        .channel(`public:profiles:user_id=eq.${user.id}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'profiles', filter: `user_id=eq.${user.id}` },
+          () => fetchProfile(user.id)
+        )
+        .subscribe();
+
+      roleChannel = supabase
+        .channel(`public:user_roles:user_id=eq.${user.id}`)
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'user_roles', filter: `user_id=eq.${user.id}` },
+          () => fetchRole(user.id)
+        )
+        .subscribe();
     }
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      subscription.unsubscribe();
+      if (profileChannel) supabase.removeChannel(profileChannel);
+      if (roleChannel) supabase.removeChannel(roleChannel);
+    };
+  }, [user?.id]);
 
   const signUp = async (email: string, password: string, fullName: string) => {
     const redirectUrl = `${window.location.origin}/`;

@@ -23,41 +23,48 @@ const Index = () => {
           .maybeSingle();
 
         if (error) {
-          console.error("Error fetching promo_banner:", {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-          });
+          console.error("Error fetching promo_banner:", error);
           return;
         }
 
         if (data && data.value) {
           let parsed = data.value;
-          // Handle potential stringified JSON
           if (typeof parsed === 'string') {
             try { parsed = JSON.parse(parsed); } catch (e) { }
           }
-          // Handle double stringified edge-case
-          if (typeof parsed === 'string') {
-            try { parsed = JSON.parse(parsed); } catch (e) { }
-          }
-
           if (parsed && typeof parsed === 'object') {
             if (parsed.isActive) {
               setPromo(parsed);
             } else {
+              setPromo(null);
             }
-          } else {
-            console.error("Unexpected format for promo_banner:", parsed);
           }
-        } else {
         }
       } catch (err) {
         console.error("Unexpected error in fetchPromo:", err);
       }
     };
+
     fetchPromo();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('promo-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'app_settings',
+          filter: 'key=eq.promo_banner'
+        },
+        () => fetchPromo()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (

@@ -49,6 +49,25 @@ export function MakingOfSection() {
     };
 
     fetchVideos();
+
+    // Subscribe to real-time changes
+    const channel = supabase
+      .channel('video-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'app_settings',
+          filter: 'key=eq.production_videos'
+        },
+        () => fetchVideos()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (!loading && videos.length === 0) return null;

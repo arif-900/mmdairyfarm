@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import { ChatWidget } from "../chat/ChatWidget";
 import InstallBanner from "./InstallBanner";
 import { AnnouncementBanner } from "./AnnouncementBanner";
+import { PWAUpdateHandler } from "./PWAUpdateHandler";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardByRole } from "@/utils/routeUtils";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -50,6 +51,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Footer />
       <ChatWidget />
       <InstallBanner />
+      <PWAUpdateHandler />
     </div>
   );
 };
