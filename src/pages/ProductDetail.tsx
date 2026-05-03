@@ -132,7 +132,7 @@ const ProductDetail = () => {
       >
         {/* Dynamic Background */}
         {product.backgroundGif && (
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-slate-900">
+          <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-slate-900">
             {product.backgroundGif.match(/\.(mp4|webm|ogg)$|vimeo|youtube/) ? (
               <video
                 key={product.backgroundGif}
