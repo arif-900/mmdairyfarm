@@ -13,8 +13,10 @@
   max-width: 1200px;
   height: 72px;
   padding: 0 2rem;
-  background-color: var(--base);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .pill-logo {
@@ -140,11 +142,14 @@
   top: 72px;
   left: 0;
   width: 100%;
-  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   z-index: 90;
   visibility: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mobile-menu-list {
