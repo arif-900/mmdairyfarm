@@ -109,13 +109,13 @@ const Index = () => {
             playsInline
             preload="auto"
             poster={heroPoster}
-            className="w-full h-full object-cover blur-[3px] scale-105 opacity-0 transition-opacity duration-1000"
+            className="w-full h-full object-cover blur-[1px] scale-150 opacity-0 transition-opacity duration-1000"
             onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
           >
             <source src="/farm.mp4" type="video/mp4" />
           </video>
           {/* Transparent Backdrop Blur Overlay */}
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-[4px] z-10" />
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px] z-10" />
         </div>
 
         <div className="relative z-10 container-main section-padding">
