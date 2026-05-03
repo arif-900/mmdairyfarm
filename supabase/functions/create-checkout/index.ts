@@ -70,8 +70,8 @@ serve(async (req) => {
       throw new Error("Shipping address and phone required");
     }
 
-    const lat = Number(shipping_lat);
-    const lng = Number(shipping_lng);
+    const lat = Number(shipping_lat) || 0;
+    const lng = Number(shipping_lng) || 0;
 
     if (isNaN(lat) || isNaN(lng)) {
       throw new Error("Invalid location coordinates");
