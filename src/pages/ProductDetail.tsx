@@ -141,14 +141,14 @@ const ProductDetail = () => {
                 muted
                 playsInline
                 preload="auto"
-                className="absolute inset-0 w-full h-full object-cover scale-105 opacity-0 blur-[2px] transition-opacity duration-1000"
+                className="absolute inset-0 w-full h-full object-cover scale-105 opacity-0 blur-[1px] transition-opacity duration-1000"
                 onLoadedData={(e) => (e.currentTarget.style.opacity = "0.5")}
               >
                 <source src={product.backgroundGif} type="video/mp4" />
               </video>
             ) : (
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 opacity-0 blur-[2px] transition-opacity duration-1000"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 opacity-0 blur-[1px] transition-opacity duration-1000"
                 style={{ 
                   backgroundImage: `url(${product.backgroundGif})`,
                 }}
@@ -162,8 +162,8 @@ const ProductDetail = () => {
                 }}
               />
             )}
-            {/* Very subtle transparent overlay for text contrast */}
-            <div className="absolute inset-0 bg-black/10" />
+            {/* Light transparent overlay for minimal contrast */}
+            <div className="absolute inset-0 bg-transparent backdrop-blur-[1px]" />
           </div>
         )}
 
