@@ -132,7 +132,7 @@ const ProductDetail = () => {
       >
         {/* Dynamic Background */}
         {product.backgroundGif && (
-          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-slate-900">
             {product.backgroundGif.match(/\.(mp4|webm|ogg)$|vimeo|youtube/) ? (
               <video
                 key={product.backgroundGif}
@@ -140,18 +140,30 @@ const ProductDetail = () => {
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover scale-105 opacity-50 blur-[2px] transition-opacity duration-1000"
+                preload="auto"
+                className="absolute inset-0 w-full h-full object-cover scale-105 opacity-0 blur-[2px] transition-opacity duration-1000"
+                onLoadedData={(e) => (e.currentTarget.style.opacity = "0.5")}
               >
                 <source src={product.backgroundGif} type="video/mp4" />
               </video>
             ) : (
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 opacity-50 blur-[2px] transition-opacity duration-1000"
-                style={{ backgroundImage: `url(${product.backgroundGif})` }}
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 opacity-0 blur-[2px] transition-opacity duration-1000"
+                style={{ 
+                  backgroundImage: `url(${product.backgroundGif})`,
+                }}
+                onLoad={(e) => (e.currentTarget.style.opacity = "0.5")}
+                ref={(el) => {
+                  if (el) {
+                    const img = new Image();
+                    img.src = product.backgroundGif!;
+                    img.onload = () => { el.style.opacity = "0.5"; };
+                  }
+                }}
               />
             )}
             {/* Very subtle transparent overlay for text contrast */}
-            <div className="absolute inset-0 bg-black/5" />
+            <div className="absolute inset-0 bg-black/10" />
           </div>
         )}
 

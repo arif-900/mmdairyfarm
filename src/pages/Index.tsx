@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, MessageCircle, Tag, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import { MakingOfSection } from "@/components/home/MakingOfSection";
-import { supabase } from "@/integrations/supabase/client";
-import CircularGallery from "@/components/ui/CircularGallery";
 import { useStoreProducts } from "@/data/products";
+import heroPoster from "@/assets/hero-farm.jpg";
 import TextType from "@/components/ui/TextType";
+import { Suspense, lazy } from "react";
+
+const MakingOfSection = lazy(() => import("@/components/home/MakingOfSection").then(m => ({ default: m.MakingOfSection })));
 
 const Index = () => {
   const [promo, setPromo] = useState<{ isActive: boolean, title: string, description: string, promoCode: string } | null>(null);
@@ -97,16 +98,21 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-forest-dark">
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover blur-[1.5px] scale-105"
+            preload="auto"
+            poster={heroPoster}
+            className="w-full h-full object-cover blur-[1.5px] scale-105 opacity-0 transition-opacity duration-1000"
+            onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
           >
             <source src="/farm.mp4" type="video/mp4" />
           </video>
+          {/* Fallback overlay in case video fails or is loading */}
+          <div className="absolute inset-0 bg-black/40" />
         </div>
 
         <div className="relative z-10 container-main section-padding">
@@ -179,7 +185,9 @@ const Index = () => {
       )}
 
       {/* Making of Section */}
-      <MakingOfSection />
+      <Suspense fallback={<div className="h-96 bg-cream/30 animate-pulse" />}>
+        <MakingOfSection />
+      </Suspense>
 
       {/* CTA Section */}
       <section className="section-padding bg-primary text-primary-foreground">

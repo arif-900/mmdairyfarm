@@ -676,7 +676,29 @@ export default function CircularGallery({
       scrollSpeed,
       scrollEase
     });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (!app.raf) {
+              app.update();
+            }
+          } else {
+            if (app.raf) {
+              window.cancelAnimationFrame(app.raf);
+              app.raf = 0;
+            }
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(containerRef.current);
+
     return () => {
+      observer.disconnect();
       app.destroy();
     };
   }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);

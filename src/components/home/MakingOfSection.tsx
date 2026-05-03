@@ -141,11 +141,12 @@ export function MakingOfSection() {
                 {video.type === 'upload' && video.url ? (
                   <video 
                     src={video.url} 
-                    className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700"
+                    className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700 opacity-0"
                     muted
                     loop
                     playsInline
                     preload="metadata"
+                    onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
                     onError={(e) => {
                       (e.target as any).src = ""; // Clear broken source
                     }}
