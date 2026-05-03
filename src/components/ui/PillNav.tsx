@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import './PillNav.css';
+import { useAuth } from '@/contexts/AuthContext';
+import { LogOut, User as UserIcon } from 'lucide-react';
 
 export type PillNavItem = {
   label: string;
@@ -40,6 +42,7 @@ const PillNav: React.FC<PillNavProps> = ({
   initialLoadAnimation = true,
   actions
 }) => {
+  const { user, profile, signOut } = useAuth();
   const resolvedPillTextColor = pillTextColor ?? baseColor;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const circleRefs = useRef<Array<HTMLSpanElement | null>>([]);
@@ -348,6 +351,19 @@ const PillNav: React.FC<PillNavProps> = ({
       </nav>
 
       <div className="mobile-menu-popover mobile-only" ref={mobileMenuRef} style={cssVars}>
+        {user && (
+          <div className="mb-6 pb-6 border-b border-slate-100 flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+              <UserIcon className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm font-black text-slate-900 uppercase tracking-tighter">
+                {profile?.full_name || user.email?.split('@')[0]}
+              </p>
+              <p className="text-[10px] font-bold text-slate-400 break-all">{user.email}</p>
+            </div>
+          </div>
+        )}
         <ul className="mobile-menu-list">
           {items.map(item => (
             <li key={item.href}>
@@ -370,6 +386,20 @@ const PillNav: React.FC<PillNavProps> = ({
               )}
             </li>
           ))}
+          {user && (
+            <li className="mt-4 pt-4 border-t border-slate-100">
+              <button 
+                onClick={() => {
+                  signOut();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-rose-50 text-rose-500 font-black text-sm uppercase tracking-widest hover:bg-rose-100 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </li>
+          )}
         </ul>
       </div>
     </div>

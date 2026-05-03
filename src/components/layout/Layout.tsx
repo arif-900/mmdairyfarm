@@ -5,6 +5,7 @@ import { ChatWidget } from "../chat/ChatWidget";
 import InstallBanner from "./InstallBanner";
 import { AnnouncementBanner } from "./AnnouncementBanner";
 import { PWAUpdateHandler } from "./PWAUpdateHandler";
+import { OfflineStatus } from "./OfflineStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardByRole } from "@/utils/routeUtils";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -52,6 +53,7 @@ const Layout = ({ children }: LayoutProps) => {
       <ChatWidget />
       <InstallBanner />
       <PWAUpdateHandler />
+      <OfflineStatus />
     </div>
   );
 };
