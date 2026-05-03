@@ -44,7 +44,6 @@ serve(async (req) => {
     );
 
     const body = await req.json();
-    console.log("REQUEST BODY:", body);
 
     const {
       items,
@@ -123,7 +122,7 @@ serve(async (req) => {
           currentCoins = profile?.reward_coins ?? 0;
         }
       } catch (err) {
-        console.warn("Auth failed, continuing without user");
+        // Auth failed, continuing without user
       }
     }
 
@@ -158,17 +157,6 @@ serve(async (req) => {
       Date.now() + deliveryDays * 24 * 60 * 60 * 1000
     ).toISOString();
 
-    // 🔍 DEBUG INSERT DATA
-    console.log("INSERT DATA:", {
-      userId,
-      totalAmount,
-      shippingFee,
-      delivery_type,
-      payment_method,
-      coinsToUse,
-      coinsEarned
-    });
-
     // 🧾 INSERT ORDER (SAFE DEFAULTS)
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -200,7 +188,6 @@ serve(async (req) => {
       throw new Error(orderError.message);
     }
 
-    console.log("ORDER CREATED:", order);
 
     // 📦 INSERT ITEMS
     const itemsInsert = items.map((i: any) => ({

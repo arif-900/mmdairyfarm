@@ -7,7 +7,7 @@ const DebugInfo = () => {
   const testConnection = async () => {
     try {
       const { data, error } = await supabase.from("products").select("count").limit(1);
-      console.log("Database connection test:", { data, error });
+
     } catch (err) {
       console.error("Database connection error:", err);
     }
@@ -15,7 +15,7 @@ const DebugInfo = () => {
 
   const testEdgeFunction = async () => {
     if (!user) {
-      console.log("No user logged in for edge function test");
+
       return;
     }
     
@@ -35,7 +35,7 @@ const DebugInfo = () => {
           paymentMethod: "cod"
         }
       });
-      console.log("Edge function test result:", { data, error });
+
     } catch (err) {
       console.error("Edge function test error:", err);
     }

@@ -67,7 +67,7 @@ const AddressInput = ({ value, onChange, onDistanceError, disabled }: AddressInp
             }
           }
         } catch (e) {
-          console.warn("Manual geocoding failed", e);
+
         } finally {
           setIsVerifying(false);
         }
@@ -113,7 +113,7 @@ const AddressInput = ({ value, onChange, onDistanceError, disabled }: AddressInp
             pincode: addr.postcode || ""
           }));
         } catch (e) {
-          console.warn("Reverse geocode failed", e);
+
         }
         setIsLoading(false);
       },

@@ -46,7 +46,7 @@ serve(async (req) => {
         }
 
         const event = JSON.parse(body);
-        console.log("Razorpay Webhook Event:", event.event);
+
 
         const supabaseAdmin = createClient(
             Deno.env.get("SUPABASE_URL") ?? "",
@@ -58,7 +58,7 @@ serve(async (req) => {
             const orderId = payment.notes.order_id;
 
             if (orderId) {
-                console.log(`Processing payment.captured for order: ${orderId}`);
+
 
                 const { error: updateError } = await supabaseAdmin
                     .from("orders")
@@ -73,7 +73,7 @@ serve(async (req) => {
                 if (updateError) {
                     console.error("Error updating order via webhook:", updateError);
                 } else {
-                    console.log(`Order ${orderId} marked as paid via webhook`);
+
                 }
             }
         }

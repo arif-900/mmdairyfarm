@@ -207,7 +207,6 @@ const Order = () => {
     setIsProcessing(true);
 
     try {
-      console.log("Shipping Fee Before Insert:", finalFee);
 
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {

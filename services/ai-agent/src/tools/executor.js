@@ -250,7 +250,7 @@ function formatOrder(order) {
  * @returns {Promise<object>} - Structured result sent back to Gemini
  */
 export async function executeTool(toolName, toolInput) {
-  console.log(`[Tool] ${toolName}`, JSON.stringify(toolInput));
+  // console.log(`[Tool] ${toolName}`, JSON.stringify(toolInput));
   try {
     switch (toolName) {
       case 'getOrders': return await getOrders(toolInput);

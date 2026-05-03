@@ -153,7 +153,7 @@ export function ChatWidget() {
                     { session_id: sessionId, user_id: userId ?? null, role: "user",      content: text  },
                     { session_id: sessionId, user_id: userId ?? null, role: "assistant", content: reply }
                 ])
-                .then(({ error }: any) => { if (error) console.warn("chat_history:", error.message); });
+                .then(({ error }: any) => { if (error) { /* Log history failed */ } });
 
         } catch (err: unknown) {
             console.error("[ChatWidget]", err);

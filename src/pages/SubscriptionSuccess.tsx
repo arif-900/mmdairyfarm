@@ -39,7 +39,7 @@ const SubscriptionSuccess = () => {
     // Play Success Sound
     const isMuted = localStorage.getItem("muteSuccessSound") === "true";
     
-    console.log("Subscription Success Sound Debug:", { isMuted, product: product.name });
+
 
     if (!isMuted) {
       // Pre-load audio object to reduce latency
@@ -50,11 +50,11 @@ const SubscriptionSuccess = () => {
       const playAudio = () => {
         audio.play()
           .then(() => {
-            console.log("Success sound played successfully!");
+
             window.removeEventListener("click", playAudio);
           })
           .catch((err) => {
-            console.warn("Autoplay blocked. Sound will play on next click.");
+
           });
       };
 

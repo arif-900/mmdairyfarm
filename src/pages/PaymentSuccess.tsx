@@ -44,7 +44,7 @@ const PaymentSuccess = () => {
     // Play Success Sound
     const isMuted = localStorage.getItem("muteSuccessSound") === "true";
     
-    console.log("Success Sound Debug:", { isMuted, orderId });
+
 
     if (!isMuted) {
       // Pre-load audio object to reduce latency
@@ -55,11 +55,11 @@ const PaymentSuccess = () => {
       const playAudio = () => {
         audio.play()
           .then(() => {
-            console.log("Success sound played successfully!");
+
             window.removeEventListener("click", playAudio);
           })
           .catch((err) => {
-            console.warn("Autoplay blocked. Sound will play on next click.");
+
           });
       };
 

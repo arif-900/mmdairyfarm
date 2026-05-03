@@ -9,12 +9,12 @@ export default async function handler(req, res) {
     corsMiddleware(req, res, async (result) => {
       if (result instanceof Error) return reject(result);
       
-      console.log(`[LOGIN] Method: ${req.method}, Body present: ${!!req.body}`);
+      // console.log(`[LOGIN] Method: ${req.method}, Body present: ${!!req.body}`);
 
       if (req.method === 'POST') {
         try {
           if (!req.body || Object.keys(req.body).length === 0) {
-             console.warn('[LOGIN] Empty body received');
+             // console.warn('[LOGIN] Empty body received');
           }
           await login(req, res);
           resolve();

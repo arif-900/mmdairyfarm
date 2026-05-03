@@ -53,7 +53,7 @@ serve(async (req) => {
         )
 
         // Create the User in Auth
-        console.log(`Creating auth user for ${email}...`);
+
         const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
             email: email,
             password: password,
@@ -82,7 +82,7 @@ serve(async (req) => {
 
         const newUser = authData.user;
         if (newUser) {
-            console.log(`User created with ID: ${newUser.id}. Updating profile and role...`);
+
             
             // Wait briefly for the trigger to insert the profile
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -94,7 +94,7 @@ serve(async (req) => {
                 .eq('user_id', newUser.id);
 
             if (profileError) {
-                console.warn("Profile update warning (might not exist yet):", profileError);
+
                 // Fallback: Try to upsert if update failed (though trigger should've created it)
                 await supabaseAdmin.from('profiles').upsert({ 
                     user_id: newUser.id, 
@@ -104,7 +104,7 @@ serve(async (req) => {
             }
 
             // Give them the requested role using UPSERT to handle race conditions with triggers
-            console.log(`[DEBUG] Upserting role ${role} into user_roles for ${newUser.id}...`);
+
             const { error: roleError } = await supabaseAdmin
                 .from('user_roles')
                 .upsert({ user_id: newUser.id, role: role }, { onConflict: 'user_id' });
@@ -114,7 +114,7 @@ serve(async (req) => {
                 throw new Error(`Role Assignment Failed: ${roleError.message}`);
             }
             
-            console.log("[DEBUG] Account setup fully complete.");
+
         }
 
         return new Response(

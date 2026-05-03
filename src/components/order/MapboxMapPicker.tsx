@@ -352,7 +352,7 @@ const MapboxMapPicker = ({
         }
       },
       (err) => {
-        console.warn("GPS error:", err.message);
+
         setGpsState("error");
         setAutoFollow(false);
         toast({

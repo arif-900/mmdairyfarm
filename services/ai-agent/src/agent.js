@@ -54,7 +54,7 @@ function toGeminiHistory(history) {
  * @returns {Promise<{reply: string, toolsUsed: string[]}>}
  */
 export async function processMessage(message, userId = null, history = []) {
-  console.log(`\n[Agent] user=${userId || 'guest'} | msg="${message}"`);
+  // console.log(`\n[Agent] user=${userId || 'guest'} | msg="${message}"`);
 
   // Inject userId so Gemini can extract it for tool calls
   const userContent = userId
@@ -85,7 +85,7 @@ export async function processMessage(message, userId = null, history = []) {
   while (iteration < MAX_ITER) {
     if (iteration > 0) await new Promise(r => setTimeout(r, RETRY_DELAY));
     iteration++;
-    console.log(`[Agent] iteration ${iteration} | sending: "${String(currentMessage).slice(0, 80)}"`);
+    // console.log(`[Agent] iteration ${iteration} | sending: "${String(currentMessage).slice(0, 80)}"`);
 
     let result;
     try {
@@ -108,7 +108,7 @@ export async function processMessage(message, userId = null, history = []) {
     }
 
     const parts = candidate.content?.parts || [];
-    console.log(`[Agent] parts received: ${parts.map(p => p.functionCall ? 'functionCall:' + p.functionCall.name : 'text').join(', ')}`);
+    // console.log(`[Agent] parts received: ${parts.map(p => p.functionCall ? 'functionCall:' + p.functionCall.name : 'text').join(', ')}`);
 
     // ── Check for function calls ───────────────────────────────────────────
     const functionCallParts = parts.filter(p => p.functionCall);
@@ -119,11 +119,11 @@ export async function processMessage(message, userId = null, history = []) {
 
       for (const part of functionCallParts) {
         const { name, args } = part.functionCall;
-        console.log(`[Agent] function call: ${name}`, args);
+        // console.log(`[Agent] function call: ${name}`, args);
         toolsUsed.push(name);
 
         const toolResult = await executeTool(name, args || {});
-        console.log(`[Agent] result: ${JSON.stringify(toolResult).slice(0, 200)}`);
+        // console.log(`[Agent] result: ${JSON.stringify(toolResult).slice(0, 200)}`);
 
         functionResponseParts.push({
           functionResponse: {
@@ -142,11 +142,11 @@ export async function processMessage(message, userId = null, history = []) {
     const textPart = parts.find(p => p.text);
     if (textPart?.text?.trim()) {
       const reply = textPart.text.trim();
-      console.log(`[Agent] final reply: "${reply.slice(0, 100)}"`);
+      // console.log(`[Agent] final reply: "${reply.slice(0, 100)}"`);
       return { reply, toolsUsed };
     }
 
-    console.warn('[Agent] No text or function call in response — breaking loop');
+    // console.warn('[Agent] No text or function call in response — breaking loop');
     break;
   }
 

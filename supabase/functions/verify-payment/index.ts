@@ -20,12 +20,6 @@ serve(async (req) => {
       isSubscription // New parameter
     } = await req.json();
 
-    console.log("Payment verification request received:", {
-      orderId,
-      razorpayOrderId,
-      razorpayPaymentId,
-      isSubscription
-    });
 
     if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature || !orderId) {
       return new Response(JSON.stringify({ error: "Missing parameters" }), {

@@ -73,7 +73,7 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
-    console.log("Auth Page: Initiating Google Login...");
+
     try {
       const { error } = await signInWithGoogle();
       if (error) {

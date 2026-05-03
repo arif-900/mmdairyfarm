@@ -92,7 +92,7 @@ export const SmartScannerModal: React.FC<SmartScannerModalProps> = ({
           try {
             if (qrCode.isScanning) await qrCode.stop();
           } catch (e) {
-            console.warn("Scanner stop warning:", e);
+
           }
           try {
             qrCode.clear();

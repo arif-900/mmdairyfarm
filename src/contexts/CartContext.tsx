@@ -125,7 +125,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
             // OVERWRITE behavior as requested
             setItems(mappedItems);
-            console.log("Cart synced from DB:", mappedItems);
           }
         }
       } catch (err) {

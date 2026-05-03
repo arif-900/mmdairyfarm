@@ -109,7 +109,7 @@ const OrderHistory = () => {
 
       if (ordersError) throw ordersError;
 
-      console.log("Orders data fetched:", ordersData?.length || 0, "orders found");
+
 
       if (ordersData && ordersData.length > 0) {
         // Filter out orders that are stuck in 'pending' with 'online' payment method
@@ -186,7 +186,7 @@ const OrderHistory = () => {
               filter: `user_id=eq.${user.id}`,
             },
             (payload) => {
-              console.log("Order status updated:", payload);
+
               setOrders((prevOrders) =>
                 prevOrders.map((order) =>
                   order.id === payload.new.id

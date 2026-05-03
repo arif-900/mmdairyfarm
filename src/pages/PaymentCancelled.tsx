@@ -19,7 +19,7 @@ const PaymentCancelled = () => {
       supabase.rpc('cancel_my_pending_order', { p_order_id: orderId })
         .then(({ data, error }) => {
           if (error) console.error("Could not cancel order:", error);
-          else if (data) console.log("Pending order cancelled and coins refunded.");
+          else if (data) { /* Pending order cancelled */ }
         });
     }
   }, [orderId]);

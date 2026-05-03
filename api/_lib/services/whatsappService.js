@@ -75,10 +75,10 @@ export const sendWhatsAppMessage = async (templateName, phoneNumber, dynamicData
     };
 
     // DEBUG: Log the payload without the token
-    console.log('--- WhatsApp API Payload ---');
-    console.log(JSON.stringify(payload, null, 2));
-    console.log('---------------------------');
-
+    // console.log('--- WhatsApp API Payload ---');
+    // console.log(JSON.stringify(payload, null, 2));
+    // console.log('---------------------------');
+    
     const response = await axios.post(BASE_URL, payload, {
       headers: {
         'Authorization': `Bearer ${ACCESS_TOKEN}`,
@@ -86,7 +86,7 @@ export const sendWhatsAppMessage = async (templateName, phoneNumber, dynamicData
       }
     });
 
-    console.log(`WhatsApp message sent successfully to ${phoneNumber}. Message ID: ${response.data.messages[0].id}`);
+    // console.log(`WhatsApp message sent successfully to ${phoneNumber}. Message ID: ${response.data.messages[0].id}`);
     return { success: true, data: response.data };
   } catch (error) {
     const errorDetails = error.response ? error.response.data : error.message;

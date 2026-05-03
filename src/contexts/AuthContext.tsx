@@ -70,12 +70,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    console.log("AuthProvider: Initializing...");
 
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("AuthProvider: Auth change detected:", event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -96,7 +94,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) console.error("AuthProvider: Get session error:", error);
 
-      console.log("AuthProvider: Current session:", session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -144,9 +141,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut({ scope: 'local' });
-      if (error) console.warn("Supabase signout returned an error:", error);
-    } catch (err) {
-      console.warn("Exception during signout:", err);
+      if (error) {
+        // Supabase signout returned an error
+      }    } catch (err) {
+      // Exception during signout
     } finally {
       // Force clear state to ensure UI updates immediately
       setUser(null);

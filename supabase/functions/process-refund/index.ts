@@ -80,7 +80,7 @@ serve(async (req) => {
         throw new Error("Razorpay credentials not configured");
       }
 
-      console.log(`Initiating refund for payment: ${razorpayPaymentId}`);
+
 
       const response = await fetch(`https://api.razorpay.com/v1/payments/${razorpayPaymentId}/refund`, {
         method: "POST",
@@ -105,7 +105,7 @@ serve(async (req) => {
       }
 
       refundId = refundData.id;
-      console.log(`Refund successful. ID: ${refundId}`);
+
     }
 
     // 6. Update DB Status

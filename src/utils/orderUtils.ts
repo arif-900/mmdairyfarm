@@ -54,7 +54,7 @@ export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
   // Create order items
   const orderItems = items.map(item => {
     if (!item.name) {
-      console.warn("Item missing name property:", item);
+
     }
     return {
       order_id: order.id,
@@ -74,14 +74,6 @@ export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
 
   if (itemsError) {
     console.error("Order items insertion error:", itemsError);
-    console.warn("Failed to insert order items:", {
-      error: itemsError,
-      errorCode: itemsError.code,
-      errorMessage: itemsError.message,
-      errorDetails: itemsError.details,
-      orderItems: orderItems,
-      orderId: order.id
-    });
     
     // RLS might be blocking insertion. Log this for debugging.
     if (itemsError.code === 'PGRST301' || itemsError.message?.includes('RLS')) {
@@ -89,7 +81,7 @@ export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
     }
     // Don't throw error for items, order is already created
   } else {
-    console.log("Order items inserted successfully for order:", order.id);
+
   }
 
   return {

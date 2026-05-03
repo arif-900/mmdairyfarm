@@ -214,7 +214,7 @@ export function SubscriptionsTab() {
                 .gte("delivery_date", today)
                 .select(); // Added .select() to see what was updated
 
-            console.log(`Sync Result for Item ${itemId}:`, updateData);
+
 
             if (deliveryError) {
                 console.error("Error syncing deliveries:", deliveryError);

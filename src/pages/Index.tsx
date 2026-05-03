@@ -48,13 +48,11 @@ const Index = () => {
             if (parsed.isActive) {
               setPromo(parsed);
             } else {
-              console.log("Promo banner is set to inactive in DB.");
             }
           } else {
             console.error("Unexpected format for promo_banner:", parsed);
           }
         } else {
-          console.log("No promo banner found in app_settings table.");
         }
       } catch (err) {
         console.error("Unexpected error in fetchPromo:", err);
