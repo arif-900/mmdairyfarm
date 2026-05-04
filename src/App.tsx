@@ -38,6 +38,7 @@ import NotFound from "./pages/NotFound";
 import Subscriptions from "./pages/Subscriptions";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import Wallet from "./pages/Wallet";
+import DesignShowcase from "./pages/DesignShowcase";
 
 const queryClient = new QueryClient();
 
@@ -119,6 +120,7 @@ const App = () => (
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/unauthorized" element={<Unauthorized />} />
+                  <Route path="/design-showcase" element={<DesignShowcase />} />
 
                   {/* Admin Routes */}
                   <Route

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import Layout from "@/components/layout/Layout";
-import ProductCard from "@/components/products/ProductCard";
+import FloatingProductCard from "@/components/products/FloatingProductCard";
 import { useStoreProducts } from "@/data/products";
 import { Loader2, Search, ShoppingBag } from "lucide-react";
 import { CircularBackButton } from "@/components/ui/CircularBackButton";
@@ -82,15 +82,13 @@ const Products = () => {
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-4 pb-10">
               {filteredProducts.map((product, index) => (
-                <div
+                <FloatingProductCard
                   key={product.id}
-                  className="animate-slide-up"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <ProductCard {...product} />
-                </div>
+                  {...product}
+                  floatDelay={(index % 4) * 600}
+                />
               ))}
             </div>
           )}
