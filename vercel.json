@@ -1,0 +1,30 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/admin/(.*)",
+      "destination": "/api/admin/index.js"
+    },
+    {
+      "source": "/api/orders/(.*)",
+      "destination": "/api/orders/index.js"
+    },
+    {
+      "source": "/api/chat",
+      "destination": "/api/chat/index.js"
+    },
+    {
+      "source": "/api/whatsapp",
+      "destination": "/api/whatsapp/index.js"
+    },
+    {
+      "source": "/((?!assets/|api/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/abandoned-carts",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

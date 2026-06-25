@@ -1,0 +1,133 @@
+.outer-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step-circle-container {
+  background-color: var(--card);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.step-indicator-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.step-indicator-inner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 2px solid transparent;
+}
+
+.active-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.check-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: white;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background-color: var(--border);
+  margin: 0 0.5rem;
+  position: relative;
+  top: 0;
+}
+
+.step-connector-inner {
+  height: 100%;
+  width: 0;
+}
+
+.step-content-default {
+  margin-bottom: 2rem;
+}
+
+.step-default {
+  padding: 1rem 0;
+}
+
+.footer-container {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-nav {
+  display: flex;
+  width: 100%;
+}
+
+.footer-nav.spread {
+  justify-content: space-between;
+}
+
+.footer-nav.end {
+  justify-content: flex-end;
+}
+
+.back-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background-color: var(--secondary);
+}
+
+.back-button.inactive {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.next-button {
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.next-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.next-button:active {
+  transform: translateY(0);
+}
