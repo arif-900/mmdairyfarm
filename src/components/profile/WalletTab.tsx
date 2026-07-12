@@ -71,7 +71,7 @@ export const WalletTab = () => {
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-white/10 rounded-2xl backdrop-blur-md border border-white/10">
+                                <div className="p-2.5 bg-white/10 rounded-2xl border border-white/10">
                                     <Wallet className="w-5 h-5 text-emerald-400" />
                                 </div>
                                 <h3 className="text-sm font-black uppercase tracking-[0.2em] text-emerald-400">Wallet Balance</h3>
@@ -85,7 +85,7 @@ export const WalletTab = () => {
                             </p>
                         </div>
 
-                        <div className="bg-white/5 rounded-3xl p-6 border border-white/5 backdrop-blur-sm self-stretch md:self-auto flex flex-col items-center justify-center text-center">
+                        <div className="bg-white/5 rounded-3xl p-6 border border-white/5 self-stretch md:self-auto flex flex-col items-center justify-center text-center">
                             <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl p-0.5 shadow-xl mb-3 relative overflow-hidden group/coin cursor-pointer">
                                 <img src="/favicon.png" className="w-full h-full object-cover rounded-[14px] animate-spin-slow" alt="Coin" />
                                 <div className="absolute inset-0 bg-white/20 animate-shine" />
@@ -123,39 +123,39 @@ export const WalletTab = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-2 gap-2 md:gap-4">
                         {ledger.map((entry) => (
-                            <div key={entry.id} className="group bg-white rounded-[28px] p-6 border border-slate-100 hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 flex items-center justify-between gap-6">
-                                <div className="flex items-center gap-5">
+                            <div key={entry.id} className="group bg-white rounded-[14px] md:rounded-[28px] p-3 md:p-6 border border-slate-100 hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-900/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-6">
+                                <div className="flex items-center gap-2 md:gap-5 w-full md:w-auto">
                                     <div className={cn(
-                                        "w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
+                                        "w-8 h-8 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
                                         entry.type === 'credit' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-rose-50 text-rose-600 border border-rose-100"
                                     )}>
-                                        {entry.type === 'credit' ? <ArrowUpRight className="w-6 h-6" /> : <ArrowDownLeft className="w-6 h-6" />}
+                                        {entry.type === 'credit' ? <ArrowUpRight className="w-3.5 h-3.5 md:w-6 md:h-6" /> : <ArrowDownLeft className="w-3.5 h-3.5 md:w-6 md:h-6" />}
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="font-black text-slate-900 leading-tight uppercase tracking-tight text-sm md:text-base">{entry.reason}</p>
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                                                <Calendar className="w-3 h-3" />
-                                                {format(new Date(entry.created_at), "MMM dd, yyyy")}
+                                    <div className="space-y-0.5 md:space-y-1 min-w-0 flex-1">
+                                        <p className="font-black text-slate-900 leading-tight uppercase tracking-tight text-[10px] md:text-base truncate">{entry.reason}</p>
+                                        <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-3">
+                                            <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                                                <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                                                {format(new Date(entry.created_at), "MMM dd")}
                                             </div>
                                             {entry.metadata?.order_id && (
-                                                <Badge variant="secondary" className="text-[8px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 rounded-md">
-                                                    Order: #{entry.metadata.order_id.slice(0, 8)}
+                                                <Badge variant="secondary" className="text-[7px] md:text-[8px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 rounded-md px-1.5 md:px-2">
+                                                    #{entry.metadata.order_id.slice(0, 6)}
                                                 </Badge>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right">
+                                <div className="text-right w-full md:w-auto">
                                     <p className={cn(
-                                        "text-2xl md:text-3xl font-black tracking-tighter italic",
+                                        "text-sm md:text-3xl font-black tracking-tighter italic",
                                         entry.type === 'credit' ? "text-emerald-600" : "text-rose-600"
                                     )}>
                                         {entry.type === 'credit' ? '+' : '-'}₹{entry.amount}
                                     </p>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                    <p className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-slate-400">
                                         {entry.type === 'credit' ? 'Credited' : 'Debited'}
                                     </p>
                                 </div>

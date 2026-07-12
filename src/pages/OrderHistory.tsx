@@ -333,7 +333,7 @@ const OrderHistory = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               {orders.map((order) => {
                 const config = statusConfig[order.status] || { 
                   label: order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : "Unknown", 
@@ -343,7 +343,7 @@ const OrderHistory = () => {
                 const totalItems = order.order_items.reduce((acc, item) => acc + item.quantity, 0);
 
                 return (
-                  <Card key={order.id} className="relative overflow-hidden border border-border bg-white rounded-2xl shadow-soft hover:shadow-card transition-all duration-300">
+                  <Card key={order.id} className="relative overflow-hidden border border-border bg-white rounded-2xl shadow-soft hover:shadow-card">
                     <CardContent className="p-6 md:p-8 space-y-6 relative font-body">
                       
                       {/* Top Info */}

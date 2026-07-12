@@ -4,7 +4,7 @@ import { formatWeight, calculatePrice } from "@/utils/pricing";
 import { cn } from "@/lib/utils";
 import { useStoreProducts } from "@/data/products";
 import { Badge } from "@/components/ui/badge";
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 
 interface SummaryStepProps {
   items: any[];
@@ -33,6 +33,42 @@ const productAnalyses: Record<string, string> = {
   "default": "Freshly sourced from our organic farms, packed with essential dairy nutrients."
 };
 
+interface SummaryItemProps {
+  item: any;
+  onUpdateQty: (productId: string, selectedWeight: number, delta: number) => void;
+  onRemoveItem: (productId: string, selectedWeight: number) => void;
+}
+
+const SummaryItemCard = memo(function SummaryItemCard({ item, onUpdateQty, onRemoveItem }: SummaryItemProps) {
+  return (
+    <div className="flex justify-between items-start sm:items-center p-3 md:p-4 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-100/50 group gap-2 md:gap-4">
+      <div className="flex items-start sm:items-center gap-3 md:gap-4 min-w-0 flex-1">
+        <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 shrink-0 group-hover:scale-110 transition-transform">
+          <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-cover" alt={item.name} />
+        </div>
+        <div className="min-w-0">
+          <p className="font-black text-slate-800 text-xs md:text-sm italic truncate max-w-[140px] sm:max-w-[200px]">{item.name}</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+            {formatWeight(item.selectedWeight, item.unitType)}
+          </p>
+          <div className="flex items-center gap-2 mt-2 bg-white rounded-xl p-0.5 border border-slate-200 w-fit shadow-sm">
+            <button onClick={() => onUpdateQty(item.productId, item.selectedWeight, -1)} disabled={item.quantity <= 1} className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors disabled:opacity-50"><Minus className="w-3 h-3" /></button>
+            <span className="w-6 text-center text-xs font-bold text-slate-800">{item.quantity}</span>
+            <button onClick={() => onUpdateQty(item.productId, item.selectedWeight, 1)} className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"><Plus className="w-3.5 h-3.5" /></button>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 md:gap-4 shrink-0">
+        <div className="text-right">
+          <p className="font-black text-slate-800 italic tracking-tighter text-sm md:text-base">₹{item.calculatedPrice * item.quantity}</p>
+          <p className="text-[8px] md:text-[9px] font-bold text-primary uppercase tracking-widest">₹{item.calculatedPrice} / unit</p>
+        </div>
+        <button onClick={() => onRemoveItem(item.productId, item.selectedWeight)} className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 flex items-center justify-center transition-colors shadow-sm" title="Remove item"><Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" /></button>
+      </div>
+    </div>
+  );
+});
+
 export function SummaryStep({
   items,
   subtotal,
@@ -53,18 +89,9 @@ export function SummaryStep({
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [selectedWeights, setSelectedWeights] = useState<Record<string, number>>({});
 
-  if (items.length === 0) return (
-    <div className="text-center py-20 bg-white rounded-[40px] border shadow-sm font-body">
-      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <ShoppingBag className="w-10 h-10 text-slate-300" />
-      </div>
-      <h2 className="text-2xl font-black text-slate-800 italic uppercase">Your cart is empty</h2>
-      <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-2">Add some freshness to get started</p>
-    </div>
-  );
-
   // Dynamic context-based recommendation algorithm
   const suggestions = useMemo(() => {
+    if (items.length === 0) return [];
     // 1. Filter out items already in the order
     const itemProductIds = items.map(item => item.productId);
     const available = products.filter(prod => !itemProductIds.includes(prod.id));
@@ -99,6 +126,16 @@ export function SummaryStep({
     }).slice(0, 3);
   }, [products, items, subtotal]);
 
+  if (items.length === 0) return (
+    <div className="text-center py-20 bg-white rounded-[40px] border shadow-sm font-body">
+      <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+        <ShoppingBag className="w-10 h-10 text-slate-300" />
+      </div>
+      <h2 className="text-2xl font-black text-slate-800 italic uppercase">Your cart is empty</h2>
+      <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest mt-2">Add some freshness to get started</p>
+    </div>
+  );
+
   const adjustQty = (id: string, delta: number) => {
     setQuantities(prev => ({
       ...prev,
@@ -108,10 +145,10 @@ export function SummaryStep({
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700 font-body">
-      <div className="bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-[24px] md:rounded-[40px] p-5 md:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center gap-4 mb-10">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
           <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center">
             <ShoppingBag className="text-primary w-6 h-6" />
           </div>
@@ -122,7 +159,7 @@ export function SummaryStep({
         </div>
 
         {/* Free Delivery Promo Banner */}
-        <div className="mb-8 p-6 bg-primary/5 border border-primary/10 rounded-3xl space-y-3">
+        <div className="mb-6 md:mb-8 p-4 md:p-6 bg-primary/5 border border-primary/10 rounded-2xl md:rounded-3xl space-y-3">
           <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-primary">
             <span>Free Delivery Status</span>
             <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
@@ -149,53 +186,7 @@ export function SummaryStep({
         {/* Items List */}
         <div className="space-y-4 mb-10">
           {items.map((item, idx) => (
-            <div key={`${item.productId}-${idx}`} className="flex justify-between items-center p-4 bg-slate-50 rounded-3xl border border-slate-100/50 group">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-sm border border-slate-100 group-hover:scale-110 transition-transform">
-                  <img src={item.image} className="w-full h-full object-cover" alt={item.name} />
-                </div>
-                <div>
-                  <p className="font-black text-slate-800 text-sm italic">{item.name}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                    {formatWeight(item.selectedWeight, item.unitType)}
-                  </p>
-                  
-                  {/* Inline Quantity Modifier (Edit) */}
-                  <div className="flex items-center gap-2 mt-2 bg-white rounded-xl p-0.5 border border-slate-200 w-fit shadow-sm">
-                    <button 
-                      onClick={() => onUpdateQty(item.productId, item.selectedWeight, -1)}
-                      disabled={item.quantity <= 1}
-                      className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors disabled:opacity-50"
-                    >
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="w-6 text-center text-xs font-bold text-slate-800">{item.quantity}</span>
-                    <button 
-                      onClick={() => onUpdateQty(item.productId, item.selectedWeight, 1)}
-                      className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Price & Delete Action (Delete) */}
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <p className="font-black text-slate-800 italic tracking-tighter text-base">₹{item.calculatedPrice * item.quantity}</p>
-                  <p className="text-[9px] font-bold text-primary uppercase tracking-widest">₹{item.calculatedPrice} / unit</p>
-                </div>
-                
-                <button
-                  onClick={() => onRemoveItem(item.productId, item.selectedWeight)}
-                  className="w-9 h-9 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 flex items-center justify-center transition-colors shadow-sm"
-                  title="Remove item"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+            <SummaryItemCard key={`${item.productId}-${idx}`} item={item} onUpdateQty={onUpdateQty} onRemoveItem={onRemoveItem} />
           ))}
         </div>
 
@@ -206,65 +197,66 @@ export function SummaryStep({
               <h3 className="font-display text-sm font-black text-slate-800 uppercase tracking-wider">Suggested Add-ons</h3>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Best pairings & nutrition analysis for your basket</p>
             </div>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {suggestions.map((prod) => {
                 const qty = quantities[prod.id] || 1;
                 const activeWeight = selectedWeights[prod.id] || prod.availableWeights?.[0] || 1000;
                 const currentPrice = calculatePrice(prod.basePricePerKg || prod.price, activeWeight);
 
                 return (
-                  <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-primary/5 rounded-3xl border border-primary/10 gap-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white border border-slate-100 flex-shrink-0">
-                        <img src={prod.image} className="w-full h-full object-cover" alt={prod.name} />
+                  <div key={prod.id} className="flex flex-col items-center p-3 bg-primary/5 rounded-2xl border border-primary/10 gap-2 text-center">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-slate-100 flex-shrink-0">
+                      <img src={prod.image} loading="lazy" decoding="async" className="w-full h-full object-cover" alt={prod.name} />
+                    </div>
+                    <div className="space-y-0.5 w-full">
+                      <div className="flex items-center justify-center gap-1">
+                        <p className="font-black text-slate-800 text-[11px] truncate max-w-[100px]">{prod.name}</p>
+                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none text-[7px] font-bold uppercase py-0 px-1.5 leading-4 shrink-0">
+                          Analysis
+                        </Badge>
                       </div>
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-black text-slate-800 text-sm">{prod.name}</p>
-                          <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none text-[8px] font-bold uppercase py-0.5 px-2">
-                            Analysis
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-muted-foreground leading-normal max-w-md">
-                          {productAnalyses[prod.name] || productAnalyses["default"]}
-                        </p>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                          ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
-                        </p>
-                      </div>
+                      <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                        ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
+                      </p>
+                    </div>
+
+                    <div className="hidden md:block text-[10px] text-muted-foreground leading-normal">
+                      {productAnalyses[prod.name] || productAnalyses["default"]}
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
-                      {/* Weight Selector */}
-                      {prod.availableWeights && prod.availableWeights.length > 1 && (
-                        <select
-                          value={activeWeight}
-                          onChange={(e) => setSelectedWeights(prev => ({ ...prev, [prod.id]: Number(e.target.value) }))}
-                          className="bg-white border border-slate-200 rounded-xl px-2 h-9 text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-primary/30 transition-colors"
-                        >
-                          {prod.availableWeights.map(w => (
-                            <option key={w} value={w}>
-                              {formatWeight(w, prod.unitType || "g")}
-                            </option>
-                          ))}
-                        </select>
-                      )}
+                    <div className="flex flex-col gap-1.5 w-full mt-1">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {/* Weight Selector */}
+                        {prod.availableWeights && prod.availableWeights.length > 1 && (
+                          <select
+                            value={activeWeight}
+                            onChange={(e) => setSelectedWeights(prev => ({ ...prev, [prod.id]: Number(e.target.value) }))}
+                            className="bg-white border border-slate-200 rounded-lg px-1.5 h-7 text-[10px] font-bold text-slate-700 outline-none shadow-sm"
+                          >
+                            {prod.availableWeights.map(w => (
+                              <option key={w} value={w}>
+                                {formatWeight(w, prod.unitType || "g")}
+                              </option>
+                            ))}
+                          </select>
+                        )}
 
-                      {/* Qty Selector */}
-                      <div className="flex items-center bg-white rounded-xl p-1 border border-slate-200">
-                        <button 
-                          onClick={() => adjustQty(prod.id, -1)}
-                          className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="w-8 text-center text-xs font-bold text-slate-800">{qty}</span>
-                        <button 
-                          onClick={() => adjustQty(prod.id, 1)}
-                          className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
+                        {/* Qty Selector */}
+                        <div className="flex items-center bg-white rounded-lg p-0.5 border border-slate-200">
+                          <button 
+                            onClick={() => adjustQty(prod.id, -1)}
+                            className="w-5 h-5 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                          >
+                            <Minus className="w-2.5 h-2.5" />
+                          </button>
+                          <span className="w-5 text-center text-[10px] font-bold text-slate-800">{qty}</span>
+                          <button 
+                            onClick={() => adjustQty(prod.id, 1)}
+                            className="w-5 h-5 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                          >
+                            <Plus className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
                       </div>
 
                       <Button
@@ -280,12 +272,11 @@ export function SummaryStep({
                             unitType: prod.unitType || "g",
                             deliveryDays: prod.deliveryDays || 0
                           });
-                          // Reset state
                           setQuantities(prev => ({ ...prev, [prod.id]: 1 }));
                         }}
-                        className="h-9 px-4 bg-primary hover:bg-primary/95 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl shadow-sm"
+                        className="w-full h-7 text-[9px] font-bold uppercase tracking-wider rounded-lg bg-primary hover:bg-primary/95 text-white shadow-sm"
                       >
-                        + Add to Order
+                        + Add
                       </Button>
                     </div>
                   </div>
@@ -296,7 +287,7 @@ export function SummaryStep({
         )}
 
         {/* Pricing & Promo */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-slate-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pt-6 md:pt-8 border-t border-slate-100">
           <div className="space-y-4">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 block">Promotional Code</label>
             {!appliedPromo ? (
@@ -306,12 +297,12 @@ export function SummaryStep({
                   placeholder="ENTER CODE"
                   value={promoInput}
                   onChange={e => setPromoInput(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-100 rounded-2xl px-6 h-14 text-sm font-bold placeholder:text-slate-300 outline-none focus:border-primary/30 transition-all uppercase"
+                  className="flex-1 bg-slate-50 border border-slate-100 rounded-xl md:rounded-2xl px-4 md:px-6 h-12 md:h-14 text-sm font-bold placeholder:text-slate-300 outline-none focus:border-primary/30 transition-all uppercase"
                 />
                 <Button
                   onClick={handleApplyPromo}
                   disabled={checkingPromo || !promoInput.trim()}
-                  className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl h-14 px-8 font-black uppercase text-xs tracking-widest group"
+                  className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl md:rounded-2xl h-12 md:h-14 px-5 md:px-8 font-black uppercase text-xs tracking-widest group"
                 >
                   {checkingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
                 </Button>
@@ -335,7 +326,7 @@ export function SummaryStep({
             )}
           </div>
 
-          <div className="bg-slate-50 rounded-3xl p-6 space-y-3">
+          <div className="bg-slate-50 rounded-2xl md:rounded-3xl p-4 md:p-6 space-y-3">
             <div className="flex justify-between items-center opacity-60">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Subtotal</span>
               <span className="font-black text-sm italic text-slate-800">₹{subtotal}</span>
@@ -355,10 +346,10 @@ export function SummaryStep({
 
         <Button 
           onClick={onNext}
-          className="w-full h-16 rounded-[28px] bg-primary hover:bg-primary/95 text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 group active:scale-95 transition-all flex items-center justify-between px-8 mt-10"
+          className="w-full h-14 md:h-16 rounded-[20px] md:rounded-[28px] bg-primary hover:bg-primary/95 text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 group active:scale-95 transition-all flex items-center justify-between px-5 md:px-8 mt-6 md:mt-10"
         >
-          <span className="text-left font-black tracking-widest">Proceed to Delivery</span>
-          <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+          <span className="text-[11px] md:text-sm text-left font-black tracking-widest">Proceed to Delivery</span>
+          <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
         </Button>
       </div>
     </div>

@@ -33,8 +33,8 @@ export function DeliveryStep({
 }: DeliveryStepProps) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
-      <div className="bg-white rounded-[40px] p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="bg-white rounded-[24px] md:rounded-[40px] p-5 md:p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
           <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center">
             <MapPin className="text-primary w-6 h-6" />
           </div>
@@ -62,7 +62,7 @@ export function DeliveryStep({
               )}
 
               {selectedAddress && (
-                <div className="p-6 bg-slate-50 rounded-[32px] border border-slate-100 space-y-4">
+                <div className="p-4 md:p-6 bg-slate-50 rounded-[24px] md:rounded-[32px] border border-slate-100 space-y-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Shipping Summary</p>
@@ -98,22 +98,20 @@ export function DeliveryStep({
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mt-10">
+        <div className="flex items-center gap-3 mt-8 md:mt-10">
           <CircularBackButton 
             onClick={onBack}
-            className="w-16 h-16"
+            className="w-12 h-12 shrink-0"
           />
           
-          {selectedAddress && (
-            <Button 
-              onClick={onNext}
-              disabled={!!distanceError}
-              className="flex-[2] h-16 rounded-[28px] bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 group active:scale-95 transition-all flex items-center justify-between px-8"
-            >
-              <span className="font-black tracking-widest">Continue to Payment</span>
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-            </Button>
-          )}
+          <Button 
+            onClick={onNext}
+            disabled={!selectedAddress || !!distanceError}
+            className="flex-1 h-12 rounded-[16px] md:h-16 md:rounded-[28px] bg-primary hover:bg-primary/90 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 disabled:shadow-none group active:scale-95 transition-all flex items-center justify-between px-5 md:px-8"
+          >
+            <span className="font-black tracking-widest text-[11px] md:text-sm">Continue to Payment</span>
+            <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
+          </Button>
         </div>
       </div>
     </div>

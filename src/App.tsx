@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,35 +11,36 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./lib/i18n";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
+import { StaffProtectedRoute } from "@/components/admin/StaffProtectedRoute";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-import Order from "./pages/Order";
 import OrderHistory from "./pages/OrderHistory";
 import OrderDetail from "./pages/OrderDetail";
-import Auth from "./pages/Auth";
-import PaymentSuccess from "./pages/PaymentSuccess";
-import PaymentCancelled from "./pages/PaymentCancelled";
-import StaffDashboard from "./pages/StaffDashboard";
-import { StaffProtectedRoute } from "@/components/admin/StaffProtectedRoute";
-import AdminDashboard from "./pages/AdminDashboard";
-import DeliveryDashboard from "./pages/DeliveryDashboard";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
-import Refund from "./pages/Refund";
-import Shipping from "./pages/Shipping";
-import FAQ from "./pages/FAQ";
-import Contact from "./pages/Contact";
-import ScrollToTop from "@/components/layout/ScrollToTop";
-import ResetPassword from "./pages/ResetPassword";
-import ForgotPassword from "./pages/ForgotPassword";
-import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
-import Subscriptions from "./pages/Subscriptions";
-import SubscriptionSuccess from "./pages/SubscriptionSuccess";
-import Wallet from "./pages/Wallet";
-import DesignShowcase from "./pages/DesignShowcase";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+
+const Order = lazy(() => import("./pages/Order"));
+const Auth = lazy(() => import("./pages/Auth"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentCancelled = lazy(() => import("./pages/PaymentCancelled"));
+const Subscriptions = lazy(() => import("./pages/Subscriptions"));
+const SubscriptionSuccess = lazy(() => import("./pages/SubscriptionSuccess"));
+const Wallet = lazy(() => import("./pages/Wallet"));
+const DeliveryDashboard = lazy(() => import("./pages/DeliveryDashboard"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const StaffDashboard = lazy(() => import("./pages/StaffDashboard"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Refund = lazy(() => import("./pages/Refund"));
+const Shipping = lazy(() => import("./pages/Shipping"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Unauthorized = lazy(() => import("./pages/Unauthorized"));
+const DesignShowcase = lazy(() => import("./pages/DesignShowcase"));
 
 const queryClient = new QueryClient();
 
@@ -72,7 +73,6 @@ const App = () => (
               <Sonner />
               <BrowserRouter
                 future={{
-                  v7_startTransition: true,
                   v7_relativeSplatPath: true,
                 }}
               >
@@ -83,7 +83,7 @@ const App = () => (
                   <Route path="/products" element={<Products />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/cart" element={<Cart />} />
-                  <Route path="/order" element={<Order />} />
+                  <Route path="/order" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Order /></Suspense>} />
                   <Route
                     path="/orders"
                     element={
@@ -100,43 +100,45 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/privacy" element={<Privacy />} />
-                  <Route path="/refund" element={<Refund />} />
-                  <Route path="/shipping" element={<Shipping />} />
-                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/auth" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Auth /></Suspense>} />
+                  <Route path="/contact" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Contact /></Suspense>} />
+                  <Route path="/terms" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Terms /></Suspense>} />
+                  <Route path="/privacy" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Privacy /></Suspense>} />
+                  <Route path="/refund" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Refund /></Suspense>} />
+                  <Route path="/shipping" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Shipping /></Suspense>} />
+                  <Route path="/faq" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><FAQ /></Suspense>} />
                   <Route
                     path="/subscriptions"
                     element={
                       <ProtectedRoute>
-                        <Subscriptions />
+                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Subscriptions /></Suspense>
                       </ProtectedRoute>
                     }
                   />
-                  <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+                  <Route path="/subscription-success" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><SubscriptionSuccess /></Suspense>} />
                   <Route
                     path="/wallet"
                     element={
                       <ProtectedRoute>
-                        <Wallet />
+                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Wallet /></Suspense>
                       </ProtectedRoute>
                     }
                   />
-                  <Route path="/payment-success" element={<PaymentSuccess />} />
-                  <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/unauthorized" element={<Unauthorized />} />
-                  <Route path="/design-showcase" element={<DesignShowcase />} />
+                  <Route path="/payment-success" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><PaymentSuccess /></Suspense>} />
+                  <Route path="/payment-cancelled" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><PaymentCancelled /></Suspense>} />
+                  <Route path="/forgot-password" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><ForgotPassword /></Suspense>} />
+                  <Route path="/reset-password" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><ResetPassword /></Suspense>} />
+                  <Route path="/unauthorized" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Unauthorized /></Suspense>} />
+                  <Route path="/design-showcase" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><DesignShowcase /></Suspense>} />
 
                   {/* Admin Routes */}
                   <Route
                     path="/admin/dashboard"
                     element={
                       <AdminProtectedRoute>
-                        <AdminDashboard />
+                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading dashboard...</div>}>
+                          <AdminDashboard />
+                        </Suspense>
                       </AdminProtectedRoute>
                     }
                   />
@@ -145,7 +147,9 @@ const App = () => (
                     path="/staff/dashboard"
                     element={
                       <StaffProtectedRoute>
-                        <StaffDashboard />
+                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading dashboard...</div>}>
+                          <StaffDashboard />
+                        </Suspense>
                       </StaffProtectedRoute>
                     }
                   />
@@ -154,7 +158,7 @@ const App = () => (
                     path="/delivery/dashboard"
                     element={
                       <StaffProtectedRoute>
-                        <DeliveryDashboard />
+                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><DeliveryDashboard /></Suspense>
                       </StaffProtectedRoute>
                     }
                   />

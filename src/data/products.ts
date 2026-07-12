@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-import cowMilkImg from "@/assets/cow-milk.jpg";
-import buffaloMilkImg from "@/assets/buffalo-milk.jpg";
-import curdImg from "@/assets/curd.jpg";
-import gheeImg from "@/assets/ghee.jpg";
+import cowMilkImg from "@/assets/cow-milk.webp";
+import buffaloMilkImg from "@/assets/buffalo-milk.webp";
+import curdImg from "@/assets/curd.webp";
+import gheeImg from "@/assets/ghee.webp";
 
 export interface Product {
   id: string;

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { WifiOff, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+
+const overlayCls = 'fixed inset-0 z-[99999] bg-white/60 backdrop-blur-2xl flex items-center justify-center p-6 transition-opacity duration-300';
 
 export function OfflineStatus() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -20,14 +21,8 @@ export function OfflineStatus() {
   }, []);
 
   return (
-    <AnimatePresence>
+    <div className={overlayCls + (isOffline ? ' opacity-100' : ' opacity-0 pointer-events-none')}>
       {isOffline && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[99999] bg-white/60 backdrop-blur-2xl flex items-center justify-center p-6"
-        >
           <div className="text-center space-y-10 max-w-md w-full animate-in fade-in zoom-in duration-500">
             {/* Animated Icon Container */}
             <div className="relative mx-auto w-32 h-32">
@@ -62,8 +57,7 @@ export function OfflineStatus() {
               <span className="font-black text-sm uppercase tracking-widest text-slate-900">MM Dairy</span>
             </div>
           </div>
-        </motion.div>
       )}
-    </AnimatePresence>
+    </div>
   );
 }

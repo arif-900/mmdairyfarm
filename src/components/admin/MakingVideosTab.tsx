@@ -300,7 +300,7 @@ export const MakingVideosTab = () => {
                       <Video className="w-12 h-12 text-white/10 group-hover:scale-110 transition-transform duration-500" />
                       {getYouTubeId(video.url) && (
                         <img
-                          src={`https://img.youtube.com/vi/${getYouTubeId(video.url)}/hqdefault.jpg`}
+                          src={`https://img.youtube.com/vi/${getYouTubeId(video.url)}/hqdefault.jpg`} loading="lazy" decoding="async"
                           className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 blur-[0.5px] group-hover:blur-0 grow scale-110 group-hover:scale-100"
                           alt={video.title}
                         />

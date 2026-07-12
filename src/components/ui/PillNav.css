@@ -37,6 +37,10 @@
   top: 0;
   z-index: 100;
   margin: 16px auto 0;
+
+  /* GPU compositing — prevents full-page repaint when backdrop-filter changes on scroll */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ---- Logo ---- */

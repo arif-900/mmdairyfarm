@@ -174,7 +174,7 @@ export function MySubscriptions() {
         const resolvedStatus = expired ? 'EXPIRED' : item.status;
 
         return (
-        <Card key={item.id} className="overflow-hidden border-none shadow-xl rounded-[40px] bg-white group hover:shadow-2xl transition-all duration-500 relative">
+        <Card key={item.id} className="overflow-hidden border-none shadow-xl rounded-[40px] bg-white group hover:shadow-2xl relative">
             {/* Expiry Alert Bar */}
             {expiring && (
               <div className="bg-amber-100 text-amber-700 px-6 py-2 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest border-b border-amber-200/50 animate-in slide-in-from-top duration-500">

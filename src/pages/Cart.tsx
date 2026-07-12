@@ -5,7 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { formatWeight, calculatePrice } from "@/utils/pricing";
 import { useStoreProducts } from "@/data/products";
 import { Badge } from "@/components/ui/badge";
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import { 
   ShoppingBag, 
   Trash2, 
@@ -19,15 +19,55 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const productAnalyses: Record<string, string> = {
-  "Pure Desi Ghee": "Rich in vitamins (A, D, E) to boost immunity and gut health.",
-  "Fresh Curd (Dahi)": "Loaded with natural probiotics to support healthy digestion.",
-  "Artisan Paneer": "A clean, calcium-rich source of protein for muscle recovery.",
-  "Buffalo Milk": "Rich, thick texture, high in calcium—perfect for home curd.",
-  "Cow Milk": "Light, easily digestible, and rich in essential minerals for daily energy.",
-  "Milk Kova": "Traditional sweet handmade with pure cow milk and zero preservatives.",
-  "default": "Freshly sourced from our organic farms, packed with essential dairy nutrients."
-};
+interface CartItemCardProps {
+  item: any;
+  onToggle: (id: string) => void;
+  onUpdateQty: (id: string, delta: number) => void;
+  onRemove: (id: string) => void;
+}
+
+const CartItemCard = memo(function CartItemCard({ item, onToggle, onUpdateQty, onRemove }: CartItemCardProps) {
+  return (
+    <div className={cn(
+      "group bg-white rounded-[32px] p-4 pr-6 border flex items-center gap-6",
+      item.selected ? "border-primary/20 shadow-lg shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
+    )}>
+      <button onClick={() => onToggle(item.id)}
+        className={cn(
+          "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0",
+          item.selected ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" : "bg-white border-slate-200"
+        )}
+      >
+        {item.selected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in duration-300" />}
+      </button>
+      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
+        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-contain p-2" alt={item.name} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-black text-slate-800 italic truncate">{item.name}</h3>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+          {formatWeight(item.selectedWeight, item.unitType)} • ₹{item.calculatedPrice} / unit
+        </p>
+        <div className="flex items-center gap-4 mt-4 lg:hidden">
+          <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-100">
+            <button onClick={() => onUpdateQty(item.id, -1)} className="p-1 hover:text-primary transition-colors"><Minus className="w-3 h-3" /></button>
+            <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
+            <button onClick={() => onUpdateQty(item.id, 1)} className="p-1 hover:text-primary transition-colors"><Plus className="w-3 h-3" /></button>
+          </div>
+        </div>
+      </div>
+      <div className="hidden lg:flex items-center bg-slate-50 rounded-2xl p-1 px-4 border border-slate-100 shadow-inner">
+        <button onClick={() => onUpdateQty(item.id, -1)} className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Minus className="w-3.5 h-3.5" /></button>
+        <span className="w-12 text-center text-sm font-black text-slate-800">{item.quantity}</span>
+        <button onClick={() => onUpdateQty(item.id, 1)} className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Plus className="w-3.5 h-3.5" /></button>
+      </div>
+      <div className="text-right shrink-0 min-w-[100px]">
+        <p className="font-black text-slate-900 text-lg italic tracking-tighter">₹{item.calculatedPrice * item.quantity}</p>
+        <button onClick={() => onRemove(item.id)} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline mt-2 flex items-center gap-1 ml-auto"><Trash2 className="w-3 h-3" /> Remove</button>
+      </div>
+    </div>
+  );
+});
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -45,8 +85,8 @@ const Cart = () => {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [selectedWeights, setSelectedWeights] = useState<Record<string, number>>({});
 
-  const selectedItems = items.filter(item => item.selected);
-  const subtotal = selectedItems.reduce((acc, item) => acc + (item.calculatedPrice * item.quantity), 0);
+  const selectedItems = useMemo(() => items.filter(item => item.selected), [items]);
+  const subtotal = useMemo(() => selectedItems.reduce((acc, item) => acc + (item.calculatedPrice * item.quantity), 0), [selectedItems]);
 
   // Dynamic context-based recommendation algorithm
   const suggestions = useMemo(() => {
@@ -140,82 +180,15 @@ const Cart = () => {
               {/* Items List */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="space-y-4">
-                  {items.map((item) => (
-                    <div 
-                      key={item.id} 
-                      className={cn(
-                        "group bg-white rounded-[32px] p-4 pr-6 border transition-all duration-300 flex items-center gap-6",
-                        item.selected ? "border-primary/20 shadow-lg shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
-                      )}
-                    >
-                      {/* Checkbox */}
-                      <button 
-                        onClick={() => toggleItemSelection(item.id)}
-                        className={cn(
-                          "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0",
-                          item.selected 
-                            ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                            : "bg-white border-slate-200"
-                        )}
-                      >
-                        {item.selected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in duration-300" />}
-                      </button>
-
-                      {/* Image */}
-                      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
-                        <img src={item.image} className="w-full h-full object-contain p-2" alt={item.name} />
-                      </div>
-
-                      {/* Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-black text-slate-800 italic truncate">{item.name}</h3>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                          {formatWeight(item.selectedWeight, item.unitType as any)} • ₹{item.calculatedPrice} / unit
-                        </p>
-                        
-                        {/* Quantity Selector for Mobile/Small tablets */}
-                        <div className="flex items-center gap-4 mt-4 lg:hidden">
-                          <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-100">
-                            <button onClick={() => updateQuantity(item.id, -1)} className="p-1 hover:text-primary transition-colors">
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.id, 1)} className="p-1 hover:text-primary transition-colors">
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Quantity Desktop */}
-                      <div className="hidden lg:flex items-center bg-slate-50 rounded-2xl p-1 px-4 border border-slate-100 shadow-inner">
-                        <button 
-                          onClick={() => updateQuantity(item.id, -1)}
-                          className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="w-12 text-center text-sm font-black text-slate-800">{item.quantity}</span>
-                        <button 
-                          onClick={() => updateQuantity(item.id, 1)}
-                          className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Total & Remove */}
-                      <div className="text-right shrink-0 min-w-[100px]">
-                        <p className="font-black text-slate-900 text-lg italic tracking-tighter">₹{item.calculatedPrice * item.quantity}</p>
-                        <button 
-                          onClick={() => removeItem(item.id)}
-                          className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline mt-2 flex items-center gap-1 ml-auto"
-                        >
-                          <Trash2 className="w-3 h-3" /> Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    {items.map((item) => (
+                      <CartItemCard
+                        key={item.id}
+                        item={item}
+                        onToggle={toggleItemSelection}
+                        onUpdateQty={updateQuantity}
+                        onRemove={removeItem}
+                      />
+                    ))}
                 </div>
 
                 {/* Suggested Add-ons with Analysis */}
@@ -235,7 +208,7 @@ const Cart = () => {
                           <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-primary/5 rounded-2xl border border-primary/10 gap-4">
                             <div className="flex items-start gap-4">
                               <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-slate-100 shrink-0">
-                                <img src={prod.image} className="w-full h-full object-cover" alt={prod.name} />
+                                <img src={prod.image} loading="lazy" decoding="async" className="w-full h-full object-cover" alt={prod.name} />
                               </div>
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-2">
@@ -405,11 +378,11 @@ const Cart = () => {
 
                 {/* Trust Badges */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
                     <ShieldCheck className="w-5 h-5 text-emerald-600" />
                     <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Secure Payment</span>
                   </div>
-                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
                     <Truck className="w-5 h-5 text-emerald-600" />
                     <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Farm Fresh</span>
                   </div>

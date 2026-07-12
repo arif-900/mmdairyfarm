@@ -625,7 +625,7 @@ const Subscriptions = () => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {subscriptions.map(sub => (
                 <Card key={sub.id} className="rounded-[40px] overflow-hidden border-none shadow-xl hover:shadow-2xl transition-all group bg-white shadow-emerald-900/5 ring-1 ring-slate-100 relative">
                   <div className="relative h-28 bg-emerald-50 flex items-center px-8 border-b border-emerald-100/50">

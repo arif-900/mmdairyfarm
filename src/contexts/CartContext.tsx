@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
@@ -279,8 +279,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const totalItems = items.reduce((sum, item) => item.selected ? sum + item.quantity : sum, 0);
-  const totalPrice = items.reduce((sum, item) => item.selected ? sum + (item.calculatedPrice * item.quantity) : sum, 0);
+  const totalItems = useMemo(() => items.reduce((sum, item) => item.selected ? sum + item.quantity : sum, 0), [items]);
+  const totalPrice = useMemo(() => items.reduce((sum, item) => item.selected ? sum + (item.calculatedPrice * item.quantity) : sum, 0), [items]);
 
   return (
     <CartContext.Provider value={{

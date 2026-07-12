@@ -4,7 +4,7 @@ import { ArrowRight, MessageCircle, Tag, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { useStoreProducts } from "@/data/products";
-import heroPoster from "@/assets/hero-farm.jpg";
+import heroPoster from "@/assets/hero-farm-1200.webp";
 import TextType from "@/components/ui/TextType";
 import { Suspense, lazy } from "react";
 // Optimized Hero & Smoothness Refactor - 2026-05-03
@@ -107,7 +107,7 @@ const Index = () => {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             poster={heroPoster}
             className="w-full h-full object-cover blur-[1px] scale-150 opacity-0 transition-opacity duration-1000"
             onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}

@@ -142,22 +142,10 @@ const PaymentSuccess = () => {
               animate={{ scale: [1, 1.4, 1.2], opacity: [0.5, 0.2, 0] }}
               transition={{ 
                 duration: 2, 
-                repeat: Infinity,
+                repeat: 3,
                 ease: "easeOut"
               }}
               className="absolute inset-0 rounded-full bg-primary/20 pointer-events-none"
-            />
-            {/* Second pulse Glow effect */}
-             <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.6, 1.3], opacity: [0.4, 0.1, 0] }}
-              transition={{ 
-                duration: 2.5, 
-                repeat: Infinity,
-                ease: "easeOut",
-                delay: 0.5
-              }}
-              className="absolute inset-0 rounded-full bg-primary/10 pointer-events-none"
             />
           </div>
 

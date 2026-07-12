@@ -77,7 +77,7 @@ export const CartDrawer = ({ children }: { children?: React.ReactNode }) => {
                     />
                   </div>
                   <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <img src={item.image} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div>

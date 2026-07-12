@@ -48,10 +48,10 @@ export function PaymentStep({
       {/* Import Roboto stylesheet locally for this component to satisfy the typography requirement */}
       <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 
-      <div className="bg-white rounded-[16px] p-8 shadow-sm border border-[#E5E7EB] space-y-6">
+      <div className="bg-white rounded-[16px] p-5 md:p-8 shadow-sm border border-[#E5E7EB] space-y-5 md:space-y-6">
         
         {/* Header - Sentence Case & Non-Italics */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
           <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
             <CreditCard className="text-emerald-600 w-5 h-5" />
           </div>
@@ -68,7 +68,7 @@ export function PaymentStep({
             type="button"
             onClick={() => setPaymentMethod('online')}
             className={cn(
-              "flex flex-col items-center gap-4 p-8 rounded-[16px] border transition-all duration-250 relative group text-center w-full",
+              "flex flex-col items-center gap-3 md:gap-4 p-5 md:p-8 rounded-[16px] border transition-all duration-250 relative group text-center w-full",
               paymentMethod === 'online' 
                 ? "border-emerald-600 bg-emerald-50/20 scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.12)]" 
                 : "border-[#E5E7EB] bg-white hover:-translate-y-1 hover:shadow-md hover:border-slate-300"
@@ -83,12 +83,12 @@ export function PaymentStep({
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-semibold text-base text-slate-800">Online payment</p>
-              <p className="text-xs text-slate-400 mt-1">Cards • UPI • Net Banking</p>
+              <p className="font-semibold text-sm md:text-base text-slate-800">Online payment</p>
+              <p className="text-[11px] md:text-xs text-slate-400 mt-1">Cards • UPI • Net Banking</p>
             </div>
 
             {/* Subtle Brand Logos */}
-            <div className="flex gap-2.5 mt-2 items-center justify-center opacity-60 group-hover:opacity-90 transition-opacity">
+            <div className="flex gap-2.5 mt-2 items-center justify-center opacity-60 group-hover:opacity-90 transition-opacity flex-wrap">
               {/* Mastercard */}
               <svg className="h-3 w-5 shrink-0" viewBox="0 0 24 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="7.5" cy="7.5" r="7.5" fill="#EB001B"/>
@@ -119,7 +119,7 @@ export function PaymentStep({
             type="button"
             onClick={() => setPaymentMethod('cod')}
             className={cn(
-              "flex flex-col items-center gap-4 p-8 rounded-[16px] border transition-all duration-250 relative group text-center w-full",
+              "flex flex-col items-center gap-3 md:gap-4 p-5 md:p-8 rounded-[16px] border transition-all duration-250 relative group text-center w-full",
               paymentMethod === 'cod' 
                 ? "border-emerald-600 bg-emerald-50/20 scale-[1.02] shadow-[0_0_20px_rgba(16,185,129,0.12)]" 
                 : "border-[#E5E7EB] bg-white hover:-translate-y-1 hover:shadow-md hover:border-slate-300"
@@ -134,11 +134,11 @@ export function PaymentStep({
               <Wallet className="w-6 h-6" />
             </div>
             <div>
-              <p className="font-semibold text-base text-slate-800">Cash on delivery</p>
-              <p className="text-xs text-slate-400 mt-1">Pay at your doorstep</p>
+              <p className="font-semibold text-sm md:text-base text-slate-800">Cash on delivery</p>
+              <p className="text-[11px] md:text-xs text-slate-400 mt-1">Pay at your doorstep</p>
             </div>
 
-            <div className="h-4 mt-2" /> {/* Layout alignment spacer */}
+            <div className="h-3 md:h-4 mt-2" /> {/* Layout alignment spacer */}
 
             {paymentMethod === 'cod' && (
               <div className="absolute top-4 right-4 w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center border-2 border-white shadow-sm animate-in zoom-in duration-200">
@@ -151,7 +151,7 @@ export function PaymentStep({
         </div>
 
         {/* Extras & Summary Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 border-t border-slate-100">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 pt-6 border-t border-slate-100">
           
           {/* iOS Toggles & Delivery Info (7 Columns) */}
           <div className="lg:col-span-7 space-y-6">
@@ -248,7 +248,7 @@ export function PaymentStep({
           </div>
 
           {/* Premium Payable Summary Card (5 Columns) */}
-          <div className="lg:col-span-5 bg-slate-900 rounded-[16px] p-8 text-white flex flex-col justify-between shadow-md space-y-6 relative overflow-hidden">
+          <div className="lg:col-span-5 bg-slate-900 rounded-[16px] p-5 md:p-8 text-white flex flex-col justify-between shadow-md space-y-5 md:space-y-6 relative overflow-hidden">
             {/* Background design accents for Stripe-like look */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
@@ -288,16 +288,16 @@ export function PaymentStep({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 mt-8 pt-4">
+        <div className="flex items-center gap-3 mt-6 md:mt-8 pt-4">
           <CircularBackButton 
             onClick={onBack}
-            className="w-14 h-14 rounded-full border-[#E5E7EB] hover:bg-slate-50 transition-colors shrink-0"
+            className="w-12 h-12 rounded-full border-[#E5E7EB] hover:bg-slate-50 transition-colors shrink-0"
           />
           
           <Button 
             onClick={handleSubmit}
             disabled={isProcessing || (paymentMethod === 'online' && !razorpayLoaded)}
-            className="flex-1 h-14 rounded-[16px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base shadow-sm hover:shadow active:scale-[0.98] transition-all duration-250 flex items-center justify-center"
+            className="flex-1 h-12 rounded-[12px] md:h-14 md:rounded-[16px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm md:text-base shadow-sm hover:shadow active:scale-[0.98] transition-all duration-250 flex items-center justify-center"
           >
             {isProcessing ? (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

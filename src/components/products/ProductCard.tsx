@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
@@ -6,7 +7,7 @@ import { Product } from "@/data/products";
 
 interface ProductCardProps extends Product {}
 
-const ProductCard = (product: ProductCardProps) => {
+const ProductCard = memo(function ProductCard(product: ProductCardProps) {
   const { id, name, description, price, basePricePerKg, image, stock, unitType, deliveryDays, originalPrice } = product;
   const navigate = useNavigate();
   
@@ -19,7 +20,7 @@ const ProductCard = (product: ProductCardProps) => {
     <div 
       onClick={() => navigate(`/product/${id}`)}
       className={cn(
-        "group bg-white rounded-[20px] p-6 pb-6 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)] hover:-translate-y-[6px] hover:scale-[1.02] border border-[#F1F5F9] cursor-pointer relative",
+        "group bg-white rounded-[20px] p-6 pb-6 transition-transform duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)] hover:-translate-y-[6px] hover:scale-[1.02] border border-[#F1F5F9] cursor-pointer relative",
         isOutOfStock && "opacity-80 grayscale-[0.3]"
       )}
     >
@@ -28,11 +29,13 @@ const ProductCard = (product: ProductCardProps) => {
         <img
           src={image}
           alt={name}
+          loading="lazy"
+          decoding="async"
           className="w-4/5 h-4/5 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
         />
 
         {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center backdrop-blur-[2px] z-10">
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center z-10">
             <span className="bg-red-500 text-white font-bold px-4 py-1.5 rounded-full shadow-sm text-xs tracking-wider uppercase">
               Sold Out
             </span>
@@ -91,6 +94,6 @@ const ProductCard = (product: ProductCardProps) => {
       </div>
     </div>
   );
-};
+});
 
 export default ProductCard;

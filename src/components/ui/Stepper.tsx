@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, Variants } from 'framer-motion';
-import React, { Children, HTMLAttributes, JSX, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { Children, HTMLAttributes, JSX, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import './Stepper.css';
 
@@ -174,9 +174,9 @@ function StepContentWrapper({ isCompleted, currentStep, direction, children, cla
   return (
     <motion.div
       className={className}
-      style={{ position: 'relative', overflow: 'hidden' }}
+      style={{ position: 'relative', overflowX: 'hidden', overflowY: 'auto' }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
-      transition={{ type: 'spring', duration: 0.4 }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
     >
       <AnimatePresence initial={false} mode="wait" custom={direction}>
         {!isCompleted && (
@@ -198,11 +198,23 @@ interface SlideTransitionProps {
 function SlideTransition({ children, direction, onHeightReady }: SlideTransitionProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useLayoutEffect(() => {
+  const measure = useCallback(() => {
     if (containerRef.current) {
       onHeightReady(containerRef.current.offsetHeight);
     }
-  }, [children, onHeightReady]);
+  }, [onHeightReady]);
+
+  useLayoutEffect(() => {
+    measure();
+  }, [measure]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [measure]);
 
   return (
     <motion.div
@@ -212,7 +224,7 @@ function SlideTransition({ children, direction, onHeightReady }: SlideTransition
       initial="enter"
       animate="center"
       exit="exit"
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      transition={{ duration: 0.25, ease: "easeInOut" }}
       style={{ position: 'absolute', left: 0, right: 0, top: 0 }}
     >
       {children}

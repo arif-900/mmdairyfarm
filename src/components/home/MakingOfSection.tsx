@@ -121,17 +121,17 @@ export function MakingOfSection() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {[1, 2, 3].map((i) => (
               <div key={i} className="aspect-video bg-forest/5 rounded-[32px] animate-pulse" />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {videos.map((video, index) => (
               <div 
                 key={video.id} 
-                className="group relative aspect-video rounded-[32px] overflow-hidden bg-forest/10 border border-forest/5 shadow-soft hover:shadow-2xl transition-all duration-500 cursor-pointer animate-slide-up"
+                className="group relative aspect-video rounded-[32px] overflow-hidden bg-forest/10 border border-forest/5 shadow-soft hover:shadow-2xl cursor-pointer animate-slide-up"
                 style={{ animationDelay: `${(index + 5) * 0.1}s`, animationFillMode: 'forwards' }}
                 onClick={() => setSelectedVideo(video)}
               >
@@ -169,7 +169,7 @@ export function MakingOfSection() {
                     <Video className="w-12 h-12 text-white/20 group-hover:scale-110 transition-transform duration-500" />
                     {(video.url.includes('youtube.com') || video.url.includes('youtu.be')) && getYouTubeId(video.url) && (
                         <img 
-                            src={`https://img.youtube.com/vi/${getYouTubeId(video.url)}/hqdefault.jpg`} 
+                            src={`https://img.youtube.com/vi/${getYouTubeId(video.url)}/hqdefault.jpg`} loading="lazy" decoding="async"
                             className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 blur-[2px] group-hover:blur-0 grow scale-110 group-hover:scale-100"
                             alt={video.title}
                         />

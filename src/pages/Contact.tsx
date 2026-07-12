@@ -10,23 +10,25 @@ import { useState } from "react";
 
 const Contact = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: ""
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    switch (name) {
+      case "name": setName(value); break;
+      case "email": setEmail(value); break;
+      case "phone": setPhone(value); break;
+      case "message": setMessage(value); break;
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
 
-    setFormData({ name: "", email: "", phone: "", message: "" });
+    setName(""); setEmail(""); setPhone(""); setMessage("");
     alert("Thank you for your message! We'll get back to you soon.");
   };
 
@@ -131,7 +133,7 @@ const Contact = () => {
                       <Input
                         type="text"
                         name="name"
-                        value={formData.name}
+                        value={name}
                         onChange={handleChange}
                         placeholder="Your name"
                         required
@@ -144,7 +146,7 @@ const Contact = () => {
                       <Input
                         type="email"
                         name="email"
-                        value={formData.email}
+                        value={email}
                         onChange={handleChange}
                         placeholder="your@email.com"
                         required
@@ -157,7 +159,7 @@ const Contact = () => {
                       <Input
                         type="tel"
                         name="phone"
-                        value={formData.phone}
+                        value={phone}
                         onChange={handleChange}
                         placeholder="+91 XXXXX XXXXX"
                         className="w-full"
@@ -168,7 +170,7 @@ const Contact = () => {
                       <label className="block text-sm font-medium mb-2">Message</label>
                       <textarea
                         name="message"
-                        value={formData.message}
+                        value={message}
                         onChange={handleChange}
                         placeholder="Tell us how we can help..."
                         required
