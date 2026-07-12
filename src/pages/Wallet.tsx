@@ -12,13 +12,13 @@ const Wallet = () => {
                 {/* Header Section */}
                 <section className="bg-slate-900 text-white section-padding relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-transparent pointer-events-none" />
-                    
+
                     <div className="container-main relative z-10">
-                        <CircularBackButton 
-                            onClick={() => navigate("/")} 
+                        <CircularBackButton
+                            onClick={() => navigate("/")}
                             className="mb-8"
                         />
-                        
+
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
                             <div>
                                 <div className="flex items-center gap-3 mb-3">
@@ -27,7 +27,7 @@ const Wallet = () => {
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Financial Hub</span>
                                 </div>
-                                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter uppercase leading-none">
+                                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-none">
                                     My <span className="text-emerald-400">Wallet</span>
                                 </h1>
                             </div>
