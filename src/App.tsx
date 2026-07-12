@@ -17,6 +17,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Order from "./pages/Order";
 import OrderHistory from "./pages/OrderHistory";
+import OrderDetail from "./pages/OrderDetail";
 import Auth from "./pages/Auth";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancelled from "./pages/PaymentCancelled";
@@ -88,6 +89,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <OrderHistory />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/orders/:id"
+                    element={
+                      <ProtectedRoute>
+                        <OrderDetail />
                       </ProtectedRoute>
                     }
                   />

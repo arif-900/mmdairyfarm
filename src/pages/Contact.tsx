@@ -58,14 +58,16 @@ const Contact = () => {
                 <CardHeader>
                   <div className="flex items-start gap-4">
                     <div className="rounded-lg bg-primary/10 p-3">
-                      <Phone className="w-6 h-6 text-primary" />
+                      <svg className="w-6 h-6 text-primary fill-current" viewBox="0 0 24 24">
+                        <path d="M12.012 2C6.48 2 2 6.48 2 12.01c0 1.77.46 3.49 1.34 5.02L2 22l5.12-1.34c1.47.8 3.12 1.22 4.88 1.22 5.53 0 10.01-4.48 10.01-10.01C22.01 6.48 17.54 2 12.012 2zm.04 17.3c-1.53 0-3.04-.41-4.36-1.19l-.31-.19-3.24.85.87-3.16-.21-.33c-.85-1.36-1.3-2.94-1.3-4.57 0-4.73 3.85-8.58 8.58-8.58 4.73 0 8.58 3.85 8.58 8.58 0 4.73-3.85 8.58-8.58 8.58zm4.72-6.43c-.26-.13-1.53-.76-1.77-.84-.23-.09-.4-.13-.57.13-.17.26-.66.84-.81 1.01-.15.17-.3.19-.56.06-.26-.13-1.11-.41-2.11-1.3-1.02-.91-1.71-2.03-1.91-2.37-.2-.34-.02-.53.11-.66.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.5-.4-.43-.57-.44-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.23.26-.88.86-.88 2.09 0 1.23.9 2.42 1.02 2.58.12.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.53-.62 1.75-1.2.22-.57.22-1.07.15-1.2-.07-.12-.26-.19-.52-.32z"/>
+                      </svg>
                     </div>
-                    <CardTitle className="text-xl">Phone</CardTitle>
+                    <CardTitle className="text-xl">WhatsApp</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-3">Call us directly for immediate assistance</p>
-                  <a href="tel:+916309835752" className="text-primary font-semibold hover:underline text-lg">
+                  <p className="text-muted-foreground mb-3">Message us on WhatsApp for instant assistance</p>
+                  <a href="https://wa.me/916309835752" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline text-lg">
                     +91 63098 35752
                   </a>
                 </CardContent>

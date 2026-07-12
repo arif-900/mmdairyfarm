@@ -28,14 +28,67 @@ const Order = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, profile, loading: authLoading } = useAuth();
-  const { items, totalPrice: cartSubtotal, clearOrderedItems } = useCart();
+  const { items, totalPrice: cartSubtotal, clearOrderedItems, addItem, removeItem, updateQuantity } = useCart();
 
   // Check if we have a direct buyNowItem from state
   const buyNowItem = location.state?.buyNowItem;
 
-  // Filter for only selected items OR use the single buyNowItem
-  const activeItems = buyNowItem ? [buyNowItem] : items.filter(item => item.selected);
-  const activeSubtotal = buyNowItem ? (buyNowItem.calculatedPrice * (buyNowItem.quantity || 1)) : cartSubtotal;
+  const [checkoutItems, setCheckoutItems] = useState<any[]>([]);
+
+  // Sync checkoutItems with the Cart items or location state buyNowItem
+  useEffect(() => {
+    if (buyNowItem) {
+      setCheckoutItems(prev => prev.length > 0 ? prev : [buyNowItem]);
+    } else {
+      setCheckoutItems(items.filter(item => item.selected));
+    }
+  }, [buyNowItem, items]);
+
+  const activeItems = checkoutItems;
+  const activeSubtotal = checkoutItems.reduce((acc, item) => acc + (item.calculatedPrice * item.quantity), 0);
+
+  const handleAddSuggested = (newItem: any) => {
+    addItem(newItem);
+    setCheckoutItems(prev => {
+      const exists = prev.find(item => item.productId === newItem.productId && item.selectedWeight === newItem.selectedWeight);
+      if (exists) {
+        return prev.map(item => 
+          (item.productId === newItem.productId && item.selectedWeight === newItem.selectedWeight)
+            ? { ...item, quantity: item.quantity + newItem.quantity }
+            : item
+        );
+      }
+      return [...prev, { ...newItem, id: `temp-${Date.now()}`, selected: true }];
+    });
+  };
+
+  const handleUpdateCheckoutQty = (productId: string, selectedWeight: number, delta: number) => {
+    if (!buyNowItem) {
+      const cartItem = items.find(item => item.productId === productId && item.selectedWeight === selectedWeight);
+      if (cartItem) {
+        updateQuantity(cartItem.id, delta);
+      }
+    }
+    setCheckoutItems(prev => 
+      prev.map(item => {
+        if (item.productId === productId && item.selectedWeight === selectedWeight) {
+          const newQty = Math.max(1, item.quantity + delta);
+          return { ...item, quantity: newQty };
+        }
+        return item;
+      })
+    );
+  };
+
+  const handleRemoveCheckoutItem = (productId: string, selectedWeight: number) => {
+    if (!buyNowItem) {
+      const cartItem = items.find(item => item.productId === productId && item.selectedWeight === selectedWeight);
+      if (cartItem) {
+        removeItem(cartItem.id);
+      }
+    }
+    setCheckoutItems(prev => prev.filter(item => !(item.productId === productId && item.selectedWeight === selectedWeight)));
+  };
 
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [isTemporaryAddress, setIsTemporaryAddress] = useState(false);
@@ -170,13 +223,9 @@ const Order = () => {
     if (activeItems.length === 0) { toast({ title: "Empty Cart", variant: "destructive" }); return; }
 
     // Coins pre-calc
-    const totalBeforeCoins = Math.max(0, activeSubtotal + (shippingFee > 0 ? shippingFee : 0) - discountAmount);
-    const availableCoins = profile?.reward_coins || 0;
-    const maxApplicableCoins = Math.min(availableCoins, totalBeforeCoins);
-    const coinsApplied = (useCoins && paymentMethod === 'online') ? maxApplicableCoins : 0;
-    // Ensure we have the latest fee before submission
-    let finalFee = shippingFee;
-    if (selectedAddress && (finalFee === 0 || finalFee === -1)) {
+    const calculatedFee = activeSubtotal > 1000 ? 0 : shippingFee;
+    let finalFee = calculatedFee;
+    if (activeSubtotal <= 1000 && selectedAddress && (finalFee === 0 || finalFee === -1)) {
       let dist = selectedAddress.distance || selectedAddress.dist || null;
       if (dist === null && selectedAddress.lat && selectedAddress.lng) {
         dist = calculateDistance(FARM_LOCATION.lat, FARM_LOCATION.lng, selectedAddress.lat, selectedAddress.lng);
@@ -185,6 +234,14 @@ const Order = () => {
         finalFee = calculateShippingFee(dist);
       }
     }
+    if (activeSubtotal > 1000) {
+      finalFee = 0;
+    }
+
+    const totalBeforeCoins = Math.max(0, activeSubtotal + (finalFee > 0 ? finalFee : 0) - discountAmount);
+    const availableCoins = profile?.reward_coins || 0;
+    const maxApplicableCoins = Math.min(availableCoins, totalBeforeCoins);
+    const coinsApplied = (useCoins && paymentMethod === 'online') ? maxApplicableCoins : 0;
 
     if (!selectedAddress || finalFee === -1 || distanceError) {
       toast({
@@ -271,14 +328,15 @@ const Order = () => {
     }
   };
 
-  const totalBeforeCoins = Math.max(0, activeSubtotal + (shippingFee > 0 ? shippingFee : 0) - discountAmount);
+  const calculatedShippingFee = activeSubtotal > 1000 ? 0 : shippingFee;
+  const totalBeforeCoins = Math.max(0, activeSubtotal + (calculatedShippingFee > 0 ? calculatedShippingFee : 0) - discountAmount);
   const availableCoins = profile?.reward_coins || 0;
   const maxApplicableCoins = Math.min(availableCoins, totalBeforeCoins);
   const coinsApplied = (useCoins && paymentMethod === 'online') ? maxApplicableCoins : 0;
   const totalAmount = Math.max(0, totalBeforeCoins - coinsApplied);
 
-  // Predict coins to earn (5% of final amount)
-  const predictedCoinsEarned = Math.floor(totalAmount * 0.03);
+  // Predict coins to earn (2% of final amount, only for orders above 100)
+  const predictedCoinsEarned = totalAmount > 100 ? Math.floor(totalAmount * 0.02) : 0;
 
   const maxDeliveryDays = getMaxDeliveryDays(activeItems);
   const expectedDate = getExpectedDeliveryDate(maxDeliveryDays);
@@ -347,6 +405,9 @@ const Order = () => {
                 removePromo={removePromo}
                 discountAmount={discountAmount}
                 onNext={nextStep}
+                onAddSuggested={handleAddSuggested}
+                onUpdateQty={handleUpdateCheckoutQty}
+                onRemoveItem={handleRemoveCheckoutItem}
               />
             </Step>
 
@@ -382,7 +443,7 @@ const Order = () => {
                 handleSubmit={handleSubmit}
                 onBack={prevStep}
                 selectedAddress={selectedAddress}
-                shippingFee={shippingFee}
+                shippingFee={calculatedShippingFee}
                 predictedCoinsEarned={predictedCoinsEarned}
                 expectedDate={expectedDate}
               />

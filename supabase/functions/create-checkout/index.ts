@@ -85,7 +85,9 @@ serve(async (req) => {
 
     // 🚚 SHIPPING CALCULATION
     let shippingFee = 0;
-    if (feeFromClient !== undefined && feeFromClient !== null) {
+    if (subtotal > 1000) {
+      shippingFee = 0;
+    } else if (feeFromClient !== undefined && feeFromClient !== null) {
         shippingFee = Number(feeFromClient);
     } else {
         const distance = calculateDistance(FARM_LOCATION.lat, FARM_LOCATION.lng, lat, lng);
@@ -143,8 +145,8 @@ serve(async (req) => {
       totalAmount = Math.max(0, totalAmount - coinsToUse);
     }
     
-    // Earn 5% of the final paid amount
-    const coinsEarned = Math.floor(totalAmount * 0.05);
+    // Earn 2% of the final paid amount, only for orders above 100
+    const coinsEarned = totalAmount > 100 ? Math.floor(totalAmount * 0.02) : 0;
 
     // 📦 DELIVERY DAYS (NO BUG)
     const deliveryDays = items.reduce(

@@ -2,7 +2,10 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { formatWeight } from "@/utils/pricing";
+import { formatWeight, calculatePrice } from "@/utils/pricing";
+import { useStoreProducts } from "@/data/products";
+import { Badge } from "@/components/ui/badge";
+import { useState, useMemo } from "react";
 import { 
   ShoppingBag, 
   Trash2, 
@@ -16,6 +19,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const productAnalyses: Record<string, string> = {
+  "Pure Desi Ghee": "Rich in vitamins (A, D, E) to boost immunity and gut health.",
+  "Fresh Curd (Dahi)": "Loaded with natural probiotics to support healthy digestion.",
+  "Artisan Paneer": "A clean, calcium-rich source of protein for muscle recovery.",
+  "Buffalo Milk": "Rich, thick texture, high in calcium—perfect for home curd.",
+  "Cow Milk": "Light, easily digestible, and rich in essential minerals for daily energy.",
+  "Milk Kova": "Traditional sweet handmade with pure cow milk and zero preservatives.",
+  "default": "Freshly sourced from our organic farms, packed with essential dairy nutrients."
+};
+
 const Cart = () => {
   const navigate = useNavigate();
   const { 
@@ -24,15 +37,63 @@ const Cart = () => {
     updateQuantity, 
     totalPrice, 
     totalItems,
-    toggleItemSelection
+    toggleItemSelection,
+    addItem
   } = useCart();
+
+  const { products, loading: productsLoading } = useStoreProducts();
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [selectedWeights, setSelectedWeights] = useState<Record<string, number>>({});
 
   const selectedItems = items.filter(item => item.selected);
   const subtotal = selectedItems.reduce((acc, item) => acc + (item.calculatedPrice * item.quantity), 0);
 
+  // Dynamic context-based recommendation algorithm
+  const suggestions = useMemo(() => {
+    // 1. Filter out items already in the cart
+    const itemProductIds = items.map(item => item.productId);
+    const available = products.filter(prod => !itemProductIds.includes(prod.id));
+
+    // 2. Identify active categories in the cart
+    const hasMilk = items.some(item => item.name.toLowerCase().includes("milk"));
+    const hasCurd = items.some(item => item.name.toLowerCase().includes("curd"));
+    const hasGhee = items.some(item => item.name.toLowerCase().includes("ghee"));
+
+    // 3. Dynamic scoring based on complementary pairs & upsell thresholds
+    return available.sort((a, b) => {
+      const getScore = (prod: any) => {
+        let score = 0;
+        const name = prod.name.toLowerCase();
+        
+        // Milk pairs best with Ghee & Curd
+        if (hasMilk) {
+          if (name.includes("ghee")) score += 4;
+          if (name.includes("curd")) score += 3;
+        }
+        // Curd pairs best with Paneer
+        if (hasCurd && name.includes("paneer")) score += 4;
+        // Ghee pairs best with Paneer
+        if (hasGhee && name.includes("paneer")) score += 3;
+        // Suggest high value items if close to free shipping limit
+        if (subtotal < 1000 && subtotal >= 600 && prod.price >= 200) score += 2;
+        
+        return score;
+      };
+
+      return getScore(b) - getScore(a);
+    }).slice(0, 3);
+  }, [products, items, subtotal]);
+
+  const adjustQty = (id: string, delta: number) => {
+    setQuantities(prev => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) + delta)
+    }));
+  };
+
   return (
     <Layout>
-      <div className="bg-slate-50 min-h-screen pb-20">
+      <div className="bg-slate-50 min-h-screen pb-20 font-body">
         {/* Navigation Header */}
         <section className="bg-white border-b border-slate-100 pt-16 pb-8 px-6">
           <div className="container-main max-w-5xl">
@@ -77,85 +138,183 @@ const Cart = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
               {/* Items List */}
-              <div className="lg:col-span-2 space-y-4">
-                {items.map((item) => (
-                  <div 
-                    key={item.id} 
-                    className={cn(
-                      "group bg-white rounded-[32px] p-4 pr-6 border transition-all duration-300 flex items-center gap-6",
-                      item.selected ? "border-primary/20 shadow-lg shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
-                    )}
-                  >
-                    {/* Checkbox */}
-                    <button 
-                      onClick={() => toggleItemSelection(item.id)}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="space-y-4">
+                  {items.map((item) => (
+                    <div 
+                      key={item.id} 
                       className={cn(
-                        "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0",
-                        item.selected 
-                          ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                          : "bg-white border-slate-200"
+                        "group bg-white rounded-[32px] p-4 pr-6 border transition-all duration-300 flex items-center gap-6",
+                        item.selected ? "border-primary/20 shadow-lg shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
                       )}
                     >
-                      {item.selected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in duration-300" />}
-                    </button>
+                      {/* Checkbox */}
+                      <button 
+                        onClick={() => toggleItemSelection(item.id)}
+                        className={cn(
+                          "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0",
+                          item.selected 
+                            ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
+                            : "bg-white border-slate-200"
+                        )}
+                      >
+                        {item.selected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in duration-300" />}
+                      </button>
 
-                    {/* Image */}
-                    <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
-                      <img src={item.image} className="w-full h-full object-contain p-2" alt={item.name} />
-                    </div>
+                      {/* Image */}
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
+                        <img src={item.image} className="w-full h-full object-contain p-2" alt={item.name} />
+                      </div>
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-black text-slate-800 italic truncate">{item.name}</h3>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                        {formatWeight(item.selectedWeight, item.unitType as any)} • ₹{item.calculatedPrice} / unit
-                      </p>
-                      
-                      {/* Quantity Selector for Mobile/Small tablets */}
-                      <div className="flex items-center gap-4 mt-4 lg:hidden">
-                        <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-100">
-                          <button onClick={() => updateQuantity(item.id, -1)} className="p-1 hover:text-primary transition-colors">
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} className="p-1 hover:text-primary transition-colors">
-                            <Plus className="w-3 h-3" />
-                          </button>
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-black text-slate-800 italic truncate">{item.name}</h3>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                          {formatWeight(item.selectedWeight, item.unitType as any)} • ₹{item.calculatedPrice} / unit
+                        </p>
+                        
+                        {/* Quantity Selector for Mobile/Small tablets */}
+                        <div className="flex items-center gap-4 mt-4 lg:hidden">
+                          <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-100">
+                            <button onClick={() => updateQuantity(item.id, -1)} className="p-1 hover:text-primary transition-colors">
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
+                            <button onClick={() => updateQuantity(item.id, 1)} className="p-1 hover:text-primary transition-colors">
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Quantity Desktop */}
-                    <div className="hidden lg:flex items-center bg-slate-50 rounded-2xl p-1 px-4 border border-slate-100 shadow-inner">
-                      <button 
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
-                      >
-                        <Minus className="w-3.5 h-3.5" />
-                      </button>
-                      <span className="w-12 text-center text-sm font-black text-slate-800">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                      {/* Quantity Desktop */}
+                      <div className="hidden lg:flex items-center bg-slate-50 rounded-2xl p-1 px-4 border border-slate-100 shadow-inner">
+                        <button 
+                          onClick={() => updateQuantity(item.id, -1)}
+                          className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
+                        >
+                          <Minus className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="w-12 text-center text-sm font-black text-slate-800">{item.quantity}</span>
+                        <button 
+                          onClick={() => updateQuantity(item.id, 1)}
+                          className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
 
-                    {/* Total & Remove */}
-                    <div className="text-right shrink-0 min-w-[100px]">
-                      <p className="font-black text-slate-900 text-lg italic tracking-tighter">₹{item.calculatedPrice * item.quantity}</p>
-                      <button 
-                        onClick={() => removeItem(item.id)}
-                        className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline mt-2 flex items-center gap-1 ml-auto"
-                      >
-                        <Trash2 className="w-3 h-3" /> Remove
-                      </button>
+                      {/* Total & Remove */}
+                      <div className="text-right shrink-0 min-w-[100px]">
+                        <p className="font-black text-slate-900 text-lg italic tracking-tighter">₹{item.calculatedPrice * item.quantity}</p>
+                        <button 
+                          onClick={() => removeItem(item.id)}
+                          className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline mt-2 flex items-center gap-1 ml-auto"
+                        >
+                          <Trash2 className="w-3 h-3" /> Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Suggested Add-ons with Analysis */}
+                {suggestions.length > 0 && (
+                  <div className="bg-white rounded-[32px] p-6 border border-slate-100 space-y-4 shadow-sm font-body">
+                    <div>
+                      <h3 className="font-display text-sm font-black text-slate-800 uppercase tracking-wider">Suggested Add-ons</h3>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Recommended pairings & nutrition analysis</p>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      {suggestions.map((prod) => {
+                        const qty = quantities[prod.id] || 1;
+                        const activeWeight = selectedWeights[prod.id] || prod.availableWeights?.[0] || 1000;
+                        const currentPrice = calculatePrice(prod.basePricePerKg || prod.price, activeWeight);
+
+                        return (
+                          <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-primary/5 rounded-2xl border border-primary/10 gap-4">
+                            <div className="flex items-start gap-4">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-slate-100 shrink-0">
+                                <img src={prod.image} className="w-full h-full object-cover" alt={prod.name} />
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-black text-slate-800 text-xs">{prod.name}</p>
+                                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none text-[8px] font-bold uppercase py-0 px-1.5 h-4">
+                                    Analysis
+                                  </Badge>
+                                </div>
+                                <p className="text-[11px] text-muted-foreground leading-snug max-w-md">
+                                  {productAnalyses[prod.name] || productAnalyses["default"]}
+                                </p>
+                                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                                  ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
+                              {/* Weight Selector */}
+                              {prod.availableWeights && prod.availableWeights.length > 1 && (
+                                <select
+                                  value={activeWeight}
+                                  onChange={(e) => setSelectedWeights(prev => ({ ...prev, [prod.id]: Number(e.target.value) }))}
+                                  className="bg-white border border-slate-200 rounded-xl px-2 h-8 text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-primary/30 transition-colors"
+                                >
+                                  {prod.availableWeights.map(w => (
+                                    <option key={w} value={w}>
+                                      {formatWeight(w, prod.unitType || "g")}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+
+                              {/* Quantity Selector */}
+                              <div className="flex items-center bg-white rounded-lg p-0.5 border border-slate-200">
+                                <button 
+                                  onClick={() => adjustQty(prod.id, -1)}
+                                  className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                >
+                                  <Minus className="w-3 h-3" />
+                                </button>
+                                <span className="w-6 text-center text-xs font-bold text-slate-800">{qty}</span>
+                                <button 
+                                  onClick={() => adjustQty(prod.id, 1)}
+                                  className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  addItem({
+                                    productId: prod.id,
+                                    name: prod.name,
+                                    selectedWeight: activeWeight,
+                                    calculatedPrice: currentPrice,
+                                    quantity: qty,
+                                    image: prod.image,
+                                    unitType: prod.unitType || "g",
+                                    deliveryDays: prod.deliveryDays || 0
+                                  });
+                                  // Reset quantity back to 1
+                                  setQuantities(prev => ({ ...prev, [prod.id]: 1 }));
+                                }}
+                                className="h-8 px-3 bg-primary hover:bg-primary/95 text-white text-[9px] font-bold uppercase tracking-wider rounded-lg shrink-0 shadow-sm"
+                              >
+                                + Add to Cart
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                ))}
+                )}
 
-                <div className="pt-6 flex justify-between items-center">
+                <div className="pt-2 flex justify-between items-center">
                   <Button 
                     variant="ghost" 
                     onClick={() => navigate("/products")}
@@ -171,11 +330,38 @@ const Cart = () => {
 
               {/* Order Summary */}
               <div className="lg:sticky lg:top-24 space-y-6">
-                <div className="bg-white rounded-[40px] p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-8">
+                <div className="bg-white rounded-[40px] p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-6">
                   <div>
                     <h2 className="font-display text-2xl font-black text-slate-800 italic uppercase tracking-tight">Summary</h2>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Review your order before checkout</p>
                   </div>
+
+                  {/* Free Delivery Promo widget */}
+                  {selectedItems.length > 0 && (
+                    <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl space-y-2">
+                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-primary">
+                        <span>Free Delivery Progress</span>
+                        <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
+                      </div>
+                      <div className="w-full bg-slate-100/60 rounded-full h-1.5 overflow-hidden shadow-inner">
+                        <div 
+                          className="bg-primary h-full transition-all duration-500 rounded-full" 
+                          style={{ width: `${Math.min(100, (subtotal / 1000) * 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
+                        {subtotal >= 1000 ? (
+                          <span className="font-semibold text-emerald-600">
+                            🎉 Your order qualifies for FREE delivery!
+                          </span>
+                        ) : (
+                          <span>
+                            Add <strong>₹{(1000 - subtotal).toFixed(0)}</strong> more for <strong>FREE Delivery</strong>!
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  )}
 
                   <div className="space-y-4 pt-4 border-t border-slate-100">
                     <div className="flex justify-between items-center text-slate-500">
@@ -184,7 +370,9 @@ const Cart = () => {
                     </div>
                     <div className="flex justify-between items-center text-slate-500">
                       <span className="text-[10px] font-black uppercase tracking-widest">Estimated Shipping</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Calculated at Next Step</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        {subtotal >= 1000 ? "FREE" : "Calculated next step"}
+                      </span>
                     </div>
                     <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
                       <div>

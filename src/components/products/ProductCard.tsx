@@ -19,70 +19,73 @@ const ProductCard = (product: ProductCardProps) => {
     <div 
       onClick={() => navigate(`/product/${id}`)}
       className={cn(
-        "group bg-white rounded-[10px] p-4 pb-6 transition-all duration-500 shadow-xl hover:shadow-2xl hover:-translate-y-2 border border-slate-100/50 cursor-pointer",
-        isOutOfStock && "opacity-80 grayscale-[0.5]"
+        "group bg-white rounded-[20px] p-6 pb-6 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)] hover:-translate-y-[6px] hover:scale-[1.02] border border-[#F1F5F9] cursor-pointer relative",
+        isOutOfStock && "opacity-80 grayscale-[0.3]"
       )}
     >
-      {/* Product Image Section */}
-      <div className="relative aspect-[4/3] rounded-[10px] overflow-hidden mb-6 shadow-inner bg-slate-50">
+      {/* Product Image Section (Approx 55% of visual layout space) */}
+      <div className="relative aspect-[4/3] rounded-[16px] overflow-hidden mb-6 bg-[#FAFAFA] flex items-center justify-center border border-slate-50">
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-contain p-2 transition-transform duration-700 group-hover:scale-110"
+          className="w-4/5 h-4/5 object-contain p-2 transition-transform duration-500 group-hover:scale-110"
         />
 
         {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-10">
-            <span className="bg-red-600 text-white font-black px-6 py-2 rounded-[10px] shadow-2xl transform -rotate-6 tracking-widest uppercase text-sm">
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center backdrop-blur-[2px] z-10">
+            <span className="bg-red-500 text-white font-bold px-4 py-1.5 rounded-full shadow-sm text-xs tracking-wider uppercase">
               Sold Out
             </span>
           </div>
         )}
 
         {isLowStock && !isOutOfStock && (
-          <div className="absolute top-4 right-4 z-10 animate-pulse">
-            <span className="bg-amber-500 text-white font-black px-4 py-1.5 rounded-full text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/30 border-2 border-white">
+          <div className="absolute top-4 right-4 z-10">
+            <span className="bg-amber-500 text-white font-bold px-3 py-1 rounded-full text-[9px] uppercase tracking-wider shadow-sm border border-white/20">
               Only {stock} Left!
             </span>
           </div>
         )}
 
         {isOnSale && !isOutOfStock && (
-          <div className="absolute top-4 -left-2 z-20">
-            <span className="bg-red-600 text-white font-black px-4 py-1.5 rounded-r-xl shadow-lg shadow-red-600/30 block tracking-widest uppercase text-[10px] border-y-2 border-r-2 border-white/20">
-              SAVE {discountPercent}%
+          <div className="absolute top-4 left-4 z-20">
+            <span className="bg-red-500 text-white font-bold px-2.5 py-1 rounded-full shadow-sm text-[9px] uppercase tracking-wider border border-white/10">
+              Save {discountPercent}%
             </span>
           </div>
         )}
       </div>
 
       {/* Content Section */}
-      <div className="px-2 space-y-4">
-        <div className="space-y-1 text-center">
-          <h3 className="font-display text-2xl font-black text-slate-900 leading-tight tracking-tight group-hover:text-primary transition-colors">
+      <div className="space-y-4">
+        <div className="space-y-1.5 text-center">
+          <h3 className="font-sans text-lg font-bold text-slate-800 leading-tight group-hover:text-primary transition-colors line-clamp-1">
             {name}
           </h3>
           
           {/* Price Display */}
-          <div className="flex items-end justify-center gap-2 mt-1 mb-2">
-            <span className="text-xl font-black text-emerald-600">
+          <div className="flex items-baseline justify-center gap-1.5">
+            <span className="text-xl font-bold text-slate-900">
               ₹{basePricePerKg || price}
             </span>
             {originalPrice && originalPrice > (basePricePerKg || Number(price)) && (
-              <span className="text-sm font-bold text-slate-400 line-through mb-0.5">
+              <span className="text-xs text-slate-400 line-through">
                 ₹{originalPrice}
               </span>
             )}
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1 ml-1">
-               per 1 {(unitType as any) === 'ml' ? 'L' : 'kg'}
+            <span className="text-[10px] text-slate-400 font-normal uppercase tracking-wider ml-1">
+               / {(unitType as any) === 'ml' ? 'L' : 'kg'}
             </span>
           </div>
         </div>
 
-        {/* Footer Indicators */}
-        <div className="flex items-center justify-center pt-4 border-t border-slate-200/50">
-          <Button variant="ghost" className="h-8 rounded-full text-primary font-black uppercase text-[10px] tracking-widest hover:bg-primary/5 px-4 group/btn">
-             View Detail <Plus className="w-3 h-3 ml-1 group-hover/btn:rotate-90 transition-transform" />
+        {/* Premium Rounded Button CTA */}
+        <div className="pt-2">
+          <Button 
+            variant="default"
+            className="w-full h-10 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold uppercase tracking-wider shadow-sm transition-all duration-200 active:scale-95"
+          >
+             View Details
           </Button>
         </div>
       </div>
