@@ -24,12 +24,32 @@ export const WalletTab = () => {
 
     useEffect(() => {
         if (user) {
-            fetchLedger();
+            fetchLedger(true);
+
+            const channel = supabase
+                .channel(`user-wallet-ledger-${user.id}`)
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "*",
+                        schema: "public",
+                        table: "wallet_ledger",
+                        filter: `user_id=eq.${user.id}`,
+                    },
+                    () => {
+                        fetchLedger(false);
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
         }
     }, [user]);
 
-    const fetchLedger = async () => {
-        setLoading(true);
+    const fetchLedger = async (showLoader = true) => {
+        if (showLoader) setLoading(true);
         try {
             const { data, error } = await supabase
                 .from("wallet_ledger")
@@ -42,7 +62,7 @@ export const WalletTab = () => {
         } catch (err) {
             console.error("Ledger fetch error:", err);
         } finally {
-            setLoading(false);
+            if (showLoader) setLoading(false);
         }
     };
 

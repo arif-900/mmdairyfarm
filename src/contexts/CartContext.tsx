@@ -137,6 +137,100 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     syncWithDB();
   }, [user]);
 
+  // Synchronize cart across tabs when localstorage changes in another tab
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'mmdairy_cart') {
+        if (e.newValue) {
+          try {
+            setItems(JSON.parse(e.newValue));
+          } catch (err) {
+            console.error("Failed to parse cart storage change", err);
+          }
+        } else {
+          setItems([]);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Real-time device-to-device cart sync
+  useEffect(() => {
+    if (!user) return;
+
+    let channel: any = null;
+
+    const setupRealtimeCart = async () => {
+      try {
+        const cartId = await getOrCreateCart(user.id);
+        
+        channel = supabase
+          .channel(`user-cart-items-${cartId}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "*",
+              schema: "public",
+              table: "cart_items",
+              filter: `cart_id=eq.${cartId}`,
+            },
+            async () => {
+              const { data: dbItems } = await supabase
+                .from('cart_items')
+                .select(`
+                    id,
+                    product_id,
+                    quantity,
+                    selected_weight,
+                    unit_type,
+                    selected,
+                    products (
+                        name,
+                        price,
+                        image_url,
+                        stock,
+                        available_weights
+                    )
+                `)
+                .eq('cart_id', cartId);
+
+              if (dbItems) {
+                const mappedItems: CartItem[] = dbItems.map((item: any) => ({
+                  id: item.id,
+                  productId: item.product_id,
+                  name: item.products.name,
+                  selectedWeight: item.selected_weight,
+                  calculatedPrice: item.products.price,
+                  quantity: item.quantity,
+                  stock: item.products.stock,
+                  image: item.products.image_url,
+                  unitType: item.unit_type,
+                  selected: item.selected,
+                }));
+                setItems(mappedItems);
+              }
+            }
+          )
+          .subscribe();
+      } catch (err) {
+        console.error("Error setting up realtime cart:", err);
+      }
+    };
+
+    setupRealtimeCart();
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [user]);
+
   // Save cart to localStorage on change
   useEffect(() => {
     localStorage.setItem('mmdairy_cart', JSON.stringify(items));

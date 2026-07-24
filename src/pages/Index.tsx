@@ -102,20 +102,24 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[85vh] flex items-center">
         <div className="absolute inset-0 z-0 overflow-hidden bg-forest-dark">
+          <img
+            src={heroPoster}
+            alt="Farm Hero Background"
+            className="absolute inset-0 w-full h-full object-cover blur-[1px] scale-110"
+          />
           <video
             autoPlay
             loop
             muted
             playsInline
-            preload="metadata"
-            poster={heroPoster}
-            className="w-full h-full object-cover blur-[1px] scale-110 opacity-0 transition-opacity duration-1000"
-            onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover blur-[1px] scale-110 opacity-0 transition-opacity duration-1000 z-10"
+            onCanPlayThrough={(e) => (e.currentTarget.style.opacity = "1")}
           >
             <source src="/farm.mp4" type="video/mp4" />
           </video>
           {/* Transparent Backdrop Blur Overlay */}
-          <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px] z-10" />
+          <div className="absolute inset-0 bg-white/5 backdrop-blur-[1px] z-20" />
         </div>
 
         <div className="relative z-10 container-main section-padding">

@@ -167,7 +167,7 @@ const AdminDashboard = () => {
 
       if (error) throw error;
 
-      const fetchedOrders = (data || []).filter(o => 
+      const fetchedOrders = (data || []).filter(o =>
         !(o.status === 'pending' && o.payment_method === 'online')
       );
 
@@ -235,11 +235,11 @@ const AdminDashboard = () => {
       order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.phone.includes(searchTerm) ||
       order.shipping_address.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = 
-      statusFilter === "all" || 
-      (statusFilter === "refunded" ? (order.status === "cancelled" && order.refund_id) : 
-       statusFilter === "cancelled" ? (order.status === "cancelled" && !order.refund_id) :
-       order.status === statusFilter);
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "refunded" ? (order.status === "cancelled" && order.refund_id) :
+        statusFilter === "cancelled" ? (order.status === "cancelled" && !order.refund_id) :
+          order.status === statusFilter);
     return matchesSearch && matchesStatus;
   });
 

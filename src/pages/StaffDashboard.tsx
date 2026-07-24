@@ -96,7 +96,7 @@ const StaffDashboard = () => {
                 .order("created_at", { ascending: false });
 
             if (error) throw error;
-            const fetchedOrders = (data || []).filter(o => 
+            const fetchedOrders = (data || []).filter(o =>
                 !(o.status === 'pending' && o.payment_method === 'online')
             );
 
@@ -212,11 +212,11 @@ const StaffDashboard = () => {
             order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.phone.includes(searchTerm) ||
             order.shipping_address.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = 
-            statusFilter === "all" || 
-            (statusFilter === "refunded" ? (order.status === "cancelled" && (order as any).refund_id) : 
-             statusFilter === "cancelled" ? (order.status === "cancelled" && !(order as any).refund_id) :
-             order.status === statusFilter);
+        const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "refunded" ? (order.status === "cancelled" && (order as any).refund_id) :
+                statusFilter === "cancelled" ? (order.status === "cancelled" && !(order as any).refund_id) :
+                    order.status === statusFilter);
         const matchesAssignment = assignmentFilter === "all" || order.assigned_to === user?.id;
         return matchesSearch && matchesStatus && matchesAssignment;
     });
@@ -245,9 +245,9 @@ const StaffDashboard = () => {
                             <span>Dispatch</span>
                         </Button>
                         <div className="h-8 w-px bg-forest/10 mx-1 hidden sm:block" />
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={handleSignOut}
                             className="h-11 w-11 rounded-[10px] hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100"
                         >
@@ -449,61 +449,61 @@ const StaffDashboard = () => {
 
                         <div className="border rounded-[10px] overflow-x-auto bg-card scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
                             <div className="min-w-[800px]">
-                            {loading ? (
-                                <div className="flex items-center justify-center py-12">
-                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                                </div>
-                            ) : filteredOrders.length === 0 ? (
-                                <div className="text-center py-12 text-muted-foreground">
-                                    <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                                    <p>No orders found</p>
-                                </div>
-                            ) : (
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Order ID</TableHead>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Customer</TableHead>
-                                             <TableHead>Products</TableHead>
-                                             <TableHead>Amount</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {filteredOrders.map((order) => (
-                                            <TableRow key={order.id} className="cursor-pointer hover:bg-muted/50">
-                                                <TableCell className="font-mono font-medium">#{order.id.slice(0, 8).toUpperCase()}</TableCell>
-                                                <TableCell className="text-muted-foreground">{format(new Date(order.created_at), "dd MMM, p")}</TableCell>
-                                                <TableCell>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{(order as any).user_name || (order as any).profiles?.full_name || "Unknown Customer"}</p>
-                                                        <p className="font-medium text-sm text-gray-600">{order.phone}</p>
-                                                        <p className="text-xs text-muted-foreground truncate max-w-[200px]">{order.shipping_address}</p>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="flex flex-wrap gap-1 max-w-[200px]">
-                                                        {(order as any).order_items?.map((item: any) => (
-                                                            <span key={item.id} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-forest/5 text-forest text-[10px] font-black rounded-[10px] border border-forest/10 uppercase tracking-tighter">
-                                                                {item.product_name} <span className="opacity-60 text-[9px] font-black">×{item.quantity}</span>
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="font-semibold">₹{Number(order.total_amount).toFixed(0)}</TableCell>
-                                                <TableCell><OrderStatusBadge status={order.status} refundId={(order as any).refund_id} /></TableCell>
-                                                <TableCell className="text-right">
-                                                    <Button variant="ghost" size="sm" onClick={() => { setSelectedOrder(order); setDialogOpen(true); }}>
-                                                        Manage Order
-                                                    </Button>
-                                                </TableCell>
+                                {loading ? (
+                                    <div className="flex items-center justify-center py-12">
+                                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                    </div>
+                                ) : filteredOrders.length === 0 ? (
+                                    <div className="text-center py-12 text-muted-foreground">
+                                        <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                        <p>No orders found</p>
+                                    </div>
+                                ) : (
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Order ID</TableHead>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Customer</TableHead>
+                                                <TableHead>Products</TableHead>
+                                                <TableHead>Amount</TableHead>
+                                                <TableHead>Status</TableHead>
+                                                <TableHead className="text-right">Actions</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            )}
+                                        </TableHeader>
+                                        <TableBody>
+                                            {filteredOrders.map((order) => (
+                                                <TableRow key={order.id} className="cursor-pointer hover:bg-muted/50">
+                                                    <TableCell className="font-mono font-medium">#{order.id.slice(0, 8).toUpperCase()}</TableCell>
+                                                    <TableCell className="text-muted-foreground">{format(new Date(order.created_at), "dd MMM, p")}</TableCell>
+                                                    <TableCell>
+                                                        <div>
+                                                            <p className="font-bold text-gray-900">{(order as any).user_name || (order as any).profiles?.full_name || "Unknown Customer"}</p>
+                                                            <p className="font-medium text-sm text-gray-600">{order.phone}</p>
+                                                            <p className="text-xs text-muted-foreground truncate max-w-[200px]">{order.shipping_address}</p>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                                            {(order as any).order_items?.map((item: any) => (
+                                                                <span key={item.id} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-forest/5 text-forest text-[10px] font-black rounded-[10px] border border-forest/10 uppercase tracking-tighter">
+                                                                    {item.product_name} <span className="opacity-60 text-[9px] font-black">×{item.quantity}</span>
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="font-semibold">₹{Number(order.total_amount).toFixed(0)}</TableCell>
+                                                    <TableCell><OrderStatusBadge status={order.status} refundId={(order as any).refund_id} /></TableCell>
+                                                    <TableCell className="text-right">
+                                                        <Button variant="ghost" size="sm" onClick={() => { setSelectedOrder(order); setDialogOpen(true); }}>
+                                                            Manage Order
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                )}
                             </div>
                         </div>
                     </TabsContent>

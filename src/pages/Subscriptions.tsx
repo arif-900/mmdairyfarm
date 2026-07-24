@@ -69,7 +69,38 @@ const Subscriptions = () => {
 
   useEffect(() => {
     if (user) {
-      fetchData();
+      fetchData(true);
+
+      const channel = supabase
+        .channel(`user-subscriptions-${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "subscription_items",
+          },
+          () => {
+            fetchData(false);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "addresses",
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            fetchData(false);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     } else {
       setLoading(false);
     }
@@ -82,8 +113,8 @@ const Subscriptions = () => {
     }
   }, [isAddingConfig, productId, products]);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (showLoader = true) => {
+    if (showLoader) setLoading(true);
     try {
       // Fetch existing subscriptions (Active and Paused)
       const { data: subs } = await supabase
@@ -107,7 +138,7 @@ const Subscriptions = () => {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (showLoader) setLoading(false);
     }
   };
 
