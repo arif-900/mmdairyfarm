@@ -632,30 +632,30 @@ const DeliveryDashboard = () => {
       <header
         className={cn(
           "sticky top-0 z-50 bg-cream-dark/80 backdrop-blur-3xl border-b border-earth-light/20 transition-all duration-500",
-          isScrolled ? "py-4 px-6 shadow-md" : "py-8 px-6 shadow-none"
+          isScrolled ? "py-3 px-3 sm:px-6 shadow-md" : "py-5 px-3 sm:px-6 shadow-none"
         )}
       >
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <div
               className={cn(
-                "bg-gradient-to-br from-forest to-forest-dark rounded-[10px] flex items-center justify-center shadow-lg shadow-forest/20 ring-4 ring-forest/5 transition-all duration-500",
-                isScrolled ? "w-10 h-10" : "w-14 h-14"
+                "bg-gradient-to-br from-forest to-forest-dark rounded-[10px] flex items-center justify-center shadow-lg shadow-forest/20 ring-4 ring-forest/5 transition-all duration-500 shrink-0",
+                isScrolled ? "w-9 h-9" : "w-12 h-12"
               )}
             >
-              <Bike className={cn("text-white transition-all", isScrolled ? "h-5 w-5" : "h-7 w-7")} />
+              <Bike className={cn("text-white transition-all", isScrolled ? "h-4.5 w-4.5" : "h-6 w-6")} />
             </div>
-            <div>
-              <h1 className={cn("font-display font-black text-earth tracking-tight leading-none mb-1 transition-all", isScrolled ? "text-lg" : "text-2xl")}>
+            <div className="min-w-0">
+              <h1 className={cn("font-display font-black text-earth tracking-tight leading-none mb-1 transition-all truncate max-w-[120px] xs:max-w-[160px] sm:max-w-none", isScrolled ? "text-base" : "text-lg sm:text-2xl")}>
                 {isScrolled ? "Today's Route" : (profile?.full_name || 'Partner')}
               </h1>
               {!isScrolled && (
-                <div className="flex items-center gap-2">
-                  <span className="flex items-center gap-1 px-2 py-0.5 bg-forest-light/15 text-forest rounded-full text-[10px] font-bold uppercase tracking-wider">
-                    Active Now
+                <div className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-forest-light/15 text-forest rounded-full text-[9px] font-bold uppercase tracking-wider shrink-0">
+                    Active
                   </span>
                   {profile?.phone && (
-                    <span className="text-xs font-medium text-earth-light">
+                    <span className="text-[10px] font-medium text-earth-light truncate">
                       {profile.phone}
                     </span>
                   )}

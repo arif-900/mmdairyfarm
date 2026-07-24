@@ -35,7 +35,7 @@ export function DeliveryStatsCard({
   return (
     <div 
       className={cn(
-        "relative group overflow-hidden rounded-[10px] p-4 md:p-6 transition-all duration-500 shadow-lg md:shadow-xl active:scale-95 hover:shadow-2xl",
+        "relative group overflow-hidden rounded-[10px] p-3 md:p-6 transition-all duration-500 shadow-lg md:shadow-xl active:scale-95 hover:shadow-2xl",
         variants[variant],
         className
       )}
@@ -54,10 +54,10 @@ export function DeliveryStatsCard({
           <Icon className="h-4 w-4 md:h-5 md:w-5" />
         </div>
         <div>
-          <p className="text-[9px] md:text-[10px] font-black opacity-60 uppercase tracking-[0.15em] md:tracking-[0.2em] mb-0.5 md:mb-1">{title}</p>
-          <div className="flex items-baseline gap-1 md:gap-2">
-            <p className="text-2xl md:text-4xl font-black tracking-tight md:tracking-tighter tabular-nums">{value}</p>
-            <span className="text-[10px] md:text-xs font-bold opacity-80">{label}</span>
+          <p className="text-[9px] md:text-[10px] font-black opacity-60 uppercase tracking-[0.15em] md:tracking-[0.2em] mb-0.5 md:mb-1 truncate">{title}</p>
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-2 min-w-0">
+            <p className="text-xl sm:text-2xl md:text-4xl font-black tracking-tight md:tracking-tighter tabular-nums truncate leading-none">{value}</p>
+            <span className="text-[9px] md:text-xs font-bold opacity-80 truncate">{label}</span>
           </div>
         </div>
       </div>
