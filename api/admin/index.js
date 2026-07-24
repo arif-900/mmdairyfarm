@@ -13,8 +13,11 @@ app.use(express.json());
 // Public routes
 app.post('/api/admin/login', adminController.login);
 
-// Protected routes middleware
-app.use(verifyAdmin);
+// Protected routes middleware (scoped strictly to /api/admin routes)
+app.use('/api/admin', (req, res, next) => {
+  if (req.path === '/login') return next();
+  verifyAdmin(req, res, next);
+});
 
 // Dashboard & Analytics
 app.get('/api/admin/dashboard', adminController.getDashboardStats);

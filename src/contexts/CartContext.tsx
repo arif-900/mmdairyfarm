@@ -170,7 +170,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const cartId = await getOrCreateCart(user.id);
         
         channel = supabase
-          .channel(`user-cart-items-${cartId}`)
+          .channel(`user-cart-${cartId}-${Date.now()}`)
           .on(
             "postgres_changes",
             {

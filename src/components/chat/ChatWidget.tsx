@@ -146,15 +146,6 @@ export function ChatWidget() {
 
             setMessages(prev => [...prev, { id: uid(), role: "assistant", content: reply }]);
 
-            // Log to Supabase chat_history (background)
-            (supabase as any)
-                .from("chat_history")
-                .insert([
-                    { session_id: sessionId, user_id: userId ?? null, role: "user",      content: text  },
-                    { session_id: sessionId, user_id: userId ?? null, role: "assistant", content: reply }
-                ])
-                .then(({ error }: any) => { if (error) { /* Log history failed */ } });
-
         } catch (err: unknown) {
             console.error("[ChatWidget]", err);
             toast({ title: "Chat Unavailable", description: "Something went wrong. Please try Email.", variant: "destructive" });

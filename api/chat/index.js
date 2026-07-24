@@ -16,11 +16,13 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
+    console.log('[/api/chat] Incoming request - message:', message, 'userId:', userId);
     const { reply, toolsUsed } = await processMessage(
       message.trim(),
       userId,
       history
     );
+    console.log('[/api/chat] Success - reply:', reply, 'tools:', toolsUsed);
 
     return res.status(200).json({
       reply,
