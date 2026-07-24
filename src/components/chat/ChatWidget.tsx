@@ -30,7 +30,7 @@ interface ConversationEntry {
 // Locally proxies to your Unified Backend (port 5001).
 const AI_AGENT_URL = import.meta.env.VITE_AI_AGENT_URL || "/api";
 
-const WELCOME_MSG = "Hi! I'm the MM Dairy Farm assistant 🥛 How can I help you today?";
+const WELCOME_MSG = "Hi! I'm MilkMind AI 🌿 How can I help you with your orders, products, or subscriptions today?";
 
 function uid() {
     return Math.random().toString(36).slice(2, 10);
@@ -189,12 +189,12 @@ export function ChatWidget() {
         <>
             {/* FAB */}
             <Button
-                className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 z-50 p-0 flex items-center justify-center transition-transform hover:scale-105"
+                className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 z-50 p-0 flex items-center justify-center transition-transform hover:scale-105 overflow-hidden border-2 border-white ring-2 ring-forest/20"
                 onClick={() => setIsOpen(true)}
                 style={{ display: isOpen ? "none" : "flex" }}
-                aria-label="Open chat"
+                aria-label="Open MilkMind AI chat"
             >
-                <MessageCircle className="h-7 w-7 text-white" />
+                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="h-full w-full object-cover p-1 bg-white" />
             </Button>
 
             {/* Chat Window */}
@@ -203,11 +203,16 @@ export function ChatWidget() {
 
                     {/* Header */}
                     <div className="bg-primary text-white p-4 flex justify-between items-center rounded-t-2xl shadow-sm">
-                        <div className="flex items-center gap-2">
-                            <MessageCircle className="h-5 w-5" />
+                        <div className="flex items-center gap-3">
+                            <div className="h-9 w-9 rounded-full bg-white p-0.5 shadow-md shrink-0 overflow-hidden">
+                                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="h-full w-full object-cover rounded-full" />
+                            </div>
                             <div>
-                                <h3 className="font-semibold leading-none">MMVALI Chat Support</h3>
-                                <p className="text-xs text-white/70 mt-0.5">{isLoading ? "Thinking…" : "AI Assistant • Online"}</p>
+                                <h3 className="font-bold text-sm leading-none flex items-center gap-1">
+                                    MilkMind AI
+                                    <span className="text-[10px] bg-amber-400/30 text-amber-200 px-1.5 py-0.5 rounded-full font-extrabold uppercase">Copilot</span>
+                                </h3>
+                                <p className="text-xs text-white/80 mt-0.5">{isLoading ? "Analyzing..." : "Online • Dairy Assistant"}</p>
                             </div>
                         </div>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20 rounded-full" onClick={() => setIsOpen(false)}>
