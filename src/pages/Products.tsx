@@ -25,30 +25,30 @@ const Products = () => {
     <Layout>
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <section className="pt-12 sm:pt-16 pb-8 sm:pb-12 px-4 sm:px-6">
+        <section className="pt-6 sm:pt-10 pb-4 sm:pb-6 px-4 sm:px-6">
           <div className="container-main">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
-              <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8">
+              <div className="space-y-2 sm:space-y-4">
                 <CircularBackButton 
                   onClick={() => navigate("/")} 
-                  className="mb-2 sm:mb-4 bg-white text-forest hover:bg-primary hover:text-white shadow-md border border-forest/10 w-8 h-8 sm:w-10 sm:h-10" 
+                  className="mb-1 sm:mb-2 bg-white text-forest hover:bg-primary hover:text-white shadow-md border border-forest/10 w-8 h-8 sm:w-10 sm:h-10" 
                 />
-                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase leading-[0.9] sm:leading-[0.85] tracking-tight text-forest">
+                <h1 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.9] sm:leading-[0.85] tracking-tight text-forest">
                   Our <span className="text-golden">Products</span>
                 </h1>
-                <p className="text-earth/50 font-body font-bold uppercase text-[10px] sm:text-[11px] md:text-xs tracking-[0.25em] sm:tracking-[0.3em] pl-1">
+                <p className="text-earth/50 font-body font-bold uppercase text-[9px] sm:text-[11px] md:text-xs tracking-[0.25em] sm:tracking-[0.3em] pl-1">
                   Pure &bull; Fresh &bull; Farm to Table
                 </p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
                  <div className="relative group flex-1 sm:w-72 md:w-80">
-                    <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-forest/30 group-focus-within:text-primary transition-colors" />
+                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-forest/30 group-focus-within:text-primary transition-colors" />
                     <Input 
                       placeholder="Search products..." 
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-12 sm:h-14 md:h-16 pl-11 sm:pl-14 pr-4 sm:pr-6 bg-white border-forest/10 rounded-[10px] sm:rounded-[10px] font-body font-semibold text-xs sm:text-sm placeholder:text-earth/30 focus-visible:ring-primary/20 focus-visible:border-primary/30 transition-all shadow-soft"
+                      className="h-10 sm:h-12 md:h-14 pl-9 sm:pl-12 pr-4 bg-white border-forest/10 rounded-lg font-body font-semibold text-xs sm:text-sm placeholder:text-earth/30 focus-visible:ring-primary/20 focus-visible:border-primary/30 transition-all shadow-soft"
                     />
                  </div>
               </div>
@@ -84,7 +84,7 @@ const Products = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pt-4 pb-10">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 pt-2 pb-6">
                 {filteredProducts.map((product, index) => (
                   <FloatingProductCard
                     key={product.id}

@@ -12,14 +12,15 @@ import i18n from "./lib/i18n";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 import { ProtectedRoute } from "@/components/layout/ProtectedRoute";
 import { StaffProtectedRoute } from "@/components/admin/StaffProtectedRoute";
-import Index from "./pages/Index";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import OrderHistory from "./pages/OrderHistory";
-import OrderDetail from "./pages/OrderDetail";
-import NotFound from "./pages/NotFound";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+
+const Index = lazy(() => import("./pages/Index"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Cart = lazy(() => import("./pages/Cart"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory"));
+const OrderDetail = lazy(() => import("./pages/OrderDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const Order = lazy(() => import("./pages/Order"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -78,93 +79,90 @@ const App = () => (
               >
                 <NavigationHandler />
                 <ScrollToTop />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/order" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Order /></Suspense>} />
-                  <Route
-                    path="/orders"
-                    element={
-                      <ProtectedRoute>
-                        <OrderHistory />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/orders/:id"
-                    element={
-                      <ProtectedRoute>
-                        <OrderDetail />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/auth" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Auth /></Suspense>} />
-                  <Route path="/contact" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Contact /></Suspense>} />
-                  <Route path="/terms" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Terms /></Suspense>} />
-                  <Route path="/privacy" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Privacy /></Suspense>} />
-                  <Route path="/refund" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Refund /></Suspense>} />
-                  <Route path="/shipping" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Shipping /></Suspense>} />
-                  <Route path="/faq" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><FAQ /></Suspense>} />
-                  <Route
-                    path="/subscriptions"
-                    element={
-                      <ProtectedRoute>
-                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Subscriptions /></Suspense>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/subscription-success" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><SubscriptionSuccess /></Suspense>} />
-                  <Route
-                    path="/wallet"
-                    element={
-                      <ProtectedRoute>
-                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Wallet /></Suspense>
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route path="/payment-success" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><PaymentSuccess /></Suspense>} />
-                  <Route path="/payment-cancelled" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><PaymentCancelled /></Suspense>} />
-                  <Route path="/forgot-password" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><ForgotPassword /></Suspense>} />
-                  <Route path="/reset-password" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><ResetPassword /></Suspense>} />
-                  <Route path="/unauthorized" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><Unauthorized /></Suspense>} />
-                  <Route path="/design-showcase" element={<Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><DesignShowcase /></Suspense>} />
+                <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/order" element={<Order />} />
+                    <Route
+                      path="/orders"
+                      element={
+                        <ProtectedRoute>
+                          <OrderHistory />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/orders/:id"
+                      element={
+                        <ProtectedRoute>
+                          <OrderDetail />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/refund" element={<Refund />} />
+                    <Route path="/shipping" element={<Shipping />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route
+                      path="/subscriptions"
+                      element={
+                        <ProtectedRoute>
+                          <Subscriptions />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+                    <Route
+                      path="/wallet"
+                      element={
+                        <ProtectedRoute>
+                          <Wallet />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/payment-success" element={<PaymentSuccess />} />
+                    <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
+                    <Route path="/design-showcase" element={<DesignShowcase />} />
 
-                  {/* Admin Routes */}
-                  <Route
-                    path="/admin/dashboard"
-                    element={
-                      <AdminProtectedRoute>
-                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading dashboard...</div>}>
+                    {/* Admin Routes */}
+                    <Route
+                      path="/admin/dashboard"
+                      element={
+                        <AdminProtectedRoute>
                           <AdminDashboard />
-                        </Suspense>
-                      </AdminProtectedRoute>
-                    }
-                  />
-                  {/* Staff Routes */}
-                  <Route
-                    path="/staff/dashboard"
-                    element={
-                      <StaffProtectedRoute>
-                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading dashboard...</div>}>
+                        </AdminProtectedRoute>
+                      }
+                    />
+                    {/* Staff Routes */}
+                    <Route
+                      path="/staff/dashboard"
+                      element={
+                        <StaffProtectedRoute>
                           <StaffDashboard />
-                        </Suspense>
-                      </StaffProtectedRoute>
-                    }
-                  />
+                        </StaffProtectedRoute>
+                      }
+                    />
 
-                  <Route
-                    path="/delivery/dashboard"
-                    element={
-                      <StaffProtectedRoute>
-                        <Suspense fallback={<div className="h-screen flex items-center justify-center text-sm text-slate-400">Loading...</div>}><DeliveryDashboard /></Suspense>
-                      </StaffProtectedRoute>
-                    }
-                  />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                    <Route
+                      path="/delivery/dashboard"
+                      element={
+                        <StaffProtectedRoute>
+                          <DeliveryDashboard />
+                        </StaffProtectedRoute>
+                      }
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
               </BrowserRouter>
             </NotificationProvider>
           </CartProvider>

@@ -70,5 +70,32 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("@supabase") || id.includes("supabase")) {
+              return "supabase";
+            }
+            if (id.includes("react") || id.includes("react-dom") || id.includes("react-router")) {
+              return "react-core";
+            }
+            if (id.includes("lucide-react")) {
+              return "lucide";
+            }
+            if (id.includes("recharts")) {
+              return "recharts";
+            }
+            if (id.includes("mapbox-gl") || id.includes("leaflet") || id.includes("react-leaflet")) {
+              return "maps";
+            }
+            if (id.includes("framer-motion") || id.includes("gsap")) {
+              return "animation";
+            }
+            return "vendor";
+          }
+        }
+      }
+    }
   },
 });

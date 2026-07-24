@@ -25,14 +25,22 @@ import {
     Package, 
     Users,
     ArrowUpRight,
-    ShoppingBag
+    ShoppingBag,
+    CalendarHeart,
+    AlertCircle,
+    MessageSquare,
+    HandCoins
 } from "lucide-react";
 
-export function OverviewTab() {
+export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => void }) {
     const [orders, setOrders] = useState<any[]>([]);
     const [orderItems, setOrderItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
+    const [activeSubs, setActiveSubs] = useState(0);
+    const [lowStock, setLowStock] = useState(0);
+    const [unreadFeedbacks, setUnreadFeedbacks] = useState(0);
+    const [codPending, setCodPending] = useState(0);
 
     const fetchDashboardData = async () => {
         try {
@@ -60,6 +68,36 @@ export function OverviewTab() {
             } else if (itemsData) {
                 setOrderItems(itemsData);
             }
+
+            // Fetch Active Subscriptions count
+            const { count: subsCount } = await supabase
+                .from("subscription_items")
+                .select("*", { count: "exact", head: true })
+                .eq("status", "active");
+            setActiveSubs(subsCount || 0);
+
+            // Fetch Low Stock count (stock <= 10)
+            const { data: productsData } = await supabase
+                .from("products")
+                .select("stock");
+            const lowStockCount = productsData?.filter(p => p.stock !== null && p.stock !== undefined && p.stock <= 10).length || 0;
+            setLowStock(lowStockCount);
+
+            // Fetch Unread Feedback count
+            const { count: feedbackCount } = await supabase
+                .from("feedbacks")
+                .select("*", { count: "exact", head: true })
+                .neq("status", "resolved");
+            setUnreadFeedbacks(feedbackCount || 0);
+
+            // Fetch COD pending amount
+            const { data: codPendingData } = await supabase
+                .from("orders")
+                .select("total_amount")
+                .eq("payment_method", "cod")
+                .not("status", "in", '("delivered","cancelled")');
+            const codPendingSum = codPendingData?.reduce((sum, o) => sum + Number(o.total_amount || 0), 0) || 0;
+            setCodPending(codPendingSum);
 
         } catch (err) {
             console.error("Dashboard fetch error:", err);
@@ -200,47 +238,151 @@ export function OverviewTab() {
     return (
         <div className="space-y-8 animate-fade-in">
             {/* Metric Overview Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="card-elevated border-none overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <TrendingUp className="h-12 w-12 text-forest" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* 1. Today's Revenue */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <TrendingUp className="h-10 w-10 text-forest" />
                     </div>
-                    <CardHeader className="pb-2">
-                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Today's Revenue</p>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Today's Revenue</p>
                     </CardHeader>
-                    <CardContent>
-                        <h3 className="text-2xl font-black text-forest">₹{dailyRevenue.toFixed(0)}</h3>
-                        <p className="text-[10px] text-green-600 font-bold mt-1 flex items-center gap-1">
-                            <span>+{dailyOrders.length} orders today</span>
-                        </p>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-forest">₹{dailyRevenue.toFixed(0)}</h3>
+                        <p className="text-[8px] text-green-600 font-bold mt-0.5">+{dailyOrders.length} orders today</p>
                     </CardContent>
                 </Card>
 
-                <Card className="card-elevated border-none overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <DollarSign className="h-12 w-12 text-golden" />
+                {/* 2. Today's Orders */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <ShoppingBag className="h-10 w-10 text-emerald-600" />
                     </div>
-                    <CardHeader className="pb-2">
-                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{format(selectedMonth, "MMMM")} Revenue</p>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Today's Orders</p>
                     </CardHeader>
-                    <CardContent>
-                        <h3 className="text-2xl font-black text-golden-dark">₹{totalMonthlyRevenue.toFixed(0)}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium mt-1">Total projected earnings</p>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-slate-800">{dailyOrders.length}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Real-time status</p>
                     </CardContent>
                 </Card>
 
-                <Card className="card-elevated border-none overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <Users className="h-12 w-12 text-earth" />
+                {/* 3. Active Subscriptions */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <CalendarHeart className="h-10 w-10 text-rose-500" />
                     </div>
-                    <CardHeader className="pb-2">
-                        <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Total Status</p>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Active Subscriptions</p>
                     </CardHeader>
-                    <CardContent>
-                        <h3 className="text-2xl font-black text-earth">{totalMonthlyOrders}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium mt-1">Total orders this month</p>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-rose-600">{activeSubs}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Recurring cycles active</p>
                     </CardContent>
                 </Card>
+
+                {/* 4. Low Stock Alerts */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <AlertCircle className="h-10 w-10 text-amber-500" />
+                    </div>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Low Stock Alerts</p>
+                    </CardHeader>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-amber-600">{lowStock}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Items &lt;= 10 units</p>
+                    </CardContent>
+                </Card>
+
+                {/* 5. COD Collections Pending */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <HandCoins className="h-10 w-10 text-indigo-500" />
+                    </div>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">COD Pending</p>
+                    </CardHeader>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-indigo-600">₹{codPending.toFixed(0)}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Outstanding in field</p>
+                    </CardContent>
+                </Card>
+
+                {/* 6. Unread Feedback */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <MessageSquare className="h-10 w-10 text-sky-500" />
+                    </div>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Unresolved Feedback</p>
+                    </CardHeader>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-sky-600">{unreadFeedbacks}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Requires operational review</p>
+                    </CardContent>
+                </Card>
+
+                {/* 7. Selected Month Revenue */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <DollarSign className="h-10 w-10 text-golden" />
+                    </div>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{format(selectedMonth, "MMM")} Revenue</p>
+                    </CardHeader>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-golden-dark">₹{totalMonthlyRevenue.toFixed(0)}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Total completed &amp; paid</p>
+                    </CardContent>
+                </Card>
+
+                {/* 8. Selected Month Orders */}
+                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                        <Users className="h-10 w-10 text-earth" />
+                    </div>
+                    <CardHeader className="pb-1 pt-4 px-4">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{format(selectedMonth, "MMM")} Orders</p>
+                    </CardHeader>
+                    <CardContent className="pb-4 px-4">
+                        <h3 className="text-xl font-black text-earth">{totalMonthlyOrders}</h3>
+                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Volume for this period</p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Quick Actions Panel */}
+            <div className="bg-white/80 backdrop-blur-md p-6 rounded-[10px] border border-white/40 shadow-soft space-y-3">
+                <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-700 flex items-center gap-2">
+                    ⚡ Quick Operations
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <button onClick={() => onTabChange?.("products")} className="flex flex-col items-center justify-center p-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-100 rounded-[10px] transition-all group text-center gap-2">
+                        <span className="text-2xl font-bold group-hover:scale-110 transition-transform">📦</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800">+ Add Product</span>
+                    </button>
+                    
+                    <button onClick={() => onTabChange?.("whatsapp")} className="flex flex-col items-center justify-center p-4 bg-green-50 hover:bg-green-100/80 border border-green-100 rounded-[10px] transition-all group text-center gap-2">
+                        <span className="text-2xl font-bold group-hover:scale-110 transition-transform">💬</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-green-700">Broadcast WhatsApp</span>
+                    </button>
+
+                    <button onClick={() => onTabChange?.("offers")} className="flex flex-col items-center justify-center p-4 bg-amber-50 hover:bg-amber-100/80 border border-amber-100 rounded-[10px] transition-all group text-center gap-2">
+                        <span className="text-2xl font-bold group-hover:scale-110 transition-transform">🏷️</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-amber-700">+ Create Offer</span>
+                    </button>
+
+                    <button onClick={() => onTabChange?.("announcements")} className="flex flex-col items-center justify-center p-4 bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-100 rounded-[10px] transition-all group text-center gap-2">
+                        <span className="text-2xl font-bold group-hover:scale-110 transition-transform">📢</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-indigo-700">Announce</span>
+                    </button>
+
+                    <button onClick={() => onTabChange?.("tracking")} className="flex flex-col items-center justify-center p-4 bg-rose-50 hover:bg-rose-100/80 border border-rose-100 rounded-[10px] transition-all group text-center gap-2">
+                        <span className="text-2xl font-bold group-hover:scale-110 transition-transform">🚚</span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-rose-700">Route Tracking</span>
+                    </button>
+                </div>
             </div>
 
             {/* Header with Month Picker */}

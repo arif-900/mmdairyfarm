@@ -100,7 +100,7 @@ const Index = () => {
       )}
 
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center">
+      <section className="relative min-h-[60vh] sm:min-h-[75vh] md:min-h-[85vh] flex items-center">
         <div className="absolute inset-0 z-0 overflow-hidden bg-forest-dark">
           <video
             autoPlay
@@ -109,7 +109,7 @@ const Index = () => {
             playsInline
             preload="metadata"
             poster={heroPoster}
-            className="w-full h-full object-cover blur-[1px] scale-150 opacity-0 transition-opacity duration-1000"
+            className="w-full h-full object-cover blur-[1px] scale-110 opacity-0 transition-opacity duration-1000"
             onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
           >
             <source src="/farm.mp4" type="video/mp4" />
@@ -171,7 +171,8 @@ const Index = () => {
                 </div>
               </div>
 
-              <div className="flex-1 min-h-[500px]">
+              {/* Circular gallery - hidden on mobile/tablet, visible on laptop and larger screens */}
+              <div className="hidden lg:block flex-1 min-h-[500px]">
                 <CircularGallery
                   items={products.map(p => ({
                     image: p.image || "",

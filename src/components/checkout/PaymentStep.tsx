@@ -45,9 +45,6 @@ export function PaymentStep({
 }: PaymentStepProps) {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700 font-sans" style={{ fontFamily: "'Roboto', sans-serif" }}>
-      {/* Import Roboto stylesheet locally for this component to satisfy the typography requirement */}
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-
       <div className="bg-white rounded-[16px] p-5 md:p-8 shadow-sm border border-[#E5E7EB] space-y-5 md:space-y-6">
         
         {/* Header - Sentence Case & Non-Italics */}

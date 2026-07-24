@@ -2,7 +2,6 @@
    FLOATING PILL NAV — Desktop (Premium SaaS)
    ============================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
 /* The floating bar itself */
 .pill-nav {
   display: flex;

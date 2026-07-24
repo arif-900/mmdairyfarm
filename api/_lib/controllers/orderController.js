@@ -49,9 +49,14 @@ export const createOrder = async (req, res) => {
 export const updateStatus = async (req, res) => {
   try {
     const { orderId, status, metadata } = req.body;
+    const userId = req.user?.id;
 
     if (!orderId || !status) {
       return res.status(400).json({ error: 'orderId and status are required' });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
     }
 
     // Validate status is allowed
@@ -60,7 +65,16 @@ export const updateStatus = async (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    // Fetch order first to get phone and opt-in info
+    // Fetch user's role
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const userRole = roleData?.role;
+
+    // Fetch order first to check permissions and get status/opt-in details
     const { data: order, error: fetchError } = await supabase
       .from('orders')
       .select('*')
@@ -71,7 +85,21 @@ export const updateStatus = async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    // Prevent duplicate sends by checking if status is already updated
+    // Auth validation check:
+    // User is authorized if they are 'admin' or 'staff',
+    // OR if they are the rider assigned to this order (assigned_to === user.id)
+    // OR if they are claiming an unassigned order (setting status to 'picked_up' while assigned_to is null)
+    const isAuthorized = 
+      userRole === 'admin' || 
+      userRole === 'staff' || 
+      order.assigned_to === userId ||
+      (status === 'picked_up' && !order.assigned_to);
+
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Access denied. You do not have permission to update this order.' });
+    }
+
+    // Prevent duplicate status updates
     if (order.status === status) {
       return res.status(200).json({ success: true, message: `Status is already ${status}` });
     }
@@ -93,7 +121,7 @@ export const updateStatus = async (req, res) => {
       return res.status(500).json({ error: 'Database Update Failed', detail: updateError.message });
     }
 
-    logger.info(`Order ${orderId} status updated to ${status}`);
+    logger.info(`Order ${orderId} status updated to ${status} by user ${userId}`);
 
     return res.status(200).json({ success: true, status });
   } catch (err) {

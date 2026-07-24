@@ -1,7 +1,6 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, lazy, Suspense } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { ChatWidget } from "../chat/ChatWidget";
 import InstallBanner from "./InstallBanner";
 import { AnnouncementBanner } from "./AnnouncementBanner";
 import { PWAUpdateHandler } from "./PWAUpdateHandler";
@@ -10,6 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getDashboardByRole } from "@/utils/routeUtils";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+
+const ChatWidget = lazy(() => import("../chat/ChatWidget").then(m => ({ default: m.ChatWidget })));
 
 interface LayoutProps {
   children: ReactNode;
@@ -50,7 +51,9 @@ const Layout = ({ children }: LayoutProps) => {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
       <InstallBanner />
       <PWAUpdateHandler />
       <OfflineStatus />

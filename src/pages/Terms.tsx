@@ -9,38 +9,38 @@ const Terms = () => {
     const sections = [
         {
             icon: Package,
-            title: "Product Integrity",
-            content: "Nature's purity is our promise. All MMVALI dairy products are subject to seasonal availability. We reserve the right to prioritize quality over quantity, meaning production limits may be applied to ensure every bottle meets our elite standards."
+            title: "Account Registration & Security",
+            content: "Accessing certain features (such as making purchases, subscribing to products, and reviewing wallet balances) requires user registration. Accounts are authenticated securely via Supabase (email/password or Google OAuth). Users are solely responsible for maintaining the confidentiality of their authentication credentials and are fully liable for all transactions or orders placed under their account."
         },
         {
             icon: CreditCard,
-            title: "Premium Transactions",
-            content: "Excellence is reflected in our transparent pricing. All orders are charged at the rate active during checkout. We utilize secure payment gateways to ensure your financial data remains as protected as our heritage."
+            title: "Prepaid Subscriptions & Wallet Coins",
+            content: "Subscriptions for products (e.g. Milk, Curd, Ghee) are governed by a strictly prepaid model. Balance refunds resulting from subscription pauses, adjustments, or cancellations are credited automatically to your digital wallet as Reward Coins. Reward Coins carry a valuation of 1 Coin = ₹1, are non-transferable, cannot be redeemed for cash, and can only be used as checking discounts on this platform."
         },
         {
             icon: Truck,
-            title: "Bespoke Delivery",
-            content: "Our logistics team ensures a seamless farm-to-doorstep experience. While we strive for absolute precision in our 5 AM - 8 AM window, timelines may marginally shift due to external environmental factors."
+            title: "Delivery Terms & Responsibilities",
+            content: "Deliveries are executed by our rider network within specified slots: Morning (5:00 AM - 8:00 AM) and Evening (5:00 PM - 8:00 PM). Customers must pinpoint accurate drop coordinates using our integrated Mapbox picker. We are not liable for delayed, failed, or spoiled deliveries resulting from inaccurate map pins, locked gates, or unavailable contact numbers."
         },
         {
             icon: User,
-            title: "Client Commitment",
-            content: "The MMVALI experience is a partnership. To ensure the freshest possible delivery, we rely on your accurate contact and location details. Success in our service is shared when information is precise."
+            title: "Product Availability & Pricing",
+            content: "All raw dairy products are perishable goods and are subject to real-time farm availability. We reserve the right to limit order quantities or pause subscription drops in cases of supply fluctuations. Product pricing is calculated at the rates active during checkout. All digital receipts and orders are logged on our servers."
         },
         {
             icon: Globe,
-            title: "Digital Sovereignty",
-            content: "The digital essence of MMVALI—our brand, imagery, and intellectual property—is protected. Use of our assets without explicit consent is a breach of our brand values and legal mandates."
+            title: "Intellectual Property Ownership",
+            content: "All digital assets, source code, visual interfaces, database designs, branding elements, and media files on this platform are the intellectual property of MM Dairy Farm. Unauthorized copying, reverse-engineering, or usage of these materials without explicit written consent is strictly prohibited under Indian trademark and copyright acts."
         },
         {
             icon: AlertCircle,
-            title: "Balanced Liability",
-            content: "While we stand by the purity of our farm products, MMVALI is not liable for indirect or incidental consequences arising from the digital use of our platform or external handling post-delivery."
+            title: "Limitation of Liability",
+            content: "MM Dairy Farm, its directors, and riders shall not be liable for any indirect, incidental, or consequential damages resulting from database server interruptions, third-party payment portal (Razorpay) failures, or the ingestion of dairy goods that were stored improperly by the client post-delivery."
         },
         {
             icon: RefreshCw,
-            title: "Evolution of Terms",
-            content: "As we grow our farm and services, these terms may evolve. Your continued journey with MMVALI implies an ongoing agreement with our latest standards and policies."
+            title: "Governing Law & Disputes",
+            content: "These terms and conditions are governed by and construed in accordance with the laws of the Republic of India. Any legal disputes or claims arising out of the use of this website, wallet system, or subscription deliveries shall be subject to the exclusive jurisdiction of the competent courts in India."
         }
     ];
 
@@ -75,7 +75,7 @@ const Terms = () => {
                             ))}
                         </h1>
                         <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
-                            The foundations of our mutual commitment to excellence, purity, and heritage.
+                            Legal guidelines and conditions governing the purchase, subscription, and delivery of dairy products.
                         </p>
                     </div>
                 </div>
@@ -87,10 +87,10 @@ const Terms = () => {
                     <div className="mb-16 bg-white rounded-3xl p-8 md:p-12 border border-golden/10 shadow-soft animate-slide-up [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
                         <div className="flex items-center gap-4 mb-6">
                             <FileText className="w-8 h-8 text-golden" />
-                            <h2 className="font-display text-2xl font-bold text-forest-dark">Mandate of Service</h2>
+                            <h2 className="font-display text-2xl font-bold text-forest-dark">Terms of Service Agreement</h2>
                         </div>
                         <p className="text-lg text-forest-light leading-relaxed">
-                            Welcome to the MMVALI Farm circle. By navigating our platform and engaging with our services, you align with the standards and mandates outlined below. These terms safeguard our farm's heritage and ensure the consistent delivery of excellence to your home.
+                            By registering an account, purchasing dairy products, or configuring a prepaid subscription on MM Dairy Farm, you agree to comply with and be bound by the following terms of service.
                         </p>
                     </div>
 
@@ -126,7 +126,7 @@ const Terms = () => {
                     <div className="mt-20 text-center animate-slide-up [animation-delay:2000ms] opacity-0 [animation-fill-mode:forwards]">
                         <div className="h-px w-24 bg-golden/30 mx-auto mb-8" />
                         <p className="text-forest-light/60 text-sm max-w-lg mx-auto italic">
-                            These terms were last updated to meet our current excellence standards. Continued use of MMVALI services constitutes acceptance of these refined mandates.
+                            These terms constitute a legally binding agreement between you and MM Dairy Farm. Continued usage of our e-commerce portal and subscription deliveries confirms your ongoing alignment with these clauses.
                         </p>
                     </div>
                 </div>

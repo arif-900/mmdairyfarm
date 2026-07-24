@@ -30,7 +30,9 @@ import {
     Store,
     Package,
     Search,
-    Loader2
+    Loader2,
+    AlertCircle,
+    MessageSquare
 } from "lucide-react";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -62,6 +64,8 @@ const StaffDashboard = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
     const [isScannerOpen, setIsScannerOpen] = useState(false);
+    const [lowStockCount, setLowStockCount] = useState(0);
+    const [unresolvedFeedbackCount, setUnresolvedFeedbackCount] = useState(0);
 
     const handleScanResult = (decodedText: string) => {
         const scannedValue = decodedText.trim();
@@ -137,6 +141,19 @@ const StaffDashboard = () => {
             } else {
                 setOrders([]);
             }
+
+            // Fetch low stock warnings
+            const { data: prodData } = await supabase.from("products").select("stock");
+            const lowStockVal = prodData?.filter(p => p.stock !== null && p.stock !== undefined && p.stock <= 10).length || 0;
+            setLowStockCount(lowStockVal);
+
+            // Fetch unresolved feedbacks count
+            const { count: feedbackCount } = await supabase
+                .from("feedbacks")
+                .select("*", { count: "exact", head: true })
+                .neq("status", "resolved");
+            setUnresolvedFeedbackCount(feedbackCount || 0);
+
         } catch (err) {
             console.error("Error fetching orders:", err);
             toast({
@@ -243,9 +260,10 @@ const StaffDashboard = () => {
             <main className="container mx-auto px-4 py-6 space-y-6 max-w-5xl">
 
                 {/* Main Content Tabs */}
-                <Tabs defaultValue="orders" className="space-y-6">
+                <Tabs defaultValue="operations" className="space-y-6">
                     <div className="overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                         <TabsList className="bg-cream-dark/30 backdrop-blur-sm flex justify-start gap-1 p-1.5 h-14 rounded-[10px] min-w-max border border-forest/5 shadow-soft">
+                            <TabsTrigger value="operations" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Console</TabsTrigger>
                             <TabsTrigger value="orders" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Orders</TabsTrigger>
                             <TabsTrigger value="products" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Products</TabsTrigger>
                             <TabsTrigger value="delivery" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Logistics</TabsTrigger>
@@ -257,6 +275,130 @@ const StaffDashboard = () => {
                             <TabsTrigger value="videos" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Story</TabsTrigger>
                         </TabsList>
                     </div>
+
+                    <TabsContent value="operations" className="space-y-6 animate-fade-in">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {/* KPI 1: Assigned Orders */}
+                            <Card className="bg-white border border-forest/10 rounded-[10px] shadow-sm overflow-hidden relative group">
+                                <CardContent className="p-5 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-[10px] bg-forest/5 flex items-center justify-center border border-forest/10">
+                                        <Package className="w-6 h-6 text-forest" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">My Assigned Orders</p>
+                                        <p className="text-2xl font-black text-slate-800">
+                                            {orders.filter(o => o.assigned_to === user?.id && o.status !== 'delivered' && o.status !== 'cancelled').length}
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* KPI 2: Low Stock Products */}
+                            <Card className="bg-white border border-amber-100 rounded-[10px] shadow-sm overflow-hidden relative group">
+                                <CardContent className="p-5 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-[10px] bg-amber-50 flex items-center justify-center border border-amber-100">
+                                        <AlertCircle className="w-6 h-6 text-amber-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Low Stock Warnings</p>
+                                        <p className="text-2xl font-black text-slate-800">{lowStockCount}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* KPI 3: Customer Feedback */}
+                            <Card className="bg-white border border-sky-100 rounded-[10px] shadow-sm overflow-hidden relative group">
+                                <CardContent className="p-5 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-[10px] bg-sky-50 flex items-center justify-center border border-sky-100">
+                                        <MessageSquare className="w-6 h-6 text-sky-500" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Unresolved Inquiries</p>
+                                        <p className="text-2xl font-black text-slate-800">{unresolvedFeedbackCount}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Checklist Task Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="bg-white border border-slate-100 shadow-sm rounded-[10px]">
+                                <CardHeader className="pb-2 pt-4 px-5">
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-700">📋 Today's Checklist</h3>
+                                </CardHeader>
+                                <CardContent className="space-y-4 px-5 pb-5">
+                                    {/* Task Item 1 */}
+                                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-[10px] border border-slate-100">
+                                        <input type="checkbox" className="w-4 h-4 rounded text-forest focus:ring-forest mt-0.5" defaultChecked={orders.filter(o => o.status === 'processing').length === 0} />
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">Pack outgoing orders</p>
+                                            <p className="text-[10px] text-slate-400">
+                                                {orders.filter(o => o.status === 'processing').length} orders are currently in the packaging phase.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Task Item 2 */}
+                                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-[10px] border border-slate-100">
+                                        <input type="checkbox" className="w-4 h-4 rounded text-forest focus:ring-forest mt-0.5" defaultChecked={lowStockCount === 0} />
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">Verify inventory thresholds</p>
+                                            <p className="text-[10px] text-slate-400">
+                                                {lowStockCount} products are running low on stock. Review list to avoid service disruption.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Task Item 3 */}
+                                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-[10px] border border-slate-100">
+                                        <input type="checkbox" className="w-4 h-4 rounded text-forest focus:ring-forest mt-0.5" defaultChecked={unresolvedFeedbackCount === 0} />
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-800">Reply to customer queries</p>
+                                            <p className="text-[10px] text-slate-400">
+                                                {unresolvedFeedbackCount} feedback rows require support replies.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card className="bg-white border border-slate-100 shadow-sm rounded-[10px] flex flex-col justify-between">
+                                <CardHeader className="pb-2 pt-4 px-5">
+                                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-700">⚡ Operations Shortcuts</h3>
+                                </CardHeader>
+                                <CardContent className="grid grid-cols-2 gap-3 flex-1 pb-5 px-5">
+                                    <button onClick={() => setIsScannerOpen(true)} className="flex flex-col items-center justify-center p-4 bg-forest/5 hover:bg-forest/10 border border-forest/10 rounded-[10px] transition-all text-center gap-2 group">
+                                        <span className="text-2xl group-hover:scale-110 transition-transform">📷</span>
+                                        <span className="text-[9px] font-black uppercase tracking-wider text-forest">Open Barcode Scanner</span>
+                                    </button>
+
+                                    <button onClick={() => {
+                                        const trigger = document.querySelector('[value="products"]');
+                                        if (trigger) (trigger as HTMLButtonElement).click();
+                                    }} className="flex flex-col items-center justify-center p-4 bg-amber-50 hover:bg-amber-100 border border-amber-100 rounded-[10px] transition-all text-center gap-2 group">
+                                        <span className="text-2xl group-hover:scale-110 transition-transform">📦</span>
+                                        <span className="text-[9px] font-black uppercase tracking-wider text-amber-700">Manage Catalog</span>
+                                    </button>
+
+                                    <button onClick={() => {
+                                        const trigger = document.querySelector('[value="delivery"]');
+                                        if (trigger) (trigger as HTMLButtonElement).click();
+                                    }} className="flex flex-col items-center justify-center p-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 rounded-[10px] transition-all text-center gap-2 group">
+                                        <span className="text-2xl group-hover:scale-110 transition-transform">🚚</span>
+                                        <span className="text-[9px] font-black uppercase tracking-wider text-indigo-700">Riders Directory</span>
+                                    </button>
+
+                                    <button onClick={() => {
+                                        const trigger = document.querySelector('[value="settlements"]');
+                                        if (trigger) (trigger as HTMLButtonElement).click();
+                                    }} className="flex flex-col items-center justify-center p-4 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-[10px] transition-all text-center gap-2 group">
+                                        <span className="text-2xl group-hover:scale-110 transition-transform">💰</span>
+                                        <span className="text-[9px] font-black uppercase tracking-wider text-rose-700">COD Ledger</span>
+                                    </button>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
 
                     <TabsContent value="orders" className="space-y-6">
                         <div className="flex flex-col sm:flex-row gap-4">

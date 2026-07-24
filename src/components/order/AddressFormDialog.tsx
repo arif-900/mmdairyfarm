@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import MapboxMapPicker from "./MapboxMapPicker";
+const MapboxMapPicker = lazy(() => import("./MapboxMapPicker"));
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Home, Briefcase, MapPin, Loader2, Map as MapIcon, Check } from "lucide-react";
@@ -284,23 +284,30 @@ const AddressFormDialog = ({ userId, onSuccess, editAddress, trigger, autoLocate
           </div>
 
           {isMapOpen && (
-            <MapboxMapPicker
-              farmLocation={{ lat: 15.8022, lng: 78.5356 }}
-              initialLat={lat}
-              initialLng={lng}
-              onClose={() => setIsMapOpen(false)}
-              onLocationSelect={(data) => {
-                setAddressLine(data.address);
-                // Extract first part of address as village/area hint
-                const areaHint = data.address.split(',')[0];
-                setVillageName(areaHint);
-                setLat(data.lat);
-                setLng(data.lng);
-                setDistance(data.distance);
-                setIsMapOpen(false);
-                toast({ title: "Location Confirmed", description: "Area auto-filled from map." });
-              }}
-            />
+            <Suspense fallback={
+              <div className="h-[300px] flex flex-col items-center justify-center text-sm text-slate-400 gap-2 border border-dashed rounded-2xl bg-slate-50">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                <span>Loading map view...</span>
+              </div>
+            }>
+              <MapboxMapPicker
+                farmLocation={{ lat: 15.8022, lng: 78.5356 }}
+                initialLat={lat}
+                initialLng={lng}
+                onClose={() => setIsMapOpen(false)}
+                onLocationSelect={(data) => {
+                  setAddressLine(data.address);
+                  // Extract first part of address as village/area hint
+                  const areaHint = data.address.split(',')[0];
+                  setVillageName(areaHint);
+                  setLat(data.lat);
+                  setLng(data.lng);
+                  setDistance(data.distance);
+                  setIsMapOpen(false);
+                  toast({ title: "Location Confirmed", description: "Area auto-filled from map." });
+                }}
+              />
+            </Suspense>
           )}
 
           {/* New Specific Details Fields */}

@@ -144,23 +144,23 @@ export function SummaryStep({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700 font-body">
-      <div className="bg-white rounded-[24px] md:rounded-[40px] p-5 md:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-700 font-body">
+      <div className="bg-white rounded-2xl md:rounded-[40px] p-3.5 sm:p-5 md:p-8 shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-10">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center">
-            <ShoppingBag className="text-primary w-6 h-6" />
+        <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-10">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
+            <ShoppingBag className="text-primary w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div>
-            <h2 className="font-display text-2xl font-black text-slate-800 italic uppercase tracking-tighter">Order Summary</h2>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Review your selected products</p>
+            <h2 className="font-display text-xl md:text-2xl font-black text-slate-800 italic uppercase tracking-tighter">Order Summary</h2>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Review your selected products</p>
           </div>
         </div>
 
         {/* Free Delivery Promo Banner */}
-        <div className="mb-6 md:mb-8 p-4 md:p-6 bg-primary/5 border border-primary/10 rounded-2xl md:rounded-3xl space-y-3">
-          <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-primary">
+        <div className="mb-4 md:mb-8 p-3 md:p-6 bg-primary/5 border border-primary/10 rounded-xl md:rounded-3xl space-y-2">
+          <div className="flex justify-between items-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">
             <span>Free Delivery Status</span>
             <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
           </div>
@@ -170,7 +170,7 @@ export function SummaryStep({
               style={{ width: `${Math.min(100, (subtotal / 1000) * 100)}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
             {subtotal >= 1000 ? (
               <span className="font-semibold text-emerald-600 flex items-center gap-1.5">
                 🎉 Congratulations! Your order qualifies for FREE delivery.
@@ -184,7 +184,7 @@ export function SummaryStep({
         </div>
 
         {/* Items List */}
-        <div className="space-y-4 mb-10">
+        <div className="space-y-2.5 md:space-y-4 mb-6 md:mb-10">
           {items.map((item, idx) => (
             <SummaryItemCard key={`${item.productId}-${idx}`} item={item} onUpdateQty={onUpdateQty} onRemoveItem={onRemoveItem} />
           ))}
@@ -192,12 +192,12 @@ export function SummaryStep({
 
         {/* Suggested Add-ons with Analysis */}
         {suggestions.length > 0 && (
-          <div className="mb-10 space-y-4 pt-6 border-t border-slate-100">
+          <div className="mb-6 md:mb-10 space-y-3 pt-4 border-t border-slate-100">
             <div>
-              <h3 className="font-display text-sm font-black text-slate-800 uppercase tracking-wider">Suggested Add-ons</h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Best pairings & nutrition analysis for your basket</p>
+              <h3 className="font-display text-xs sm:text-sm font-black text-slate-800 uppercase tracking-wider">Suggested Add-ons</h3>
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Best pairings & nutrition analysis for your basket</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {suggestions.map((prod) => {
                 const qty = quantities[prod.id] || 1;
                 const activeWeight = selectedWeights[prod.id] || prod.availableWeights?.[0] || 1000;

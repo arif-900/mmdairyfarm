@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -139,9 +138,9 @@
     @apply flex flex-col items-center gap-2 p-6 rounded-2xl bg-white border border-border/50 shadow-soft backdrop-blur-sm;
   }
 
-  /* Section Spacing: 120px */
+  /* Responsive Section Spacing: 32px on mobile, 80px on tablet, 120px on desktop */
   .section-padding {
-    @apply px-6 py-[120px] md:px-12 md:py-[120px] lg:px-16;
+    @apply px-4 py-8 md:px-12 md:py-20 lg:px-16 lg:py-[120px];
   }
 
   .container-main {

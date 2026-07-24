@@ -9,43 +9,45 @@ const Privacy = () => {
     const sections = [
         {
             icon: Fingerprint,
-            title: "Identity & Collection",
-            content: "Your digital fingerprint is treated with absolute discretion. We collect name, contact, and delivery specifics solely to execute the premium farm-to-doorstep experience you expect.",
+            title: "Information We Collect",
+            content: "We collect and store personal identifiers necessary to create accounts and fulfill orders, including your full name, email address, mobile phone number, delivery address line, and precise geolocation coordinates picked via our interactive map picker.",
         },
         {
             icon: Lock,
-            title: "Purpose of Usage",
-            content: "Data usage is strictly contained to the following mandates:",
+            title: "How Information Is Used",
+            content: "Your data is processed strictly for the following operational requirements:",
             list: [
-                "Seamless processing and precision delivery of your orders.",
-                "Real-time status updates via secure communication channels.",
-                "Tailored support to ensure your MMVALI experience is flawless."
+                "User authentication and profile management via secure tokens.",
+                "Processing and delivering dairy orders to your specified coordinates.",
+                "Managing subscription calendars (Daily, Alternate, Weekly, Monthly plans).",
+                "Maintaining digital wallet balance ledgers (Reward Coins credit/debit records).",
+                "Sending transactional updates and order receipts via WhatsApp alerts."
             ]
         },
         {
             icon: Shield,
-            title: "Sanctity of Data",
-            content: "We employ high-end encryption standards to safeguard your information. While no digital repository is impenetrable, our commitment to your privacy is absolute.",
+            title: "Payments & Financial Security",
+            content: "All online transactions are securely routed through our integrated payment partner, Razorpay. Credit/debit card, net banking, or UPI details are processed on secure gateways and are never stored on our database. In-app digital wallet transactions are maintained locally via Reward Coins where 1 Coin equals ₹1.",
         },
         {
             icon: Users,
-            title: "Exclusive Stewardship",
-            content: "MMVALI Farm never commoditizes your personal data. We do not sell or trade information; access is restricted to the essential logistics required for your service.",
+            title: "Third-Party Data Transfer",
+            content: "We share user data only with essential service providers necessary to operate the application: Supabase (cloud database hosting and authentication), Razorpay (payment processing), Mapbox (geolocation address mapping), and WhatsApp Business API (transactional alerts).",
         },
         {
             icon: Cookie,
-            title: "Digital Footprints",
-            content: "We utilize minimal, essential cookies to refine your journey on our platform. You retain full sovereignty over these through your browser's security settings.",
+            title: "Cookies & Local Storage",
+            content: "The platform uses essential browser local storage key-value pairs (including Supabase auth tokens and shopping basket states) to ensure user sessions remain active, avoid data loss during checkouts, and maintain operational stability.",
         },
         {
             icon: ExternalLink,
-            title: "External Portals",
-            content: "Links to curated third-party services (like our payment partners) are provided for convenience. Their privacy mandates are independent of MMVALI's standards.",
+            title: "AI Assistant Usage",
+            content: "When interacting with the integrated AI Chat Assistant widget, your queries and basic order history are processed dynamically to resolve customer issues. Inputs provided in the chat are temporarily stored in local session memory to maintain thread continuity.",
         },
         {
             icon: Clock,
-            title: "Evolution of Privacy",
-            content: "As our farm and technologies evolve, so will our privacy standards. Any refinements will be presented here, and your continued trust reflects an alignement with these updates.",
+            title: "Data Security & Retention",
+            content: "User data is stored securely in databases managed by Supabase, protected by Row-Level Security (RLS) and SSL encryption during transit. We retain personal records as long as your account remains active. You can contact support at any time to request permanent deletion of your profile data.",
         }
     ];
 
@@ -80,7 +82,7 @@ const Privacy = () => {
                             ))}
                         </h1>
                         <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
-                            Your trust is our most valued heritage. Learn how we safeguard your personal data.
+                            Official policy regarding the collection, processing, and security of user data.
                         </p>
                     </div>
                 </div>
@@ -92,10 +94,10 @@ const Privacy = () => {
                     <div className="mb-16 bg-white rounded-3xl p-8 md:p-12 border border-golden/10 shadow-soft animate-slide-up [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
                         <div className="flex items-center gap-4 mb-6">
                             <Shield className="w-8 h-8 text-golden" />
-                            <h2 className="font-display text-2xl font-bold text-forest-dark">The Purity of Privacy</h2>
+                            <h2 className="font-display text-2xl font-bold text-forest-dark">Data Protection & Privacy Standards</h2>
                         </div>
                         <p className="text-lg text-forest-light leading-relaxed">
-                            At MMVALI Farm, the security of your information is as critical as the purity of our milk. We are committed to maintaining the highest standards of data integrity and transparency in every interaction.
+                            MM Dairy Farm is committed to the protection of customer privacy and operational data security. This document details how we process user data in compliance with applicable information technology laws and e-commerce guidelines in India.
                         </p>
                     </div>
 
@@ -141,7 +143,7 @@ const Privacy = () => {
                     <div className="mt-20 text-center animate-slide-up [animation-delay:2000ms] opacity-0 [animation-fill-mode:forwards]">
                         <div className="h-px w-24 bg-golden/30 mx-auto mb-8" />
                         <p className="text-forest-light/60 text-sm max-w-lg mx-auto italic">
-                            This policy reflects our ongoing commitment to your digital security. Trusted by families, verified by excellence.
+                            This document is legally binding. Continued use of MM Dairy Farm services constitutes acceptance of these data privacy practices. For data removal requests, please contact our support team.
                         </p>
                     </div>
                 </div>

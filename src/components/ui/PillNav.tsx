@@ -85,13 +85,74 @@ const PillNav: React.FC<PillNavProps> = ({
 
   const circleRefs = useRef<Array<HTMLSpanElement | null>>([]);
   const tlRefs = useRef<Array<gsap.core.Timeline | null>>([]);
-  const activeTweenRefs = useRef<Array<gsap.core.Tween | null>>([]);
+  const activeTweenRefs = useRef<Array<gsap.core.Timeline | null>>([]);
   const logoImgRef = useRef<HTMLImageElement | null>(null);
   const logoTweenRef = useRef<gsap.core.Tween | null>(null);
   const hamburgerRef = useRef<HTMLButtonElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const navItemsRef = useRef<HTMLDivElement | null>(null);
   const logoRef = useRef<HTMLAnchorElement | HTMLElement | null>(null);
+  const mobileMenuCloseBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // Manage keyboard focus trap in mobile menu drawer when open
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    
+    // Focus the close button when drawer opens
+    mobileMenuCloseBtnRef.current?.focus();
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+        // Animate hamburger lines back
+        const hamburger = hamburgerRef.current;
+        if (hamburger) {
+          const lines = hamburger.querySelectorAll('.hamburger-line');
+          gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3 });
+          gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3 });
+        }
+        const menu = mobileMenuRef.current;
+        if (menu) {
+          gsap.to(menu, {
+            opacity: 0,
+            x: -320,
+            duration: 0.25,
+            onComplete: () => {
+              gsap.set(menu, { visibility: 'hidden' });
+            }
+          });
+        }
+        hamburgerRef.current?.focus();
+      }
+      
+      if (e.key === 'Tab') {
+        const menu = mobileMenuRef.current;
+        if (!menu) return;
+        
+        const focusableElements = menu.querySelectorAll(
+          'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusableElements.length === 0) return;
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        
+        if (e.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else { // Tab
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileMenuOpen]);
 
   // Sync profile details once loaded
   useEffect(() => {
@@ -597,12 +658,11 @@ const PillNav: React.FC<PillNavProps> = ({
         ref={mobileMenuRef} 
         style={{ ...cssVars, fontFamily: "'Roboto', sans-serif" }}
       >
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-
         {/* Profile Header */}
         <div className="p-6 bg-slate-50 border-b border-[#E5E7EB] flex flex-col gap-4 relative">
           <button 
             onClick={toggleMobileMenu} 
+            ref={mobileMenuCloseBtnRef}
             className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200/50 hover:text-slate-800 transition-colors"
             aria-label="Close menu"
           >

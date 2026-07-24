@@ -329,38 +329,38 @@ const Subscriptions = () => {
   if (isAddingConfig && configProduct) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+        <div className="max-w-4xl mx-auto px-3.5 py-4 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
           <CircularBackButton 
             onClick={() => navigate("/products?context=subscription")} 
-            className="mb-8"
+            className="mb-4 sm:mb-8"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            <div className="md:col-span-8 space-y-6">
-              <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100">
-                <div className="flex items-center gap-6 mb-8">
-                  <div className="w-20 h-20 bg-emerald-50 rounded-[24px] p-2 flex items-center justify-center shadow-inner border border-emerald-100/50">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
+            <div className="md:col-span-8 space-y-4 sm:space-y-6">
+              <div className="bg-white rounded-2xl md:rounded-[32px] p-4 sm:p-8 shadow-sm border border-slate-100">
+                <div className="flex items-center gap-4 mb-4 sm:mb-8">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 bg-emerald-50 rounded-xl sm:rounded-[24px] p-1.5 flex items-center justify-center shadow-inner border border-emerald-100/50">
                     <img src={configProduct.image} alt="" className="w-full h-full object-contain" />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-black text-emerald-950 uppercase tracking-tighter leading-none">{configProduct.name}</h2>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge className="bg-emerald-600 text-white font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                    <h2 className="text-xl sm:text-3xl font-black text-emerald-950 uppercase tracking-tighter leading-none">{configProduct.name}</h2>
+                    <div className="flex items-center gap-2 mt-1 sm:mt-2">
+                      <Badge className="bg-emerald-600 text-white font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] uppercase tracking-widest">
                         {formatWeight(selectedWeight, unitType)}
                       </Badge>
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Size</span>
+                      <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Size</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="font-black uppercase text-[10px] tracking-widest text-slate-500 ml-2">How Often?</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="space-y-1.5">
+                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">How Often?</Label>
                     <Select value={planType} onValueChange={setPlanType}>
-                      <SelectTrigger className="h-14 rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
+                      <SelectTrigger className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl shadow-2xl border-slate-100">
+                      <SelectContent className="rounded-xl sm:rounded-2xl shadow-2xl border-slate-100">
                         <SelectItem value="daily">Every Day</SelectItem>
                         <SelectItem value="alternate">Alternate Days</SelectItem>
                         <SelectItem value="weekly">Once a Week</SelectItem>
@@ -369,13 +369,13 @@ const Subscriptions = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="font-black uppercase text-[10px] tracking-widest text-slate-500 ml-2">What Time?</Label>
+                  <div className="space-y-1.5">
+                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">What Time?</Label>
                     <Select value={deliveryTime} onValueChange={setDeliveryTime}>
-                      <SelectTrigger className="h-14 rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
+                      <SelectTrigger className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl shadow-2xl border-slate-100">
+                      <SelectContent className="rounded-xl sm:rounded-2xl shadow-2xl border-slate-100">
                         <SelectItem value="morning">Morning Only</SelectItem>
                         <SelectItem value="evening">Evening Only</SelectItem>
                         <SelectItem value="both">Both Slots (AM + PM)</SelectItem>
@@ -383,45 +383,45 @@ const Subscriptions = () => {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="font-black uppercase text-[10px] tracking-widest text-slate-500 ml-2">Starting On</Label>
+                  <div className="space-y-1.5">
+                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">Starting On</Label>
                     <Input
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
                       min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
-                      className="h-14 rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
+                      className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="font-black uppercase text-[10px] tracking-widest text-slate-500 ml-2">Ending On</Label>
+                  <div className="space-y-1.5">
+                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">Ending On</Label>
                     <Input
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
                       min={startDate}
-                      className="h-14 rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
+                      className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="mt-8 border-t border-slate-100 pt-8 space-y-4">
+                <div className="mt-6 border-t border-slate-100 pt-6 space-y-3">
                   {!showAllAddresses ? (
-                    <div className="flex items-center justify-between p-5 bg-slate-50 rounded-[28px] border border-slate-200 group hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer" onClick={() => setShowAllAddresses(true)}>
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-slate-200 shadow-sm group-hover:scale-110 transition-transform">
-                          <Home className="w-6 h-6 text-emerald-600" />
+                    <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-200 group hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer" onClick={() => setShowAllAddresses(true)}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200 shadow-sm group-hover:scale-110 transition-transform shrink-0">
+                          <Home className="w-5 h-5 text-emerald-600" />
                         </div>
-                        <div>
-                          <p className="text-sm font-black text-slate-900 leading-tight">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate max-w-[160px] sm:max-w-xs">
                             {addresses.find(a => a.id === selectedAddressId)?.address_line || "No address selected"}
                           </p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Primary Drop Location</p>
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Primary Drop Location</p>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors shrink-0" />
                     </div>
                   ) : (
                     <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
@@ -456,34 +456,34 @@ const Subscriptions = () => {
 
                 {/* 🏦 Prominent Wallet Option */}
                 {availableCoins > 0 && (
-                  <div className="mt-8 pt-8 border-t border-slate-100">
+                  <div className="mt-6 pt-6 border-t border-slate-100">
                     <div
                       onClick={() => setUseCoins(!useCoins)}
                       className={cn(
-                        "p-6 rounded-[32px] border-2 transition-all cursor-pointer group flex items-center justify-between",
+                        "p-3.5 rounded-xl sm:rounded-[32px] border-2 transition-all cursor-pointer group flex items-center justify-between",
                         useCoins ? "border-amber-400 bg-amber-50 shadow-xl shadow-amber-500/5" : "border-slate-100 bg-slate-50 opacity-70 grayscale hover:grayscale-0 hover:border-slate-200"
                       )}
                     >
-                      <div className="flex items-center gap-5">
+                      <div className="flex items-center gap-3">
                         <div className={cn(
-                          "w-14 h-14 rounded-2xl p-1 flex items-center justify-center transition-transform group-hover:scale-110",
+                          "w-10 h-10 rounded-lg p-1 flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
                           useCoins ? "bg-amber-100 scale-110" : "bg-white"
                         )}>
-                          <img src="/favicon.png" className="w-full h-full object-cover rounded-xl" alt="Coin" />
+                          <img src="/favicon.png" className="w-full h-full object-cover rounded-md" alt="Coin" />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-slate-900 leading-tight uppercase italic tracking-tighter">Use Wallet Balance</p>
-                          <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mt-0.5">₹{availableCoins} Available Coins</p>
+                          <p className="text-xs font-black text-slate-900 leading-tight uppercase tracking-tight">Use Wallet Balance</p>
+                          <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mt-0.5">₹{availableCoins} Coins</p>
                         </div>
                       </div>
                       <div className={cn(
-                        "w-6 h-6 rounded-full border-4 flex items-center justify-center transition-all",
-                        useCoins ? "bg-amber-500 border-white shadow-lg" : "bg-white border-slate-200"
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
+                        useCoins ? "bg-amber-500 border-white shadow-md" : "bg-white border-slate-200"
                       )}>
-                        {useCoins && <CheckCircle2 className="w-4 h-4 text-white" />}
+                        {useCoins && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
                       </div>
                     </div>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-3 ml-2 italic tracking-widest">
+                    <p className="text-[8px] font-bold text-slate-400 uppercase mt-2 ml-2 italic tracking-wider">
                       1 Coin = ₹1 Discount • Applicable on entire payable total
                     </p>
                   </div>
@@ -491,46 +491,46 @@ const Subscriptions = () => {
               </div>
             </div>
 
-            <div className="md:col-span-4 space-y-6">
-              <div className="bg-slate-950 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden ring-1 ring-white/10">
+            <div className="md:col-span-4 space-y-4 sm:space-y-6">
+              <div className="bg-slate-950 rounded-2xl md:rounded-[40px] p-4 sm:p-8 text-white shadow-2xl relative overflow-hidden ring-1 ring-white/10">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
-                <h3 className="text-xl font-black uppercase tracking-tighter mb-8 relative z-10 flex items-center gap-2">
+                <h3 className="text-lg font-black uppercase tracking-tight mb-4 sm:mb-8 relative z-10 flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-emerald-400" /> Payment Summary
                 </h3>
 
-                <div className="space-y-5 relative z-10 mb-10">
-                  <div className="flex justify-between items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                <div className="space-y-3 relative z-10 mb-6 sm:mb-10">
+                  <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
                     <span>Drop Count</span>
-                    <span className="text-white text-sm">{totalDeliveries} Deliveries</span>
+                    <span className="text-white text-xs sm:text-sm">{totalDeliveries} Deliveries</span>
                   </div>
-                  <div className="flex justify-between items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                  <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
                     <span>Unit Price ({formatWeight(selectedWeight, unitType)})</span>
-                    <span className="text-white text-sm">₹{currentUnitPrice}</span>
+                    <span className="text-white text-xs sm:text-sm">₹{currentUnitPrice}</span>
                   </div>
 
                   {/* Summary Details */}
-                  <div className="pt-4 border-t border-white/5 space-y-3">
-                    <div className="flex justify-between items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                  <div className="pt-3 border-t border-white/5 space-y-2">
+                    <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
                       <span>Coins Applied</span>
-                      <span className={cn("text-sm", coinsToUse > 0 ? "text-amber-500" : "text-white/20")}>-₹{Math.round(coinsToUse)}</span>
+                      <span className={cn("text-xs sm:text-sm", coinsToUse > 0 ? "text-amber-500" : "text-white/20")}>-₹{Math.round(coinsToUse)}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6 bg-white/5 rounded-3xl border border-white/10 mb-10 shadow-inner">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60 mb-2">Total Amount Payable</p>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 mb-6 sm:mb-10 shadow-inner">
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400/60 mb-1">Total Amount Payable</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-5xl font-black text-emerald-400 tracking-tighter italic">₹{Math.round(finalPayableTotal)}</p>
+                    <p className="text-3xl sm:text-5xl font-black text-emerald-400 tracking-tight italic">₹{Math.round(finalPayableTotal)}</p>
                     {coinsToUse > 0 && (
-                      <p className="text-sm font-black text-amber-500 line-through opacity-40 italic">₹{Math.round(rawTotalPrice)}</p>
+                      <p className="text-xs sm:text-sm font-black text-amber-500 line-through opacity-40 italic">₹{Math.round(rawTotalPrice)}</p>
                     )}
                   </div>
                   {coinsToUse > 0 && (
-                    <p className="text-[9px] font-bold text-amber-400 uppercase mt-2 italic">
+                    <p className="text-[8px] font-bold text-amber-400 uppercase mt-1 italic">
                       -₹{Math.round(coinsToUse)} Wallet Credit Applied
                     </p>
                   )}
-                  <p className="text-[9px] font-bold text-white/30 uppercase mt-4 leading-tight italic">
+                  <p className="text-[8px] font-bold text-white/30 uppercase mt-3 leading-tight italic">
                     * Strictly prepaid model. Subscription will end on the selected date.
                   </p>
                 </div>
@@ -538,7 +538,7 @@ const Subscriptions = () => {
                 <Button
                   disabled={isSubmitting || !selectedAddressId}
                   onClick={handleSubscribe}
-                  className="w-full h-16 rounded-[24px] bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 group transition-all border-b-4 border-emerald-700 active:translate-y-1 active:border-b-0"
+                  className="w-full h-12 sm:h-16 rounded-xl sm:rounded-[24px] bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 group transition-all border-b-4 border-emerald-700 active:translate-y-1 active:border-b-0 text-xs sm:text-sm"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">
@@ -625,22 +625,22 @@ const Subscriptions = () => {
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
               {subscriptions.map(sub => (
-                <Card key={sub.id} className="rounded-[40px] overflow-hidden border-none shadow-xl hover:shadow-2xl transition-all group bg-white shadow-emerald-900/5 ring-1 ring-slate-100 relative">
-                  <div className="relative h-28 bg-emerald-50 flex items-center px-8 border-b border-emerald-100/50">
-                    <div className="flex items-center gap-6">
-                      <div className="w-14 h-14 bg-white rounded-2xl p-2 shadow-sm border border-emerald-100">
+                <Card key={sub.id} className="rounded-2xl md:rounded-[40px] overflow-hidden border-none shadow-md hover:shadow-xl transition-all group bg-white shadow-emerald-900/5 ring-1 ring-slate-100 relative">
+                  <div className="relative h-20 bg-emerald-50 flex items-center px-4 border-b border-emerald-100/50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-white rounded-xl p-1.5 shadow-sm border border-emerald-100 shrink-0">
                         <img src={sub.products?.image_url || sub.products?.image} alt="" className="w-full h-full object-contain" />
                       </div>
-                      <div>
-                        <h4 className="font-black text-emerald-900 text-xl uppercase tracking-tighter leading-none mb-1.5">{sub.products?.name}</h4>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-white px-2 py-0.5 rounded-md shadow-sm border border-emerald-100">
+                      <div className="min-w-0">
+                        <h4 className="font-black text-emerald-900 text-base uppercase tracking-tighter leading-none mb-1 truncate max-w-[140px] sm:max-w-xs">{sub.products?.name}</h4>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[8px] font-black uppercase tracking-wider text-emerald-600 bg-white px-1.5 py-0.5 rounded-md shadow-sm border border-emerald-100 shrink-0">
                             {sub.quantity} units · {formatWeight(sub.selected_weight || 1000, sub.unit_type || 'ml')}
                           </span>
                           <Badge className={cn(
-                            "text-[8px] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-md border-none",
+                            "text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border-none shrink-0",
                             sub.status === 'active' ? "bg-emerald-600 text-white" : "bg-amber-500 text-white"
                           )}>
                             {sub.status}
@@ -649,8 +649,8 @@ const Subscriptions = () => {
                       </div>
                     </div>
                   </div>
-                  <CardContent className="p-8 space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
+                  <CardContent className="p-4 md:p-8 space-y-4 md:space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Delivery Cycle</p>
                         <p className="text-sm font-black text-slate-800 capitalize flex items-center gap-2">
@@ -679,13 +679,13 @@ const Subscriptions = () => {
                       </div>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between gap-4">
+                    <div className="pt-2 flex items-center justify-between gap-2.5">
                       <Button
                         variant="ghost"
                         disabled={processingId === sub.id}
                         onClick={() => toggleStatus(sub.id, sub.status)}
                         className={cn(
-                          "flex-1 font-black h-14 rounded-[22px] text-[10px] uppercase border-2 tracking-widest transition-all active:scale-95",
+                          "flex-1 font-black h-11 md:h-14 rounded-xl md:rounded-[22px] text-[9px] md:text-[10px] uppercase border-2 tracking-widest transition-all active:scale-95",
                           sub.status === 'active' ? "border-amber-100 text-amber-600 hover:bg-amber-50" : "border-emerald-100 text-emerald-600 hover:bg-emerald-50"
                         )}
                       >
@@ -696,9 +696,9 @@ const Subscriptions = () => {
                         variant="ghost"
                         disabled={processingId === sub.id}
                         onClick={() => cancelSubscription(sub.id)}
-                        className="font-black h-14 w-14 p-0 rounded-[22px] bg-rose-50 text-rose-300 hover:bg-rose-100 hover:text-rose-600 border border-rose-100 transition-all active:scale-95"
+                        className="font-black h-11 w-11 md:h-14 md:w-14 p-0 rounded-xl md:rounded-[22px] bg-rose-50 text-rose-300 hover:bg-rose-100 hover:text-rose-600 border border-rose-100 transition-all active:scale-95 shrink-0"
                       >
-                        {processingId === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                        {processingId === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 md:w-5 md:h-5" />}
                       </Button>
                     </div>
                   </CardContent>

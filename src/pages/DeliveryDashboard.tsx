@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,7 +54,7 @@ import {
 } from "@/components/ui/tabs";
 import { OrderProgressStepper } from "@/components/delivery/OrderProgressStepper";
 import { DeliveryStatsCard } from "@/components/delivery/DeliveryStatsCard";
-import { SmartScannerModal } from "@/components/shared/SmartScannerModal";
+const SmartScannerModal = lazy(() => import("@/components/shared/SmartScannerModal").then(m => ({ default: m.SmartScannerModal })));
 import { SubscriptionsDeliveryList } from "@/components/delivery/SubscriptionsDeliveryList";
 import {
   Dialog,
@@ -147,6 +147,7 @@ const DeliveryDashboard = () => {
   const [ledgerEntries, setLedgerEntries] = useState<any[]>([]);
   const [ledgerBalance, setLedgerBalance] = useState(0);
   const [isSubmittingSettlement, setIsSubmittingSettlement] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -203,6 +204,7 @@ const DeliveryDashboard = () => {
       if (error) throw error;
       const ordersData = data || [];
       setOrders(ordersData);
+      localStorage.setItem("cached_deliveries_orders", JSON.stringify(ordersData));
 
       if (ordersData.length > 0) {
         const orderIds = ordersData.map(o => o.id);
@@ -218,32 +220,87 @@ const DeliveryDashboard = () => {
             grouped[item.order_id].push(item);
           });
           setOrderItems(grouped);
+          localStorage.setItem("cached_deliveries_items", JSON.stringify(grouped));
         }
       }
     } catch (err) {
       console.error("Error:", err);
-      toast({ title: "Error", description: "Failed to load deliveries", variant: "destructive" });
+      // Retrieve from cache if network fails
+      const cachedOrders = localStorage.getItem("cached_deliveries_orders");
+      const cachedItems = localStorage.getItem("cached_deliveries_items");
+      if (cachedOrders) setOrders(JSON.parse(cachedOrders));
+      if (cachedItems) setOrderItems(JSON.parse(cachedItems));
+      
+      toast({ title: "Offline Mode", description: "Showing cached offline routes.", variant: "default" });
     } finally {
       setLoading(false);
     }
   };
 
+  const replayPendingUpdates = async () => {
+    const queue = JSON.parse(localStorage.getItem("pending_delivery_updates") || "[]");
+    if (queue.length === 0) return;
+
+    toast({ title: "Network Restored", description: `Synchronizing ${queue.length} cached updates...` });
+
+    const remainingQueue = [];
+    for (const update of queue) {
+      try {
+        const session = (await supabase.auth.getSession()).data.session;
+        const token = session?.access_token;
+        const response = await fetch("/api/orders/status", {
+          method: "PATCH",
+          headers: { 
+            "Content-Type": "application/json",
+            ...(token ? { "Authorization": `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ orderId: update.orderId, status: update.status }),
+        });
+
+        if (!response.ok) throw new Error("Update status failed");
+      } catch (err) {
+        remainingQueue.push(update);
+      }
+    }
+
+    localStorage.setItem("pending_delivery_updates", JSON.stringify(remainingQueue));
+    toast({ title: "Sync Complete", description: "Cached delivery status reports synced successfully." });
+    fetchMyOrders();
+  };
+
   useEffect(() => {
     fetchMyOrders();
     fetchProfile();
+
+    const handleOnline = () => {
+      setIsOffline(false);
+      replayPendingUpdates();
+    };
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
     const channel = supabase
       .channel("delivery-updates")
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
-        fetchMyOrders();
+        if (navigator.onLine) fetchMyOrders();
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "cod_ledger", filter: `agent_id=eq.${user?.id}` }, () => {
-        fetchLedger();
+        if (navigator.onLine) fetchLedger();
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `user_id=eq.${user?.id}` }, () => {
-        fetchProfile();
+        if (navigator.onLine) fetchProfile();
       })
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, [user?.id]);
 
   const updateStatus = async (orderId: string, status: string, providedOtp?: string) => {
@@ -274,11 +331,31 @@ const DeliveryDashboard = () => {
       }
     }
 
+    if (!navigator.onLine || isOffline) {
+      const queue = JSON.parse(localStorage.getItem("pending_delivery_updates") || "[]");
+      queue.push({ orderId, status, timestamp: Date.now() });
+      localStorage.setItem("pending_delivery_updates", JSON.stringify(queue));
+
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: status as any } : o))
+      );
+      toast({
+        title: "Offline Update Cached",
+        description: "Status changed. Will sync once signal is restored.",
+      });
+      return;
+    }
+
     try {
+      const session = (await supabase.auth.getSession()).data.session;
+      const token = session?.access_token;
       const serviceUrl = "/api/orders/status";
       const response = await fetch(serviceUrl, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({ orderId, status }),
       });
 
@@ -306,10 +383,15 @@ const DeliveryDashboard = () => {
 
   const handleClaim = async (orderId: string) => {
     try {
+      const session = (await supabase.auth.getSession()).data.session;
+      const token = session?.access_token;
       const serviceUrl = "/api/orders/status";
       const response = await fetch(serviceUrl, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           orderId,
           status: 'picked_up',
@@ -505,6 +587,21 @@ const DeliveryDashboard = () => {
 
   return (
     <div className="min-h-screen bg-cream pb-28 md:pb-24 relative overflow-x-hidden font-body">
+      {/* Offline Mode Banner */}
+      {isOffline && (
+        <div className="sticky top-0 z-[60] bg-slate-800 text-white px-6 py-3 flex items-center justify-between shadow-2xl animate-in slide-in-from-top duration-500">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 p-2 rounded-[10px] animate-pulse">
+              <Zap className="h-5 w-5 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Offline Mode</p>
+              <p className="text-sm font-bold opacity-90">Showing cached deliveries. Updates will sync automatically when online.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Urgent Settlement Banner */}
       {profile?.settlement_requested && (
         <div className="sticky top-0 z-[60] bg-rose-600 text-white px-6 py-3 flex items-center justify-between shadow-2xl animate-in slide-in-from-top duration-500">
@@ -818,13 +915,17 @@ const DeliveryDashboard = () => {
         </Tabs>
       </main>
 
-      <SmartScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScan={handleScanResult}
-        title="Scan to Deliver"
-        description="Point camera at the QR code/Barcode on the customer's parcel box."
-      />
+      {isScannerOpen && (
+        <Suspense fallback={null}>
+          <SmartScannerModal
+            isOpen={isScannerOpen}
+            onClose={() => setIsScannerOpen(false)}
+            onScan={handleScanResult}
+            title="Scan to Deliver"
+            description="Point camera at the QR code/Barcode on the customer's parcel box."
+          />
+        </Suspense>
+      )}
 
       {/* Settlement Request Modal */}
       <Dialog open={isSettlementModalOpen} onOpenChange={setIsSettlementModalOpen}>
@@ -1008,7 +1109,21 @@ const OrderCard = ({
               </div>
             )}
           </div>
-          <StatusBadge status={order.status} />
+          <div className="flex flex-col items-end gap-1.5">
+            <StatusBadge status={order.status} />
+            {(() => {
+              const pendingQueue = JSON.parse(localStorage.getItem("pending_delivery_updates") || "[]");
+              const isSyncPending = pendingQueue.some((q: any) => q.orderId === order.id);
+              if (isSyncPending) {
+                return (
+                  <span className="bg-amber-100 text-amber-700 border border-amber-200 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-[10px] animate-pulse">
+                    Sync Pending
+                  </span>
+                );
+              }
+              return null;
+            })()}
+          </div>
         </div>
 
         {!isUnassigned && order.status !== 'cancelled' && (

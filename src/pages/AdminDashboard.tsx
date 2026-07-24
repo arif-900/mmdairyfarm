@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,22 +52,22 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { format } from "date-fns";
-import { ChatHistoryTab } from "@/components/admin/ChatHistoryTab";
-import { AnnouncementsTab } from "@/components/admin/AnnouncementsTab";
-import { FeedbackTab } from "@/components/admin/FeedbackTab";
-import { OverviewTab } from "@/components/admin/OverviewTab";
-import { StaffTab } from "@/components/admin/StaffTab";
-import { ProductsTab } from "@/components/admin/ProductsTab";
-import { OffersTab } from "@/components/admin/OffersTab";
-import { CommissionsTab } from "@/components/admin/CommissionsTab";
-import { DeliveryBoysTab } from "@/components/admin/DeliveryBoysTab";
-import { WhatsAppTab } from "@/components/admin/WhatsAppTab";
-import { MakingVideosTab } from "@/components/admin/MakingVideosTab";
-import { CodLedgerTab } from "@/components/admin/CodLedgerTab";
-import { SmartScannerModal } from "@/components/shared/SmartScannerModal";
-import { SubscriptionsTab } from "@/components/admin/SubscriptionsTab";
-import { DeliveryTrackingTab } from "@/components/admin/DeliveryTrackingTab";
-import { AnalyticsTab } from "@/components/admin/AnalyticsTab";
+const ChatHistoryTab = lazy(() => import("@/components/admin/ChatHistoryTab").then(m => ({ default: m.ChatHistoryTab })));
+const AnnouncementsTab = lazy(() => import("@/components/admin/AnnouncementsTab").then(m => ({ default: m.AnnouncementsTab })));
+const FeedbackTab = lazy(() => import("@/components/admin/FeedbackTab").then(m => ({ default: m.FeedbackTab })));
+const OverviewTab = lazy(() => import("@/components/admin/OverviewTab").then(m => ({ default: m.OverviewTab })));
+const StaffTab = lazy(() => import("@/components/admin/StaffTab").then(m => ({ default: m.StaffTab })));
+const ProductsTab = lazy(() => import("@/components/admin/ProductsTab").then(m => ({ default: m.ProductsTab })));
+const OffersTab = lazy(() => import("@/components/admin/OffersTab").then(m => ({ default: m.OffersTab })));
+const CommissionsTab = lazy(() => import("@/components/admin/CommissionsTab").then(m => ({ default: m.CommissionsTab })));
+const DeliveryBoysTab = lazy(() => import("@/components/admin/DeliveryBoysTab").then(m => ({ default: m.DeliveryBoysTab })));
+const WhatsAppTab = lazy(() => import("@/components/admin/WhatsAppTab").then(m => ({ default: m.WhatsAppTab })));
+const MakingVideosTab = lazy(() => import("@/components/admin/MakingVideosTab").then(m => ({ default: m.MakingVideosTab })));
+const CodLedgerTab = lazy(() => import("@/components/admin/CodLedgerTab").then(m => ({ default: m.CodLedgerTab })));
+const SmartScannerModal = lazy(() => import("@/components/shared/SmartScannerModal").then(m => ({ default: m.SmartScannerModal })));
+const SubscriptionsTab = lazy(() => import("@/components/admin/SubscriptionsTab").then(m => ({ default: m.SubscriptionsTab })));
+const DeliveryTrackingTab = lazy(() => import("@/components/admin/DeliveryTrackingTab").then(m => ({ default: m.DeliveryTrackingTab })));
+const AnalyticsTab = lazy(() => import("@/components/admin/AnalyticsTab").then(m => ({ default: m.AnalyticsTab })));
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
@@ -103,26 +103,59 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  const navItems: NavItem[] = [
-    { value: "overview", label: "Overview", icon: LayoutDashboard, show: isAdmin },
-    { value: "subscriptions", label: "Subscriptions", icon: CalendarHeart, show: true },
-    { value: "tracking", label: "Tracking", icon: Truck, show: true },
-    { value: "analytics", label: "Growth", icon: BarChart4, show: true },
-    { value: "orders", label: "Orders", icon: ShoppingCart, show: true },
-    { value: "products", label: "Products", icon: Package, show: true },
-    { value: "staff", label: "Staff", icon: Users, show: isSuperAdmin },
-    { value: "delivery", label: "Logistics", icon: UserCog, show: isAdmin },
-    { value: "settlements", label: "Invoices", icon: Receipt, show: isAdmin },
-    { value: "chat", label: "Chat", icon: MessageSquare, show: true },
-    { value: "offers", label: "Offers", icon: Tag, show: true },
-    { value: "commissions", label: "Earnings", icon: DollarSign, show: true },
-    { value: "whatsapp", label: "WhatsApp", icon: MessageCircle, show: true },
-    { value: "videos", label: "Story", icon: Video, show: true },
-    { value: "announcements", label: "Announce", icon: Megaphone, show: true },
-    { value: "feedback", label: "Feedback", icon: Star, show: true },
+  const categories = [
+    {
+      label: "Dashboard",
+      items: [
+        { value: "overview", label: "Overview", icon: LayoutDashboard, show: isAdmin },
+        { value: "analytics", label: "Growth/Analytics", icon: BarChart4, show: true },
+      ]
+    },
+    {
+      label: "Commerce",
+      items: [
+        { value: "orders", label: "Orders", icon: ShoppingCart, show: true },
+        { value: "products", label: "Products", icon: Package, show: true },
+        { value: "offers", label: "Offers", icon: Tag, show: true },
+        { value: "subscriptions", label: "Subscriptions", icon: CalendarHeart, show: true },
+      ]
+    },
+    {
+      label: "Delivery",
+      items: [
+        { value: "delivery", label: "Delivery Boys", icon: UserCog, show: isAdmin },
+        { value: "tracking", label: "Tracking", icon: Truck, show: true },
+      ]
+    },
+    {
+      label: "Finance",
+      items: [
+        { value: "settlements", label: "COD Ledger", icon: Receipt, show: isAdmin },
+        { value: "commissions", label: "Commissions", icon: DollarSign, show: true },
+      ]
+    },
+    {
+      label: "People",
+      items: [
+        { value: "staff", label: "Staff", icon: Users, show: isSuperAdmin },
+      ]
+    },
+    {
+      label: "Marketing",
+      items: [
+        { value: "whatsapp", label: "WhatsApp", icon: MessageCircle, show: true },
+        { value: "announcements", label: "Announcements", icon: Megaphone, show: true },
+        { value: "videos", label: "Story/Videos", icon: Video, show: true },
+      ]
+    },
+    {
+      label: "Support",
+      items: [
+        { value: "feedback", label: "Feedback", icon: Star, show: true },
+        { value: "chat", label: "AI Chats", icon: MessageSquare, show: true },
+      ]
+    }
   ];
-
-  const filteredNavItems = navItems.filter((item) => item.show);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -246,7 +279,7 @@ const AdminDashboard = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "overview": return isAdmin ? <OverviewTab /> : null;
+      case "overview": return isAdmin ? <OverviewTab onTabChange={setActiveTab} /> : null;
       case "subscriptions": return <SubscriptionsTab />;
       case "tracking": return <DeliveryTrackingTab />;
       case "analytics": return <AnalyticsTab />;
@@ -371,23 +404,44 @@ const AdminDashboard = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {filteredNavItems.map((item) => {
-            const Icon = item.icon;
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-4">
+          {categories.map((category) => {
+            const visibleItems = category.items.filter((item) => item.show);
+            if (visibleItems.length === 0) return null;
             return (
-              <button
-                key={item.value}
-                onClick={() => { setActiveTab(item.value); setSidebarOpen(false); }}
-                className={cn(
-                  "w-full flex items-center gap-3 px-4 py-2.5 rounded-[10px] text-sm font-bold transition-all",
-                  activeTab === item.value
-                    ? "bg-forest text-white shadow-lg shadow-forest/20"
-                    : "text-muted-foreground hover:bg-forest/5 hover:text-forest"
-                )}
-              >
-                <Icon className={cn("w-4 h-4 flex-shrink-0", activeTab === item.value ? "text-white" : "")} />
-                <span className="text-xs uppercase tracking-widest">{item.label}</span>
-              </button>
+              <div key={category.label} className="space-y-1">
+                <p className="px-3 text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-80">
+                  {category.label}
+                </p>
+                <div className="space-y-0.5">
+                  {visibleItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={item.value}
+                        onClick={() => {
+                          setActiveTab(item.value);
+                          setSidebarOpen(false);
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-3 px-3 py-2 rounded-[10px] text-[11px] font-bold uppercase tracking-wider transition-all",
+                          activeTab === item.value
+                            ? "bg-forest text-white shadow-md shadow-forest/15"
+                            : "text-muted-foreground hover:bg-forest/5 hover:text-forest"
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            "w-3.5 h-3.5 flex-shrink-0",
+                            activeTab === item.value ? "text-white" : "text-muted-foreground group-hover:text-forest"
+                          )}
+                        />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         </nav>
@@ -489,13 +543,24 @@ const AdminDashboard = () => {
 
           {/* Content Area */}
           <div className="min-h-[400px]">
-            {renderContent()}
+            <Suspense fallback={
+              <div className="p-8 text-center text-muted-foreground animate-pulse flex flex-col items-center justify-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-forest" />
+                <span>Loading tab content...</span>
+              </div>
+            }>
+              {renderContent()}
+            </Suspense>
           </div>
         </main>
       </div>
 
       <OrderDetailsDialog order={selectedOrder} open={dialogOpen} onOpenChange={setDialogOpen} onStatusUpdate={fetchOrders} />
-      <SmartScannerModal isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} onScan={handleScanResult} />
+      {isScannerOpen && (
+        <Suspense fallback={null}>
+          <SmartScannerModal isOpen={isScannerOpen} onClose={() => setIsScannerOpen(false)} onScan={handleScanResult} />
+        </Suspense>
+      )}
     </div>
   );
 };

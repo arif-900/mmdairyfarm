@@ -29,41 +29,41 @@ interface CartItemCardProps {
 const CartItemCard = memo(function CartItemCard({ item, onToggle, onUpdateQty, onRemove }: CartItemCardProps) {
   return (
     <div className={cn(
-      "group bg-white rounded-[32px] p-4 pr-6 border flex items-center gap-6",
-      item.selected ? "border-primary/20 shadow-lg shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
+      "group bg-white rounded-2xl p-2.5 pr-4 border flex items-center gap-3 shadow-[0_2px_10px_rgba(0,0,0,0.01)]",
+      item.selected ? "border-primary/20 shadow-md shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
     )}>
       <button onClick={() => onToggle(item.id)}
         className={cn(
-          "w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0",
-          item.selected ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" : "bg-white border-slate-200"
+          "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0",
+          item.selected ? "bg-primary border-primary text-white shadow-sm" : "bg-white border-slate-200"
         )}
       >
-        {item.selected && <div className="w-2.5 h-2.5 bg-white rounded-full animate-in zoom-in duration-300" />}
+        {item.selected && <div className="w-2 h-2 bg-white rounded-full animate-in zoom-in duration-300" />}
       </button>
-      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
-        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-contain p-2" alt={item.name} />
+      <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
+        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-contain p-1.5" alt={item.name} />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-black text-slate-800 italic truncate">{item.name}</h3>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+        <h3 className="font-bold text-slate-800 text-xs sm:text-sm truncate">{item.name}</h3>
+        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
           {formatWeight(item.selectedWeight, item.unitType)} • ₹{item.calculatedPrice} / unit
         </p>
-        <div className="flex items-center gap-4 mt-4 lg:hidden">
-          <div className="flex items-center bg-slate-50 rounded-xl p-1 px-3 border border-slate-100">
-            <button onClick={() => onUpdateQty(item.id, -1)} className="p-1 hover:text-primary transition-colors"><Minus className="w-3 h-3" /></button>
-            <span className="w-8 text-center text-xs font-black">{item.quantity}</span>
-            <button onClick={() => onUpdateQty(item.id, 1)} className="p-1 hover:text-primary transition-colors"><Plus className="w-3 h-3" /></button>
+        <div className="flex items-center gap-4 mt-2 lg:hidden">
+          <div className="flex items-center bg-slate-50 rounded-lg p-0.5 px-2 border border-slate-100">
+            <button onClick={() => onUpdateQty(item.id, -1)} className="p-1 hover:text-primary transition-colors"><Minus className="w-2.5 h-2.5" /></button>
+            <span className="w-6 text-center text-xs font-bold">{item.quantity}</span>
+            <button onClick={() => onUpdateQty(item.id, 1)} className="p-1 hover:text-primary transition-colors"><Plus className="w-2.5 h-2.5" /></button>
           </div>
         </div>
       </div>
-      <div className="hidden lg:flex items-center bg-slate-50 rounded-2xl p-1 px-4 border border-slate-100 shadow-inner">
-        <button onClick={() => onUpdateQty(item.id, -1)} className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Minus className="w-3.5 h-3.5" /></button>
-        <span className="w-12 text-center text-sm font-black text-slate-800">{item.quantity}</span>
-        <button onClick={() => onUpdateQty(item.id, 1)} className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Plus className="w-3.5 h-3.5" /></button>
+      <div className="hidden lg:flex items-center bg-slate-50 rounded-xl p-0.5 px-3 border border-slate-100 shadow-inner">
+        <button onClick={() => onUpdateQty(item.id, -1)} className="w-7 h-7 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Minus className="w-3 h-3" /></button>
+        <span className="w-10 text-center text-xs font-bold text-slate-800">{item.quantity}</span>
+        <button onClick={() => onUpdateQty(item.id, 1)} className="w-7 h-7 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Plus className="w-3 h-3" /></button>
       </div>
-      <div className="text-right shrink-0 min-w-[100px]">
-        <p className="font-black text-slate-900 text-lg italic tracking-tighter">₹{item.calculatedPrice * item.quantity}</p>
-        <button onClick={() => onRemove(item.id)} className="text-[10px] font-black text-rose-500 uppercase tracking-widest hover:underline mt-2 flex items-center gap-1 ml-auto"><Trash2 className="w-3 h-3" /> Remove</button>
+      <div className="text-right shrink-0 min-w-[80px]">
+        <p className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">₹{item.calculatedPrice * item.quantity}</p>
+        <button onClick={() => onRemove(item.id)} className="text-[9px] font-bold text-rose-500 uppercase tracking-wider hover:underline mt-1 flex items-center gap-1 ml-auto"><Trash2 className="w-2.5 h-2.5" /> Remove</button>
       </div>
     </div>
   );
