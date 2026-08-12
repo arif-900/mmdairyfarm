@@ -45,7 +45,7 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen flex flex-col bg-[#061A13] text-[#F5F3EC] relative selection:bg-[#C98A24] selection:text-[#061A13]">
       <AnnouncementBanner />
       <Header />
-      <main className="flex-1 px-5 sm:px-0">{children}</main>
+      <main className="flex-1 px-[10px] sm:px-0">{children}</main>
       <Footer />
       <Suspense fallback={null}>
         <ChatWidget />

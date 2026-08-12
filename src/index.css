@@ -84,6 +84,7 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     background-color: #061A13;
     color: #F5F3EC;
   }
@@ -93,6 +94,7 @@
     color: #F5F3EC;
     font-family: var(--font-body);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    touch-action: manipulation;
   }
 
   h1,
@@ -165,7 +167,7 @@
   }
 
   .container-main {
-    @apply max-w-7xl mx-auto w-full px-5 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto w-full px-[10px] sm:px-6 lg:px-8;
   }
 
   .text-gradient-brand {
