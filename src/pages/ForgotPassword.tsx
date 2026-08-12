@@ -48,56 +48,55 @@ const ForgotPassword = () => {
 
     return (
         <Layout>
-            <section className="section-padding min-h-[70vh] flex items-center">
-                <div className="container-main max-w-md mx-auto">
-                    <div className="bg-card rounded-2xl p-6 md:p-8 shadow-card animate-scale-in">
-                        <div className="text-center mb-8">
-                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                                <Mail className="w-8 h-8 text-primary" />
+            <section className="bg-[#061A13] min-h-[85vh] flex items-center justify-center p-4 sm:p-6 text-[#F5F3EC] font-sans">
+                <div className="max-w-md w-full mx-auto">
+                    <div className="bg-[#0B2118] border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+                        <div className="text-center space-y-3">
+                            <div className="w-16 h-16 rounded-2xl bg-[#10291F] border border-white/10 flex items-center justify-center mx-auto text-[#C98A24] shadow-xl">
+                                <Mail className="w-8 h-8" />
                             </div>
-                            <h1 className="font-display text-2xl font-bold text-foreground">
-                                Reset Password
+                            <h1 className="font-display text-2xl sm:text-3xl font-black text-[#F5F3EC] uppercase tracking-tight">
+                                RESET <span className="text-[#C98A24]">PASSWORD</span>
                             </h1>
-                            <p className="text-muted-foreground mt-2">
+                            <p className="text-xs text-[#AAB8B0] leading-relaxed">
                                 {isSent
-                                    ? "Check your email for instructions"
-                                    : "Enter your email and we'll send you a link to reset your password"
+                                    ? "Check your inbox for step-by-step instructions"
+                                    : "Enter your email address to receive a secure password reset link"
                                 }
                             </p>
                         </div>
 
                         {isSent ? (
-                            <div className="text-center space-y-4">
-                                <p className="text-sm text-muted-foreground">
+                            <div className="text-center space-y-4 pt-2">
+                                <p className="text-xs text-[#AAB8B0]">
                                     Didn't receive the email? Check your spam folder or try again.
                                 </p>
                                 <Button
-                                    variant="outline"
                                     onClick={() => setIsSent(false)}
-                                    className="w-full"
+                                    className="w-full h-12 rounded-xl font-bold text-xs uppercase tracking-wider bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431] border border-white/20 shadow-xl"
                                 >
                                     Try Again
                                 </Button>
                                 <Link
                                     to="/auth"
-                                    className="inline-flex items-center text-sm text-primary hover:underline"
+                                    className="inline-flex items-center text-xs font-bold text-[#C98A24] hover:underline pt-2"
                                 >
                                     <ArrowLeft className="w-4 h-4 mr-1" /> Back to Login
                                 </Link>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <Label htmlFor="email">Email Address</Label>
-                                    <div className="relative mt-1">
-                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                <div className="space-y-1">
+                                    <Label htmlFor="email" className="text-xs font-bold text-[#F5F3EC]">Email Address</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#C98A24]" />
                                         <Input
                                             id="email"
                                             type="email"
                                             placeholder="you@example.com"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
-                                            className="pl-10"
+                                            className="pl-10 h-12 text-sm rounded-xl bg-[#10291F] border-white/10 text-[#F5F3EC] placeholder:text-[#718078] focus:border-[#C98A24]"
                                             required
                                         />
                                     </div>
@@ -105,9 +104,7 @@ const ForgotPassword = () => {
 
                                 <Button
                                     type="submit"
-                                    variant="accent"
-                                    size="lg"
-                                    className="w-full mt-6"
+                                    className="w-full h-12 rounded-xl font-bold text-xs uppercase tracking-wider bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] border border-[#C98A24] shadow-xl mt-4"
                                     disabled={isLoading}
                                 >
                                     {isLoading ? (
@@ -120,10 +117,10 @@ const ForgotPassword = () => {
                                     )}
                                 </Button>
 
-                                <div className="mt-6 text-center">
+                                <div className="pt-4 text-center">
                                     <Link
                                         to="/auth"
-                                        className="inline-flex items-center text-sm text-muted-foreground hover:text-primary hover:underline"
+                                        className="inline-flex items-center text-xs font-bold text-[#AAB8B0] hover:text-[#C98A24] hover:underline"
                                     >
                                         <ArrowLeft className="w-4 h-4 mr-1" /> Back to Login
                                     </Link>

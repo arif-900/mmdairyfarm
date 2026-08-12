@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Milk, Instagram, Facebook, Youtube, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, Youtube, Facebook, Send, ShieldCheck, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -17,178 +17,183 @@ const Footer = () => {
     setTimeout(() => {
       toast({
         title: "Subscribed Successfully",
-        description: "Thank you for subscribing to the MM Dairy Farm newsletter!",
+        description: "Thank you for subscribing to MMVALI Dairy Farm updates!",
       });
       setEmail("");
       setLoading(false);
-    }, 800);
+    }, 600);
   };
 
   return (
-    <footer className="bg-slate-950 text-slate-400 border-t border-slate-900 font-body">
-      <div className="container-main px-6 py-20 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+    <footer className="bg-[#061A13] text-[#AAB8B0] border-t border-white/10 font-sans relative overflow-hidden">
+      {/* Subtle organic gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#082D20]/20 to-black/50 pointer-events-none" />
+      
+      <div className="container-main px-6 py-16 md:px-12 lg:py-20 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10">
           
-          {/* Brand Column */}
+          {/* Brand & Trust Column */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <img
                 src="/favicon.png"
-                alt="MMVALI Dairy Farm"
-                className="w-10 h-10 rounded-xl object-cover border border-slate-800"
+                alt="MM Dairy Farm"
+                className="w-11 h-11 rounded-2xl object-cover border border-white/10 shadow-soft"
               />
-              <span className="font-display text-xl font-bold text-white tracking-tight">
-                MMVALI Dairy
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-[#F5F3EC] tracking-tight leading-none">
+                  MM Dairy Farm
+                </span>
+                <span className="text-[11px] font-semibold text-[#C98A24] tracking-wider uppercase mt-1">
+                  100% Pure & Fresh
+                </span>
+              </div>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Fresh, pure dairy products delivered straight from our farm to your doorstep. Dedicated to providing the purest natural nutrition, rooted in a commitment to quality that spans generations.
+            <p className="text-[#AAB8B0] text-sm leading-relaxed max-w-sm">
+              Delivering unadulterated, nutrient-rich fresh farm milk and organic dairy products directly from our farm to your home every morning.
             </p>
             
             {/* Social Icons */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-2">
               <a
                 href="https://instagram.com/mmvalidairyfarm"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-10 h-10 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200"
+                className="w-10 h-10 bg-[#0B2118] border border-white/10 rounded-xl flex items-center justify-center text-[#AAB8B0] hover:bg-[#10291F] hover:text-[#C98A24] hover:border-[#C98A24]/40 transition-all duration-200 shadow-sm"
               >
-                <Instagram className="w-5 h-5" />
+                <Instagram className="w-4 h-4" />
               </a>
               <a
                 href="https://youtube.com/@mmvalidairyfarm"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Youtube"
-                className="w-10 h-10 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200"
+                className="w-10 h-10 bg-[#0B2118] border border-white/10 rounded-xl flex items-center justify-center text-[#AAB8B0] hover:bg-[#10291F] hover:text-[#C98A24] hover:border-[#C98A24]/40 transition-all duration-200 shadow-sm"
               >
-                <Youtube className="w-5 h-5" />
+                <Youtube className="w-4 h-4" />
               </a>
               <a
-                href="#"
+                href="https://wa.me/916309835752"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-10 h-10 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200"
+                aria-label="WhatsApp"
+                className="w-10 h-10 bg-[#0B2118] border border-white/10 rounded-xl flex items-center justify-center text-[#AAB8B0] hover:bg-[#10291F] hover:text-[#C98A24] hover:border-[#C98A24]/40 transition-all duration-200 shadow-sm"
               >
-                <Facebook className="w-5 h-5" />
+                <Phone className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links Column */}
-          <div className="space-y-6">
-            <h4 className="font-display text-sm font-semibold text-white tracking-wider uppercase">Quick Links</h4>
+          {/* Quick Navigation Column */}
+          <div className="space-y-5">
+            <h4 className="text-xs font-bold text-[#C98A24] tracking-widest uppercase">Navigation</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/" className="hover:text-white transition-colors duration-200">
-                  Home
+                <Link to="/" className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F8A5F]" /> Home
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="hover:text-white transition-colors duration-200">
-                  Our Store
+                <Link to="/products" className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F8A5F]" /> Dairy Store
                 </Link>
               </li>
               <li>
-                <Link to="/subscriptions" className="hover:text-white transition-colors duration-200">
-                  Subscriptions
+                <Link to="/subscriptions" className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C98A24]" /> Subscription Plans
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-white transition-colors duration-200">
-                  Frequently Asked Questions
+                <Link to="/faq" className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F8A5F]" /> Frequently Asked Questions
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-white transition-colors duration-200">
-                  Contact Support
+                <Link to="/contact" className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F8A5F]" /> Customer Support
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact details Column */}
-          <div className="space-y-6">
-            <h4 className="font-display text-sm font-semibold text-white tracking-wider uppercase">Get In Touch</h4>
+          {/* Contact Details Column */}
+          <div className="space-y-5">
+            <h4 className="text-xs font-bold text-[#C98A24] tracking-widest uppercase">Get In Touch</h4>
             <ul className="space-y-4 text-sm">
-              <li className="flex items-center gap-3">
-                <svg className="w-4 h-4 text-primary flex-shrink-0 fill-current" viewBox="0 0 24 24">
-                  <path d="M12.012 2C6.48 2 2 6.48 2 12.01c0 1.77.46 3.49 1.34 5.02L2 22l5.12-1.34c1.47.8 3.12 1.22 4.88 1.22 5.53 0 10.01-4.48 10.01-10.01C22.01 6.48 17.54 2 12.012 2zm.04 17.3c-1.53 0-3.04-.41-4.36-1.19l-.31-.19-3.24.85.87-3.16-.21-.33c-.85-1.36-1.3-2.94-1.3-4.57 0-4.73 3.85-8.58 8.58-8.58 4.73 0 8.58 3.85 8.58 8.58 0 4.73-3.85 8.58-8.58 8.58zm4.72-6.43c-.26-.13-1.53-.76-1.77-.84-.23-.09-.4-.13-.57.13-.17.26-.66.84-.81 1.01-.15.17-.3.19-.56.06-.26-.13-1.11-.41-2.11-1.3-1.02-.91-1.71-2.03-1.91-2.37-.2-.34-.02-.53.11-.66.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.5-.4-.43-.57-.44-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.68.32-.23.26-.88.86-.88 2.09 0 1.23.9 2.42 1.02 2.58.12.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.53-.62 1.75-1.2.22-.57.22-1.07.15-1.2-.07-.12-.26-.19-.52-.32z"/>
-                </svg>
+              <li className="flex items-start gap-3">
+                <Phone className="w-4 h-4 text-[#C98A24] shrink-0 mt-0.5" />
                 <a
                   href="https://wa.me/916309835752"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors duration-200"
+                  className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 font-medium"
                 >
                   +91 63098 35752
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+              <li className="flex items-start gap-3">
+                <Mail className="w-4 h-4 text-[#C98A24] shrink-0 mt-0.5" />
                 <a
                   href="mailto:mmvalidairyfarm@gmail.com"
-                  className="hover:text-white transition-colors duration-200 break-all"
+                  className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 break-all"
                 >
                   mmvalidairyfarm@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-[#C98A24] shrink-0 mt-1" />
                 <a
                   href="https://maps.app.goo.gl/X8PvVu5ZBitaye1P9"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors duration-200 leading-relaxed"
+                  className="text-[#AAB8B0] hover:text-[#F5F3EC] transition-colors duration-200 leading-relaxed text-xs"
                 >
-                  MMVALI Dairy Farm,<br />
-                  Bhanakacherla, Bhanumukkala,<br />
-                  Andhra Pradesh 518422
+                  MM Dairy Farm, Bhanakacherla, Bhanumukkala, Andhra Pradesh 518422
                 </a>
               </li>
             </ul>
           </div>
 
           {/* Newsletter Column */}
-          <div className="space-y-6">
-            <h4 className="font-display text-sm font-semibold text-white tracking-wider uppercase">Newsletter</h4>
-            <p className="text-sm leading-relaxed">
-              Subscribe to get special discounts, recipe ideas, and farm updates.
+          <div className="space-y-5">
+            <h4 className="text-xs font-bold text-[#C98A24] tracking-widest uppercase">Fresh Updates</h4>
+            <p className="text-xs text-[#AAB8B0] leading-relaxed">
+              Subscribe for exclusive morning delivery slots, seasonal farm news, and special subscriber discounts.
             </p>
             <form onSubmit={handleSubscribe} className="flex gap-2">
               <Input
                 type="email"
-                placeholder="Your email address"
+                placeholder="Enter your email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-slate-900 border-slate-800 placeholder:text-slate-600 text-white rounded-xl focus-visible:ring-primary/20 focus-visible:border-primary/50 text-sm h-11"
+                className="bg-[#0B2118] border-white/10 placeholder:text-[#718078] text-[#F5F3EC] rounded-xl text-xs h-10 focus-visible:ring-[#C98A24]"
               />
-              <Button type="submit" size="icon" className="h-11 w-11 rounded-xl bg-primary hover:bg-primary/90 flex-shrink-0" disabled={loading}>
-                <Send className="w-4 h-4 text-white" />
+              <Button type="submit" size="icon" className="h-10 w-10 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] shrink-0" disabled={loading}>
+                <Send className="w-4 h-4" />
               </Button>
             </form>
+            <div className="flex items-center gap-2 pt-1 text-[11px] text-[#AAB8B0]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0F8A5F]" /> Safe & Spam-Free Guarantee
+            </div>
           </div>
         </div>
 
-        {/* Bottom copyright area */}
-        <div className="mt-16 pt-8 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <p className="text-center text-xs text-slate-500">
-            © {new Date().getFullYear()} MMVALI Dairy Farm. All rights reserved.
-          </p>
-          <div className="flex flex-wrap justify-center sm:justify-end gap-x-6 gap-y-2 text-xs">
-            <Link to="/terms" className="hover:text-white transition-colors duration-200">
+        {/* Bottom Bar */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#718078]">
+          <p>© {new Date().getFullYear()} MM Dairy Farm. Pure Dairy Goodness, Straight From Our Farm.</p>
+          <div className="flex flex-wrap justify-center sm:justify-end gap-x-6 gap-y-2">
+            <Link to="/terms" className="hover:text-[#F5F3EC] transition-colors">
               Terms & Conditions
             </Link>
-            <Link to="/privacy" className="hover:text-white transition-colors duration-200">
+            <Link to="/privacy" className="hover:text-[#F5F3EC] transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/refund" className="hover:text-white transition-colors duration-200">
+            <Link to="/refund" className="hover:text-[#F5F3EC] transition-colors">
               Refund Policy
             </Link>
-            <Link to="/shipping" className="hover:text-white transition-colors duration-200">
+            <Link to="/shipping" className="hover:text-[#F5F3EC] transition-colors">
               Shipping Policy
             </Link>
           </div>
@@ -199,3 +204,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

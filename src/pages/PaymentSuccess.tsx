@@ -2,7 +2,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Truck, ShoppingBag, Clock, Calendar } from "lucide-react";
+import { CheckCircle, Truck, ShoppingBag, Clock, Calendar, Home } from "lucide-react";
 import { CircularBackButton } from "@/components/ui/CircularBackButton";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,20 +109,17 @@ const PaymentSuccess = () => {
 
   return (
     <Layout>
-      <section className="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-slate-50/50 to-white px-4 py-12">
+      <section className="bg-[#061A13] min-h-[85vh] flex items-center justify-center p-4 sm:p-6 font-body text-[#F5F3EC]">
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-md mx-auto w-full text-center space-y-8"
+          className="max-w-md w-full text-center space-y-6 sm:space-y-8"
         >
-          <div className="flex justify-center sm:justify-start mb-4">
-            <CircularBackButton onClick={() => navigate("/")} />
-          </div>
-
-          {/* Success Icon Animation */}
-          <div className="relative mx-auto w-32 h-32 flex items-center justify-center">
-            <motion.div 
+          {/* Animated Checkmark Icon with Ambient Gold Glow */}
+          <div className="relative flex justify-center items-center py-4">
+            <div className="absolute w-28 h-28 bg-[#C98A24]/20 rounded-full blur-2xl animate-pulse" />
+            <motion.div
               initial={{ scale: 0, rotate: -45 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ 
@@ -131,28 +128,18 @@ const PaymentSuccess = () => {
                 damping: 20,
                 delay: 0.1 
               }}
-              className="relative z-10 w-24 h-24 rounded-full bg-gradient-to-br from-primary to-emerald-500 flex items-center justify-center shadow-2xl shadow-primary/30"
+              className="relative z-10 w-22 h-22 rounded-full bg-[#10291F] border-2 border-[#C98A24]/40 flex items-center justify-center text-[#C98A24] shadow-[0_0_40px_rgba(201,138,36,0.35)]"
             >
-              <CheckCircle className="w-12 h-12 text-white" />
+              <CheckCircle className="w-11 h-11 text-[#C98A24]" />
             </motion.div>
-            
-            {/* Pulse Glow Background */}
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: [1, 1.4, 1.2], opacity: [0.5, 0.2, 0] }}
-              transition={{ 
-                duration: 2, 
-                repeat: 3,
-                ease: "easeOut"
-              }}
-              className="absolute inset-0 rounded-full bg-primary/20 pointer-events-none"
-            />
           </div>
 
           {/* Headline */}
           <motion.div variants={itemVariants} className="space-y-2 px-4">
-            <h1 className="font-display text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">Order Confirmed!</h1>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-[320px] mx-auto">
+            <h1 className="font-display text-3xl sm:text-4xl font-black text-[#F5F3EC] tracking-tight leading-tight">
+              ORDER <span className="text-[#C98A24]">CONFIRMED!</span>
+            </h1>
+            <p className="text-[#AAB8B0] text-sm leading-relaxed max-w-[340px] mx-auto font-medium">
               Thank you! Our farm team is already harvesting your fresh supply.
             </p>
           </motion.div>
@@ -160,35 +147,34 @@ const PaymentSuccess = () => {
           {/* Order Info Card */}
           <motion.div 
             variants={itemVariants}
-            whileHover={{ scale: 1.01 }}
             className="overflow-hidden px-2 sm:px-0"
           >
             {orderId && (
-              <div className="bg-white border border-slate-200/60 rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-[#0B2118] border border-white/10 border-t-2 border-t-[#C98A24] rounded-3xl p-6 shadow-2xl">
                 <div className="space-y-4">
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Receipt ID</p>
-                    <p className="font-mono font-black text-slate-800 text-lg sm:text-xl tracking-wider">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#718078] mb-1">Receipt ID</p>
+                    <p className="font-mono font-black text-[#C98A24] text-xl sm:text-2xl tracking-wider">
                       #{orderId.slice(0, 8).toUpperCase()}
                     </p>
                   </div>
 
                   {/* Delivery Promise Box */}
-                  <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 sm:p-5 text-left space-y-4">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  <div className="bg-[#10291F] border border-white/10 rounded-2xl p-4 sm:p-5 text-left space-y-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-11 h-11 rounded-xl bg-[#0B2118] border border-white/10 flex items-center justify-center shrink-0 text-[#C98A24] shadow-md">
+                        <Truck className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Arriving At</p>
-                        <p className="font-black text-slate-900 text-xs sm:text-sm">{getDeliveryLabel()}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#718078]">Arriving At</p>
+                        <p className="font-black text-[#F5F3EC] text-sm">{getDeliveryLabel()}</p>
                       </div>
                     </div>
                     {expectedDate && (
-                      <div className="flex items-center gap-3 pt-3 border-t border-primary/10">
-                        <Calendar className="w-4 h-4 text-primary" />
-                        <span className="text-[11px] sm:text-xs font-bold text-slate-600 italic">
-                          ETA: <span className="text-primary font-black not-italic">{format(expectedDate, "EEEE, dd MMM")}</span>
+                      <div className="flex items-center gap-3 pt-3 border-t border-white/10">
+                        <Calendar className="w-4 h-4 text-[#C98A24]" />
+                        <span className="text-xs font-bold text-[#AAB8B0] italic">
+                          ETA: <span className="text-[#C98A24] font-black not-italic">{format(expectedDate, "EEEE, dd MMM")}</span>
                         </span>
                       </div>
                     )}
@@ -198,35 +184,33 @@ const PaymentSuccess = () => {
             )}
           </motion.div>
 
-          {/* Actions */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:grid sm:grid-cols-2 gap-3 sm:gap-4 px-4 sm:px-0">
+          {/* Premium High-Impact Actions */}
+          <motion.div variants={itemVariants} className="flex flex-col gap-3.5 w-full px-2 sm:px-0 pt-3">
             <Button
               size="lg"
-              className="rounded-[18px] sm:rounded-[20px] h-14 font-black text-xs uppercase tracking-widest bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 border-b-4 border-indigo-700 active:border-b-0 active:translate-y-1 transition-all"
+              className="w-full rounded-2xl h-15 sm:h-16 font-extrabold text-sm sm:text-base uppercase tracking-widest bg-gradient-to-r from-[#D9A441] via-[#C98A24] to-[#B3781D] text-[#061A13] border border-[#F5D79E]/40 shadow-[0_8px_25px_rgba(201,138,36,0.4)] hover:shadow-[0_12px_32px_rgba(201,138,36,0.6)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
               asChild
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/products" className="flex items-center justify-center w-full h-full">
-                  <ShoppingBag className="w-4 h-4 mr-2" />
-                  Continue Shopping
-                </Link>
-              </motion.div>
+              <Link to="/products" className="flex items-center justify-center w-full h-full gap-2.5">
+                <ShoppingBag className="w-5 h-5 text-[#061A13] shrink-0" />
+                <span>Continue Shopping</span>
+              </Link>
             </Button>
             <Button
-              variant="outline"
               size="lg"
-              className="rounded-[18px] sm:rounded-[20px] h-14 font-black text-xs uppercase tracking-widest border-2 border-slate-200 hover:bg-slate-50 transition-all"
+              className="w-full rounded-2xl h-15 sm:h-16 font-extrabold text-sm sm:text-base uppercase tracking-widest bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431] hover:text-[#C98A24] border-2 border-white/20 hover:border-[#C98A24]/50 shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-300"
               asChild
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/" className="flex items-center justify-center w-full h-full">Home</Link>
-              </motion.div>
+              <Link to="/" className="flex items-center justify-center w-full h-full gap-2.5">
+                <Home className="w-5 h-5 text-[#C98A24] shrink-0" />
+                <span>Home</span>
+              </Link>
             </Button>
           </motion.div>
 
           {/* Support Link */}
-          <motion.p variants={itemVariants} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-2 sm:pt-4 px-4">
-            Need help? <Link to="/support" className="text-primary hover:underline">Contact Support</Link>
+          <motion.p variants={itemVariants} className="text-[10px] font-bold text-[#718078] uppercase tracking-widest pt-2 sm:pt-4 px-4">
+            Need help? <Link to="/contact" className="text-[#C98A24] hover:underline">Contact Support</Link>
           </motion.p>
         </motion.div>
       </section>

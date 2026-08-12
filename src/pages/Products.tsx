@@ -1,145 +1,187 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Layout from "@/components/layout/Layout";
-import FloatingProductCard from "@/components/products/FloatingProductCard";
-import { useStoreProducts } from "@/data/products";
-import { Loader2, Search, ShoppingBag, Leaf, ShieldCheck, Timer } from "lucide-react";
-import { CircularBackButton } from "@/components/ui/CircularBackButton";
-import { useNavigate } from "react-router-dom";
+import { useStoreProducts, Product } from "@/data/products";
+import {
+  ArrowRight,
+  Loader2,
+  Search,
+  ShoppingBag,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const Products = () => {
-  const navigate = useNavigate();
   const { products, loading } = useStoreProducts();
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
     return products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           product.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
+      const name = product.name?.toLowerCase() ?? "";
+      const description = product.description?.toLowerCase() ?? "";
+
+      return !query || name.includes(query) || description.includes(query);
     });
   }, [products, searchQuery]);
 
+  const getUnit = (product: Product) =>
+    product.unitType === "ml" ? "L" : "kg";
+
+  const getPrice = (product: Product) =>
+    product.basePricePerKg || product.price;
+
   return (
     <Layout>
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <section className="pt-6 sm:pt-10 pb-4 sm:pb-6 px-4 sm:px-6">
-          <div className="container-main">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-8">
-              <div className="space-y-2 sm:space-y-4">
-                <CircularBackButton 
-                  onClick={() => navigate("/")} 
-                  className="mb-1 sm:mb-2 bg-white text-forest hover:bg-primary hover:text-white shadow-md border border-forest/10 w-8 h-8 sm:w-10 sm:h-10" 
-                />
-                <h1 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase leading-[0.9] sm:leading-[0.85] tracking-tight text-forest">
-                  Our <span className="text-golden">Products</span>
-                </h1>
-                <p className="text-earth/50 font-body font-bold uppercase text-[9px] sm:text-[11px] md:text-xs tracking-[0.25em] sm:tracking-[0.3em] pl-1">
-                  Pure &bull; Fresh &bull; Farm to Table
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full md:w-auto">
-                 <div className="relative group flex-1 sm:w-72 md:w-80">
-                    <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-forest/30 group-focus-within:text-primary transition-colors" />
-                    <Input 
-                      placeholder="Search products..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-10 sm:h-12 md:h-14 pl-9 sm:pl-12 pr-4 bg-white border-forest/10 rounded-lg font-body font-semibold text-xs sm:text-sm placeholder:text-earth/30 focus-visible:ring-primary/20 focus-visible:border-primary/30 transition-all shadow-soft"
-                    />
-                 </div>
-              </div>
-            </div>
+      {/* COMPACT PRODUCT PAGE INTRO */}
+      <section className="bg-[#082D20] pt-8 pb-6 border-b border-white/10">
+        <div className="container-main mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-5">
+          {/* Header Typography */}
+          <div className="space-y-1.5 max-w-3xl">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#C98A24]">
+              MM DAIRY FARM
+            </span>
+            <h1 className="font-display text-3xl sm:text-4xl font-black text-[#F5F3EC] tracking-tight leading-none">
+              OUR PRODUCTS
+            </h1>
+            <p className="text-[#AAB8B0] text-sm sm:text-base font-medium leading-relaxed">
+              Fresh dairy products, made with care.
+            </p>
           </div>
-        </section>
-      </div>
 
-      <section className="section-padding bg-cream/30 min-h-[400px]">
-        <div className="container-main">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center p-24 space-y-4">
-              <div className="relative">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                <ShoppingBag className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
-              </div>
-              <p className="text-xs font-body font-bold uppercase tracking-[0.3em] text-forest/40 animate-pulse">Loading Freshness...</p>
-            </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="text-center p-24 bg-white rounded-[10px] border border-forest/5 shadow-card">
-              <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center mx-auto mb-6">
-                <Search className="w-8 h-8 text-forest/30" />
-              </div>
-              <h2 className="font-display text-2xl font-bold text-forest">No Products Found</h2>
-              <p className="text-earth/50 font-body font-semibold uppercase text-xs tracking-widest mt-2">Try adjusting your search query</p>
-              <Button 
-                variant="outline" 
-                onClick={() => setSearchQuery("")}
-                className="mt-8 rounded-[10px] font-body font-bold text-xs uppercase tracking-widest border-forest/20 text-forest hover:bg-primary hover:text-white hover:border-primary"
-              >
-                Clear Search
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 pt-2 pb-6">
-                {filteredProducts.map((product, index) => (
-                  <FloatingProductCard
-                    key={product.id}
-                    {...product}
-                    floatDelay={(index % 4) * 600}
-                  />
-                ))}
-              </div>
-              <div className="text-center py-8 text-earth/40 font-body font-semibold text-xs uppercase tracking-widest">
-                Showing {filteredProducts.length} of {products.length} products
-              </div>
-            </>
-          )}
+          {/* SEARCH FIELD (Integrated, 52px height, 14px radius) */}
+          <div className="relative max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#718078]" />
+            <Input
+              aria-label="Search products"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-[52px] pl-11 pr-4 rounded-[14px] border border-white/10 bg-[#0B2118] text-[#F5F3EC] placeholder:text-[#718078] text-sm font-medium focus-visible:ring-2 focus-visible:ring-[#C98A24]/40 shadow-xs"
+            />
+          </div>
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container-main px-4">
-          <div className="max-w-2xl mx-auto text-center mb-14">
-            <span className="inline-block text-golden font-body font-bold text-xs uppercase tracking-widest mb-4">Why Us</span>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-forest mb-4">Uncompromising <span className="text-golden">Quality</span></h2>
-            <p className="text-earth/60 font-body font-medium leading-relaxed">
-              We believe in transparency and traditional methods. Our cattle are part of our family, 
-              and we ensure they get the best care, which results in the purest milk for you.
-            </p>
+      {/* PRODUCT LISTING SECTION */}
+      <section className="bg-[#061A13] py-6 sm:py-10">
+        <div className="container-main mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-5">
+
+          {/* PRODUCT COUNT */}
+          <div className="flex items-center justify-between pb-1 border-b border-white/10">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#AAB8B0]">
+              Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            </span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-8 bg-white rounded-[10px] shadow-card hover:shadow-elevated transition-all duration-500 group border border-forest/5">
-              <div className="w-14 h-14 rounded-[10px] bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500">
-                <ShieldCheck className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display font-bold text-forest mb-3 text-lg">Purity Guaranteed</h3>
-              <p className="text-sm text-earth/60 font-body leading-relaxed">
-                100% pure milk with no preservatives, chemicals or water added. Straight from the farm to your table.
+
+          {/* LOADING & EMPTY STATES */}
+          {loading ? (
+            <div className="flex min-h-[280px] flex-col items-center justify-center gap-3 py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-[#C98A24]" />
+              <p className="text-xs font-bold uppercase tracking-widest text-[#AAB8B0]">
+                Loading products...
               </p>
             </div>
-            <div className="p-8 bg-white rounded-[10px] shadow-card hover:shadow-elevated transition-all duration-500 group border border-forest/5">
-              <div className="w-14 h-14 rounded-[10px] bg-golden/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500">
-                <Leaf className="w-7 h-7 text-golden" />
+          ) : filteredProducts.length === 0 ? (
+            <div className="mx-auto flex max-w-md flex-col items-center py-16 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0B2118]/80 backdrop-blur-md mb-4 border border-white/10">
+                <ShoppingBag className="h-6 w-6 text-[#C98A24]" />
               </div>
-              <h3 className="font-display font-bold text-forest mb-3 text-lg">Natural Feed</h3>
-              <p className="text-sm text-earth/60 font-body leading-relaxed">
-                Our cattle are fed with organic fodder and clean drinking water, ensuring the highest nutritional value.
+              <h2 className="text-xl font-extrabold text-[#F5F3EC]">
+                No products found
+              </h2>
+              <p className="text-xs text-[#AAB8B0] mt-1 max-w-xs">
+                Try adjusting your search query.
               </p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="mt-5 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0F8A5F] text-white hover:bg-[#123B2A] transition-all"
+              >
+                Clear Search
+              </button>
             </div>
-            <div className="p-8 bg-white rounded-[10px] shadow-card hover:shadow-elevated transition-all duration-500 group border border-forest/5">
-              <div className="w-14 h-14 rounded-[10px] bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500">
-                <Timer className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="font-display font-bold text-forest mb-3 text-lg">Same Day Fresh</h3>
-              <p className="text-sm text-earth/60 font-body leading-relaxed">
-                Milked in the early hours and delivered to your doorstep by morning. Experience true freshness every day.
-              </p>
+          ) : (
+            /* PRODUCT GRID (3 cols desktop, 2 cols tablet & mobile) */
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              {filteredProducts.map((product) => {
+                const displayPrice = getPrice(product);
+                const unitLabel = getUnit(product);
+                const isOnSale =
+                  product.originalPrice &&
+                  product.originalPrice > displayPrice;
+                const discountPct = isOnSale
+                  ? Math.round(
+                    ((product.originalPrice! - displayPrice) /
+                      product.originalPrice!) *
+                    100
+                  )
+                  : 0;
+
+                return (
+                  <Link
+                    key={product.id}
+                    to={`/product/${product.id}`}
+                    className="group flex flex-col justify-between bg-[#0B2118]/75 backdrop-blur-md rounded-2xl sm:rounded-[18px] border border-white/10 p-3 sm:p-4 shadow-[0_4px_18px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out hover:-translate-y-[4px] hover:shadow-[0_12px_28px_rgba(0,0,0,0.55)] hover:border-[#C98A24]/40"
+                  >
+                    <div className="space-y-2.5 sm:space-y-3.5">
+                      {/* DEDICATED PRODUCT IMAGE FRAME (12px radius, #F4EFE5 bg, object-contain fit) */}
+                      <div className="relative aspect-[1/0.85] rounded-xl overflow-hidden bg-[#F4EFE5] flex items-center justify-center p-2.5 sm:p-5">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          loading="lazy"
+                          className="w-full h-full !object-contain object-center transition-transform duration-300 ease-out group-hover:scale-[1.025]"
+                        />
+
+                        {/* Refined Natural Gold Discount Badge */}
+                        {isOnSale && (
+                          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10">
+                            <span className="bg-[#C98A24] text-white text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider px-1.5 sm:px-2.5 py-0.5 rounded-md shadow-xs">
+                              Save {discountPct}%
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* PRODUCT NAME & DESCRIPTION */}
+                      <div className="space-y-1">
+                        <h3 className="font-display font-extrabold text-[#F5F3EC] text-sm sm:text-lg group-hover:text-[#C98A24] transition-colors leading-snug truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-[11px] sm:text-xs text-[#AAB8B0] line-clamp-2 leading-relaxed font-normal">
+                          {product.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* PRICE & VIEW PRODUCT CTA ROW */}
+                    <div className="pt-2.5 sm:pt-3.5 mt-2.5 sm:mt-3.5 border-t border-white/10 flex items-center justify-between">
+                      <div className="flex items-baseline gap-0.5 sm:gap-1 flex-wrap">
+                        <span className="text-base sm:text-xl font-black text-[#C98A24]">
+                          ₹{displayPrice}
+                        </span>
+                        {isOnSale && (
+                          <span className="text-[10px] sm:text-xs text-[#718078] line-through mr-0.5">
+                            ₹{product.originalPrice}
+                          </span>
+                        )}
+                        <span className="text-[10px] sm:text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">
+                          / {unitLabel}
+                        </span>
+                      </div>
+
+                      {/* Clean View Product Action */}
+                      <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#0F8A5F] group-hover:text-[#C98A24] group-hover:translate-x-1.5 transition-all duration-300 ease-out">
+                        <span>View</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-          </div>
+          )}
+
         </div>
       </section>
     </Layout>

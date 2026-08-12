@@ -118,50 +118,50 @@ export const WalletTab = () => {
 
             {/* Transaction History */}
             <div className="space-y-6">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-2 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500">
+                        <div className="w-8 h-8 bg-[#0B2118] rounded-xl flex items-center justify-center text-[#C98A24] border border-white/10">
                             <History className="w-4 h-4" />
                         </div>
-                        <h4 className="text-xl font-black tracking-tighter text-slate-900 uppercase">Movement History</h4>
+                        <h4 className="text-xl font-black tracking-tighter text-[#F5F3EC] uppercase">Movement History</h4>
                     </div>
-                    <Badge variant="outline" className="rounded-lg text-[10px] font-black uppercase tracking-widest py-1 border-slate-200">
+                    <Badge variant="outline" className="rounded-lg text-[10px] font-black uppercase tracking-widest py-1 border-white/10 text-[#AAB8B0] bg-[#0B2118]">
                         {ledger.length} Transactions
                     </Badge>
                 </div>
 
                 {ledger.length === 0 ? (
-                    <div className="py-12 flex flex-col items-center text-center space-y-4 bg-slate-50/50 rounded-2xl md:rounded-[40px] border-2 border-dashed border-slate-200">
-                        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 shadow-sm">
+                    <div className="py-12 flex flex-col items-center text-center space-y-4 bg-[#0B2118] rounded-2xl md:rounded-[40px] border border-white/10">
+                        <div className="w-16 h-16 bg-[#10291F] rounded-2xl flex items-center justify-center text-[#C98A24] shadow-sm border border-white/10">
                             <Sparkles className="w-8 h-8" />
                         </div>
                         <div className="space-y-1">
-                            <h5 className="text-base font-black text-slate-900 uppercase">Your vault is empty</h5>
-                            <p className="text-xs font-bold text-slate-400 max-w-[200px]">
+                            <h5 className="text-base font-black text-[#F5F3EC] uppercase">Your vault is empty</h5>
+                            <p className="text-xs font-bold text-[#AAB8B0] max-w-[200px]">
                                 Once you earn coins or receive a refund, they'll magically appear here.
                             </p>
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                         {ledger.map((entry) => (
-                            <div key={entry.id} className="group bg-white rounded-xl md:rounded-[28px] p-2.5 md:p-6 border border-slate-100 hover:border-emerald-500/20 hover:shadow-lg hover:shadow-emerald-900/5 flex items-center justify-between gap-3 md:gap-6">
-                                <div className="flex items-center gap-2.5 md:gap-5 min-w-0 flex-1">
+                            <div key={entry.id} className="group bg-[#0B2118] rounded-xl md:rounded-[28px] p-4 md:p-6 border border-white/10 hover:border-[#C98A24]/40 hover:shadow-lg flex items-center justify-between gap-3 md:gap-6">
+                                <div className="flex items-center gap-3 md:gap-5 min-w-0 flex-1">
                                     <div className={cn(
                                         "w-9 h-9 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
-                                        entry.type === 'credit' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-rose-50 text-rose-600 border border-rose-100"
+                                        entry.type === 'credit' ? "bg-[#0F8A5F]/20 text-[#4ADE80] border border-[#0F8A5F]/30" : "bg-rose-950/40 text-rose-300 border border-rose-900/50"
                                     )}>
                                         {entry.type === 'credit' ? <ArrowUpRight className="w-4 h-4 md:w-6 md:h-6" /> : <ArrowDownLeft className="w-4 h-4 md:w-6 md:h-6" />}
                                     </div>
                                     <div className="space-y-0.5 md:space-y-1 min-w-0 flex-1">
-                                        <p className="font-black text-slate-900 leading-tight uppercase tracking-tight text-[10px] md:text-base truncate">{entry.reason}</p>
+                                        <p className="font-black text-[#F5F3EC] leading-tight uppercase tracking-tight text-[10px] md:text-base truncate">{entry.reason}</p>
                                         <div className="flex items-center gap-2">
-                                            <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-slate-400 uppercase tracking-widest shrink-0">
+                                            <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-[#AAB8B0] uppercase tracking-widest shrink-0">
                                                 <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
                                                 {format(new Date(entry.created_at), "MMM dd")}
                                             </div>
                                             {entry.metadata?.order_id && (
-                                                <Badge variant="secondary" className="text-[7px] md:text-[8px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 rounded-md px-1 py-0.5 md:px-2 shrink-0">
+                                                <Badge variant="secondary" className="text-[7px] md:text-[8px] font-black uppercase tracking-widest bg-[#10291F] text-[#C98A24] rounded-md px-1 py-0.5 md:px-2 shrink-0 border border-white/10">
                                                     #{entry.metadata.order_id.slice(0, 6)}
                                                 </Badge>
                                             )}
@@ -171,11 +171,11 @@ export const WalletTab = () => {
                                 <div className="text-right shrink-0">
                                     <p className={cn(
                                         "text-base md:text-3xl font-black tracking-tighter italic leading-none",
-                                        entry.type === 'credit' ? "text-emerald-600" : "text-rose-600"
+                                        entry.type === 'credit' ? "text-[#4ADE80]" : "text-rose-400"
                                     )}>
                                         {entry.type === 'credit' ? '+' : '-'}₹{entry.amount}
                                     </p>
-                                    <p className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-slate-400 mt-0.5">
+                                    <p className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-[#718078] mt-0.5">
                                         {entry.type === 'credit' ? 'Credited' : 'Debited'}
                                     </p>
                                 </div>
@@ -186,15 +186,15 @@ export const WalletTab = () => {
             </div>
 
             {/* FAQ/Info */}
-            <div className="bg-amber-50 rounded-2xl md:rounded-[32px] p-4 md:p-8 border border-amber-100/50">
+            <div className="bg-[#0B2118] rounded-2xl md:rounded-[32px] p-4 md:p-8 border border-[#C98A24]/30">
                 <div className="flex gap-4 md:gap-5">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-400 rounded-xl md:rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-400/20">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-[#C98A24] rounded-xl md:rounded-2xl flex items-center justify-center text-[#061A13] shrink-0 shadow-lg">
                         <Info className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div className="space-y-1">
-                        <h5 className="font-black text-amber-900 uppercase tracking-tight text-xs sm:text-sm">How to use your coins?</h5>
-                        <p className="text-[11px] sm:text-xs font-semibold text-amber-800/70 leading-relaxed italic">
-                            Every time you checkout, you'll see a option in the payment summary! Toggle the "Use Wallet Balance" button to get an instant discount. 1 Coin = ₹1.
+                        <h5 className="font-black text-[#C98A24] uppercase tracking-tight text-xs sm:text-sm">How to use your coins?</h5>
+                        <p className="text-[11px] sm:text-xs font-semibold text-[#AAB8B0] leading-relaxed italic">
+                            Every time you checkout, you'll see an option in the payment summary! Toggle the "Use Wallet Balance" button to get an instant discount. 1 Coin = ₹1.
                         </p>
                     </div>
                 </div>

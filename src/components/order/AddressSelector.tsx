@@ -106,50 +106,48 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
         <div className="space-y-4">
           <div
             onClick={() => setIsExpanded(true)}
-            className="p-4 md:p-6 rounded-[24px] md:rounded-[32px] border-2 border-primary bg-primary/5 shadow-xl shadow-primary/10 cursor-pointer group animate-in fade-in zoom-in-95 duration-300"
+            className="p-4 md:p-6 rounded-2xl border border-[#C98A24] bg-[#10291F] shadow-xl cursor-pointer group"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex gap-3 md:gap-4 min-w-0">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm bg-primary text-white shrink-0">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center bg-[#C98A24] text-[#061A13] font-bold shrink-0">
                   {getLabelIcon(selectedAddress.label)}
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-black text-slate-900 uppercase text-[10px] md:text-xs tracking-widest">{selectedAddress.label}</h4>
+                    <h4 className="font-bold text-[#F5F3EC] uppercase text-xs tracking-wider">{selectedAddress.label}</h4>
                     {selectedAddress.is_default && (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase">Default</span>
+                      <span className="px-2 py-0.5 rounded-full bg-[#10291F] border border-white/10 text-[#4ADE80] text-[10px] font-bold uppercase">Default</span>
                     )}
                   </div>
-                  <p className="text-xs md:text-sm font-bold text-slate-700 mt-1 truncate max-w-[160px] md:max-w-none">{selectedAddress.full_name}</p>
-                  <p className="text-[11px] md:text-xs text-slate-500 mt-1 break-words">{selectedAddress.address_line}</p>
+                  <p className="text-xs md:text-sm font-bold text-[#F5F3EC] mt-1 truncate">{selectedAddress.full_name}</p>
+                  <p className="text-[11px] md:text-xs text-[#AAB8B0] mt-1 break-words">{selectedAddress.address_line}</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-1 md:gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <div className="flex gap-1">
-                   <AddressFormDialog 
-                    userId={userId} 
-                    onSuccess={fetchAddresses} 
-                    editAddress={selectedAddress}
-                    trigger={
-                      <Button type="button" variant="ghost" size="icon" className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white shadow-sm border border-slate-100 hover:bg-slate-50">
-                        <Edit2 className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-400" />
-                      </Button>
-                    }
-                   />
-                   <Button 
-                    type="button"
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(e, selectedAddress.id);
-                    }}
-                    className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white shadow-sm border border-slate-100 hover:bg-rose-50 hover:border-rose-100 group"
-                   >
-                     <Trash2 className="w-2.5 h-2.5 md:w-3 md:h-3 text-rose-400 group-hover:text-rose-500" />
-                   </Button>
-                </div>
+              <div className="flex items-start gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                <AddressFormDialog 
+                  userId={userId} 
+                  onSuccess={fetchAddresses} 
+                  editAddress={selectedAddress}
+                  trigger={
+                    <Button type="button" variant="ghost" size="icon" className="w-8 h-8 rounded-xl bg-[#061A13] border border-white/10 text-[#F5F3EC] hover:text-[#C98A24]">
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </Button>
+                  }
+                />
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(e, selectedAddress.id);
+                  }}
+                  className="w-8 h-8 rounded-xl bg-[#061A13] border border-white/10 text-rose-400 hover:bg-rose-500/10"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
                 <Button 
                   type="button" 
                   variant="ghost" 
@@ -158,7 +156,7 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
                     e.stopPropagation();
                     setIsExpanded(true);
                   }}
-                  className="font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 rounded-xl h-7 md:h-8 px-2 md:px-3"
+                  className="font-bold text-xs uppercase tracking-wider text-[#C98A24] bg-[#061A13] hover:bg-[#164431] border border-white/10 rounded-xl h-8 px-3"
                 >
                   Change
                 </Button>
@@ -167,13 +165,13 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
           </div>
         </div>
       ) : (
-        <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+        <div className="space-y-4">
            {/* Header for Selection View */}
            {addresses.length > 0 && (
              <div className="flex items-center justify-between mb-2">
-                <p className="font-black text-[10px] text-slate-400 uppercase tracking-widest">Select From Your Addresses</p>
+                <p className="font-bold text-[10px] text-[#AAB8B0] uppercase tracking-wider">Select From Your Addresses</p>
                 {selectedAddress && (
-                  <Button variant="ghost" size="sm" onClick={() => setIsExpanded(false)} className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-100 rounded-full h-8 px-4">
+                  <Button variant="ghost" size="sm" onClick={() => setIsExpanded(false)} className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] bg-[#10291F] hover:bg-[#164431] rounded-full h-8 px-4 border border-white/10">
                     Cancel
                   </Button>
                 )}
@@ -190,39 +188,39 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
                       setIsExpanded(false);
                     }}
                     className={cn(
-                      "relative p-4 md:p-6 rounded-[24px] md:rounded-[32px] border-2 cursor-pointer group",
+                      "relative p-4 md:p-6 rounded-2xl border cursor-pointer transition-all",
                       selectedId === addr.id 
-                        ? "border-primary bg-primary/5 shadow-xl shadow-primary/10" 
-                        : "border-slate-100 bg-white hover:border-slate-200"
+                        ? "border-[#C98A24] bg-[#10291F] shadow-xl" 
+                        : "border-white/10 bg-[#061A13] hover:border-white/20"
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex gap-3 md:gap-4 min-w-0">
                         <div className={cn(
-                          "w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm shrink-0",
-                          selectedId === addr.id ? "bg-primary text-white" : "bg-slate-50 text-slate-400"
+                          "w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0",
+                          selectedId === addr.id ? "bg-[#C98A24] text-[#061A13]" : "bg-[#10291F] text-[#AAB8B0]"
                         )}>
                           {getLabelIcon(addr.label)}
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="font-black text-slate-900 uppercase text-[10px] md:text-xs tracking-widest">{addr.label}</h4>
+                            <h4 className="font-bold text-[#F5F3EC] uppercase text-xs tracking-wider">{addr.label}</h4>
                             {addr.is_default && (
-                              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase">Default</span>
+                              <span className="px-2 py-0.5 rounded-full bg-[#10291F] border border-white/10 text-[#4ADE80] text-[10px] font-bold uppercase">Default</span>
                             )}
                           </div>
-                          <p className="text-xs md:text-sm font-bold text-slate-700 mt-1 truncate max-w-[140px] md:max-w-[220px]">{addr.full_name}</p>
-                          <p className="text-[11px] md:text-xs text-slate-500 mt-1 leading-relaxed break-words">
+                          <p className="text-xs md:text-sm font-bold text-[#F5F3EC] mt-1 truncate">{addr.full_name}</p>
+                          <p className="text-[11px] md:text-xs text-[#AAB8B0] mt-1 leading-relaxed break-words">
                             {addr.address_line}
                           </p>
-                          <p className="text-[11px] md:text-xs font-black text-slate-400 mt-1 md:mt-2 tracking-tighter">{addr.phone}</p>
+                          <p className="text-[11px] md:text-xs font-bold text-[#C98A24] mt-1">{addr.phone}</p>
                         </div>
                       </div>
         
-                      <div className="flex flex-col gap-1 md:gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex flex-col gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
                         {selectedId === addr.id && (
-                          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center text-white scale-110 ml-auto mb-1 md:mb-2">
-                            <Check className="w-3 h-3 md:w-4 md:h-4" />
+                          <div className="w-7 h-7 rounded-full bg-[#C98A24] text-[#061A13] flex items-center justify-center ml-auto font-black text-xs">
+                            ✓
                           </div>
                         )}
                         
@@ -236,10 +234,10 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
                                 type="button" 
                                 variant="ghost" 
                                 size="icon" 
-                                className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-50 border border-slate-100 hover:bg-white transition-all"
+                                className="w-8 h-8 rounded-xl bg-[#10291F] border border-white/10 text-[#F5F3EC] hover:text-[#C98A24]"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <Edit2 className="w-2.5 h-2.5 md:w-3 md:h-3 text-slate-400" />
+                                <Edit2 className="w-3.5 h-3.5" />
                               </Button>
                             }
                            />
@@ -251,9 +249,9 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
                               e.stopPropagation();
                               handleDelete(e, addr.id);
                             }}
-                            className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-50 border border-slate-100 hover:bg-rose-50 hover:border-rose-100 transition-all group"
+                            className="w-8 h-8 rounded-xl bg-[#10291F] border border-white/10 text-rose-400 hover:bg-rose-500/10"
                            >
-                             <Trash2 className="w-2.5 h-2.5 md:w-3 md:h-3 text-rose-400 group-hover:text-rose-500" />
+                             <Trash2 className="w-3.5 h-3.5" />
                            </Button>
                         </div>
                       </div>
@@ -263,25 +261,25 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
            </div>
 
             {addresses.length === 0 && !isLoading && (
-               <div className="p-6 md:p-8 text-center bg-slate-50 rounded-[24px] md:rounded-[32px] border-2 border-dashed border-slate-200">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                    <MapPin className="text-slate-300 w-6 h-6" />
+               <div className="p-6 md:p-8 text-center bg-[#10291F] rounded-2xl border border-white/10">
+                  <div className="w-12 h-12 rounded-2xl bg-[#061A13] border border-white/10 flex items-center justify-center mx-auto mb-4 text-[#C98A24]">
+                    <MapPin className="w-6 h-6" />
                   </div>
-                  <p className="font-black text-xs text-slate-400 uppercase tracking-[0.2em] mb-4 text-center">No saved addresses found</p>
+                  <p className="font-bold text-xs text-[#AAB8B0] uppercase tracking-wider mb-4">No saved addresses found</p>
                </div>
             )}
 
-            {/* Always show add buttons when in list mode or empty */}
+            {/* Add buttons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mt-2">
                 <AddressFormDialog 
                 userId={userId} 
                 onSuccess={fetchAddresses} 
                 trigger={
-                    <Button type="button" variant="outline" className="h-14 md:h-16 rounded-xl md:rounded-2xl border-dashed border-2 border-slate-200 hover:border-primary hover:bg-primary/5 hover:text-primary group transition-all">
-                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-slate-50 group-hover:bg-primary/10 flex items-center justify-center mr-2 md:mr-3 shrink-0">
-                        <Plus className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <Button type="button" variant="outline" className="h-14 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431] hover:text-[#C98A24] transition-all">
+                    <div className="w-7 h-7 rounded-lg bg-[#061A13] flex items-center justify-center mr-3 shrink-0 text-[#C98A24]">
+                        <Plus className="w-3.5 h-3.5" />
                     </div>
-                    <span className="font-black uppercase text-[10px] md:text-xs tracking-widest">Add New Address</span>
+                    <span className="font-bold uppercase text-xs tracking-wider">Add New Address</span>
                     </Button>
                 }
                 />
@@ -294,12 +292,12 @@ const AddressSelector = ({ userId, selectedId, onSelect, onTemporaryAddress }: A
                     <Button 
                     type="button"
                     variant="outline" 
-                    className="h-14 md:h-16 rounded-xl md:rounded-2xl border-2 transition-all border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200"
+                    className="h-14 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431] transition-all"
                     >
-                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg md:rounded-xl bg-white flex items-center justify-center mr-2 md:mr-3 shrink-0">
-                        <MapPin className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <div className="w-7 h-7 rounded-lg bg-[#061A13] flex items-center justify-center mr-3 shrink-0 text-[#C98A24]">
+                        <MapPin className="w-3.5 h-3.5" />
                     </div>
-                    <span className="font-black uppercase text-[10px] md:text-xs tracking-widest">Manual Enter</span>
+                    <span className="font-bold uppercase text-xs tracking-wider">Manual Enter</span>
                     </Button>
                 }
                 />

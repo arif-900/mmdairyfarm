@@ -41,12 +41,8 @@ const Layout = ({ children }: LayoutProps) => {
     }
   }, [role, loading, navigate, location.pathname, toast]);
 
-  // Optionally, we could return a blank screen while `loading && isStaff` is true
-  // but rendering children normally ensures normal customers don't see a loading flash.
-  // The staff user will see a split second of the page before being kicked.
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#061A13] text-[#F5F3EC] relative selection:bg-[#C98A24] selection:text-[#061A13]">
       <AnnouncementBanner />
       <Header />
       <main className="flex-1">{children}</main>

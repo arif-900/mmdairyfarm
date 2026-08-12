@@ -360,241 +360,236 @@ const Subscriptions = () => {
   if (isAddingConfig && configProduct) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-3.5 py-4 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
-          <CircularBackButton 
-            onClick={() => navigate("/products?context=subscription")} 
-            className="mb-4 sm:mb-8"
-          />
+        <div className="bg-[#061A13] min-h-[85vh] py-6 sm:py-10 px-3.5">
+          <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+            <CircularBackButton 
+              onClick={() => navigate("/products?context=subscription")} 
+              className="mb-4 sm:mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC]"
+            />
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
-            <div className="md:col-span-8 space-y-4 sm:space-y-6">
-              <div className="bg-white rounded-2xl md:rounded-[32px] p-4 sm:p-8 shadow-sm border border-slate-100">
-                <div className="flex items-center gap-4 mb-4 sm:mb-8">
-                  <div className="w-14 h-14 sm:w-20 sm:h-20 bg-emerald-50 rounded-xl sm:rounded-[24px] p-1.5 flex items-center justify-center shadow-inner border border-emerald-100/50">
-                    <img src={configProduct.image} alt="" className="w-full h-full object-contain" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl sm:text-3xl font-black text-emerald-950 uppercase tracking-tighter leading-none">{configProduct.name}</h2>
-                    <div className="flex items-center gap-2 mt-1 sm:mt-2">
-                      <Badge className="bg-emerald-600 text-white font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] uppercase tracking-widest">
-                        {formatWeight(selectedWeight, unitType)}
-                      </Badge>
-                      <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Size</span>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
+              <div className="md:col-span-8 space-y-4 sm:space-y-6">
+                <div className="bg-[#0B2118] rounded-2xl md:rounded-[32px] p-4 sm:p-8 shadow-2xl border border-white/10 text-[#F5F3EC]">
+                  <div className="flex items-center gap-4 mb-4 sm:mb-8">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 bg-[#F1EEE7] rounded-xl sm:rounded-2xl p-1.5 flex items-center justify-center shadow-inner border border-white/10 shrink-0">
+                      <img src={configProduct.image} alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl sm:text-3xl font-black text-[#F5F3EC] uppercase tracking-tight leading-none">{configProduct.name}</h2>
+                      <div className="flex items-center gap-2 mt-1 sm:mt-2">
+                        <Badge className="bg-[#C98A24] text-[#061A13] font-bold px-2.5 py-0.5 rounded-md text-[10px] uppercase tracking-wider">
+                          {formatWeight(selectedWeight, unitType)}
+                        </Badge>
+                        <span className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-wider">Selected Size</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="space-y-1.5">
-                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">How Often?</Label>
-                    <Select value={planType} onValueChange={setPlanType}>
-                      <SelectTrigger className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl sm:rounded-2xl shadow-2xl border-slate-100">
-                        <SelectItem value="daily">Every Day</SelectItem>
-                        <SelectItem value="alternate">Alternate Days</SelectItem>
-                        <SelectItem value="weekly">Once a Week</SelectItem>
-                        <SelectItem value="monthly">Once a Month</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="space-y-1.5">
+                      <Label className="font-bold uppercase text-[10px] tracking-wider text-[#AAB8B0] ml-1">How Often?</Label>
+                      <Select value={planType} onValueChange={setPlanType}>
+                        <SelectTrigger className="h-11 sm:h-13 rounded-xl border-white/10 font-bold bg-[#10291F] text-[#F5F3EC] transition-all">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl bg-[#061A13] border-white/10 text-[#F5F3EC]">
+                          <SelectItem value="daily">Every Day</SelectItem>
+                          <SelectItem value="alternate">Alternate Days</SelectItem>
+                          <SelectItem value="weekly">Once a Week</SelectItem>
+                          <SelectItem value="monthly">Once a Month</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="font-bold uppercase text-[10px] tracking-wider text-[#AAB8B0] ml-1">What Time?</Label>
+                      <Select value={deliveryTime} onValueChange={setDeliveryTime}>
+                        <SelectTrigger className="h-11 sm:h-13 rounded-xl border-white/10 font-bold bg-[#10291F] text-[#F5F3EC] transition-all">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl bg-[#061A13] border-white/10 text-[#F5F3EC]">
+                          <SelectItem value="morning">Morning Only</SelectItem>
+                          <SelectItem value="evening">Evening Only</SelectItem>
+                          <SelectItem value="both">Both Slots (AM + PM)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="font-bold uppercase text-[10px] tracking-wider text-[#AAB8B0] ml-1">Starting On</Label>
+                      <Input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
+                        className="h-11 sm:h-13 rounded-xl border-white/10 font-bold bg-[#10291F] text-[#F5F3EC] transition-all"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="font-bold uppercase text-[10px] tracking-wider text-[#AAB8B0] ml-1">Ending On</Label>
+                      <Input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        min={startDate}
+                        className="h-11 sm:h-13 rounded-xl border-white/10 font-bold bg-[#10291F] text-[#F5F3EC] transition-all"
+                        required
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">What Time?</Label>
-                    <Select value={deliveryTime} onValueChange={setDeliveryTime}>
-                      <SelectTrigger className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-bold bg-slate-50 shadow-inner group hover:bg-white transition-all">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl sm:rounded-2xl shadow-2xl border-slate-100">
-                        <SelectItem value="morning">Morning Only</SelectItem>
-                        <SelectItem value="evening">Evening Only</SelectItem>
-                        <SelectItem value="both">Both Slots (AM + PM)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">Starting On</Label>
-                    <Input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
-                      className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="font-black uppercase text-[9px] sm:text-[10px] tracking-widest text-slate-500 ml-2">Ending On</Label>
-                    <Input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      min={startDate}
-                      className="h-11 sm:h-14 rounded-xl sm:rounded-2xl border-slate-200 font-black bg-slate-50 shadow-inner focus:bg-white transition-all"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-6 border-t border-slate-100 pt-6 space-y-3">
-                  {!showAllAddresses ? (
-                    <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-200 group hover:border-emerald-500 hover:bg-emerald-50/20 transition-all cursor-pointer" onClick={() => setShowAllAddresses(true)}>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200 shadow-sm group-hover:scale-110 transition-transform shrink-0">
-                          <Home className="w-5 h-5 text-emerald-600" />
+                  <div className="mt-6 border-t border-white/10 pt-6 space-y-3">
+                    {!showAllAddresses ? (
+                      <div className="flex items-center justify-between p-3.5 bg-[#10291F] rounded-xl border border-white/10 hover:border-white/20 transition-all cursor-pointer" onClick={() => setShowAllAddresses(true)}>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-[#061A13] rounded-lg flex items-center justify-center border border-white/10 shrink-0 text-[#C98A24]">
+                            <Home className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs sm:text-sm font-bold text-[#F5F3EC] leading-tight truncate max-w-[160px] sm:max-w-xs">
+                              {addresses.find(a => a.id === selectedAddressId)?.address_line || "No address selected"}
+                            </p>
+                            <p className="text-[10px] font-bold text-[#C98A24] uppercase tracking-wider mt-0.5">Primary Drop Location</p>
+                          </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs sm:text-sm font-black text-slate-900 leading-tight truncate max-w-[160px] sm:max-w-xs">
-                            {addresses.find(a => a.id === selectedAddressId)?.address_line || "No address selected"}
-                          </p>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Primary Drop Location</p>
+                        <Button variant="ghost" size="sm" className="text-xs font-bold text-[#C98A24] hover:bg-[#061A13]">
+                          Change
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <Label className="font-bold uppercase text-[10px] tracking-wider text-[#AAB8B0]">Select Delivery Address</Label>
+                          <Button variant="ghost" size="sm" onClick={() => setShowAllAddresses(false)} className="text-[10px] font-bold text-[#AAB8B0]">
+                            Done
+                          </Button>
+                        </div>
+                        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                          {addresses.map(addr => (
+                            <div
+                              key={addr.id}
+                              onClick={() => setSelectedAddressId(addr.id)}
+                              className={cn(
+                                "p-3 rounded-xl border cursor-pointer flex items-center justify-between transition-all",
+                                selectedAddressId === addr.id
+                                  ? "border-[#C98A24] bg-[#10291F]"
+                                  : "border-white/10 bg-[#061A13] hover:border-white/20"
+                              )}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <MapPin className={cn("w-4 h-4 shrink-0", selectedAddressId === addr.id ? "text-[#C98A24]" : "text-[#AAB8B0]")} />
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-[#F5F3EC] truncate">{addr.full_name} ({addr.label})</p>
+                                  <p className="text-[10px] text-[#AAB8B0] truncate">{addr.address_line}</p>
+                                </div>
+                              </div>
+                              {selectedAddressId === addr.id && (
+                                <CheckCircle2 className="w-4 h-4 text-[#C98A24] shrink-0" />
+                              )}
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors shrink-0" />
-                    </div>
-                  ) : (
-                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                      {addresses.map(addr => (
-                        <div
-                          key={addr.id}
-                          onClick={() => { setSelectedAddressId(addr.id); setShowAllAddresses(false); }}
-                          className={cn(
-                            "p-5 rounded-[24px] border-2 transition-all cursor-pointer flex items-center justify-between",
-                            selectedAddressId === addr.id ? "border-emerald-500 bg-emerald-50 shadow-lg shadow-emerald-500/10" : "border-slate-100 bg-white hover:border-slate-200"
-                          )}
+                    )}
+
+                    {/* Coins Toggle */}
+                    {availableCoins > 0 && (
+                      <div className="p-3.5 bg-[#10291F] rounded-xl border border-white/10">
+                        <div 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => setUseCoins(!useCoins)}
                         >
-                          <div className="flex items-center gap-4">
-                            <div className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center transition-colors",
-                              selectedAddressId === addr.id ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"
-                            )}>
-                              <MapPin className="w-5 h-5" />
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg p-1 bg-[#061A13] border border-white/10 flex items-center justify-center shrink-0">
+                              <img src="/favicon.png" className="w-full h-full object-cover rounded-md" alt="Coin" />
                             </div>
                             <div>
-                              <p className="text-sm font-black text-slate-800">{addr.address_line}</p>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{addr.area_name || "Custom Location"}</span>
+                              <p className="text-xs font-bold text-[#F5F3EC] uppercase tracking-tight">Use Wallet Balance</p>
+                              <p className="text-[10px] font-bold text-[#C98A24] uppercase tracking-wider mt-0.5">₹{availableCoins} Coins Available</p>
                             </div>
                           </div>
-                          {selectedAddressId === addr.id && <CheckCircle2 className="w-6 h-6 text-emerald-600" />}
-                        </div>
-                      ))}
-                      <Button variant="link" className="text-slate-400 text-[10px] font-bold uppercase w-full hover:no-underline hover:text-rose-500" onClick={() => setShowAllAddresses(false)}>Cancel Selection</Button>
-                    </div>
-                  )}
-                </div>
-
-                {/* 🏦 Prominent Wallet Option */}
-                {availableCoins > 0 && (
-                  <div className="mt-6 pt-6 border-t border-slate-100">
-                    <div
-                      onClick={() => setUseCoins(!useCoins)}
-                      className={cn(
-                        "p-3.5 rounded-xl sm:rounded-[32px] border-2 transition-all cursor-pointer group flex items-center justify-between",
-                        useCoins ? "border-amber-400 bg-amber-50 shadow-xl shadow-amber-500/5" : "border-slate-100 bg-slate-50 opacity-70 grayscale hover:grayscale-0 hover:border-slate-200"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={cn(
-                          "w-10 h-10 rounded-lg p-1 flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
-                          useCoins ? "bg-amber-100 scale-110" : "bg-white"
-                        )}>
-                          <img src="/favicon.png" className="w-full h-full object-cover rounded-md" alt="Coin" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-black text-slate-900 leading-tight uppercase tracking-tight">Use Wallet Balance</p>
-                          <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest mt-0.5">₹{availableCoins} Coins</p>
+                          <div className={cn(
+                            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
+                            useCoins ? "bg-[#C98A24] border-[#C98A24] text-[#061A13]" : "border-white/20 bg-[#061A13]"
+                          )}>
+                            {useCoins && <CheckCircle2 className="w-3.5 h-3.5 text-[#061A13]" />}
+                          </div>
                         </div>
                       </div>
-                      <div className={cn(
-                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0",
-                        useCoins ? "bg-amber-500 border-white shadow-md" : "bg-white border-slate-200"
-                      )}>
-                        {useCoins && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                      </div>
-                    </div>
-                    <p className="text-[8px] font-bold text-slate-400 uppercase mt-2 ml-2 italic tracking-wider">
-                      1 Coin = ₹1 Discount • Applicable on entire payable total
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="md:col-span-4 space-y-4 sm:space-y-6">
-              <div className="bg-slate-950 rounded-2xl md:rounded-[40px] p-4 sm:p-8 text-white shadow-2xl relative overflow-hidden ring-1 ring-white/10">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
-                <h3 className="text-lg font-black uppercase tracking-tight mb-4 sm:mb-8 relative z-10 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-emerald-400" /> Payment Summary
-                </h3>
-
-                <div className="space-y-3 relative z-10 mb-6 sm:mb-10">
-                  <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
-                    <span>Drop Count</span>
-                    <span className="text-white text-xs sm:text-sm">{totalDeliveries} Deliveries</span>
-                  </div>
-                  <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
-                    <span>Unit Price ({formatWeight(selectedWeight, unitType)})</span>
-                    <span className="text-white text-xs sm:text-sm">₹{currentUnitPrice}</span>
-                  </div>
-
-                  {/* Summary Details */}
-                  <div className="pt-3 border-t border-white/5 space-y-2">
-                    <div className="flex justify-between items-center text-slate-400 text-[9px] font-black uppercase tracking-widest">
-                      <span>Coins Applied</span>
-                      <span className={cn("text-xs sm:text-sm", coinsToUse > 0 ? "text-amber-500" : "text-white/20")}>-₹{Math.round(coinsToUse)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 mb-6 sm:mb-10 shadow-inner">
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400/60 mb-1">Total Amount Payable</p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-3xl sm:text-5xl font-black text-emerald-400 tracking-tight italic">₹{Math.round(finalPayableTotal)}</p>
-                    {coinsToUse > 0 && (
-                      <p className="text-xs sm:text-sm font-black text-amber-500 line-through opacity-40 italic">₹{Math.round(rawTotalPrice)}</p>
                     )}
                   </div>
-                  {coinsToUse > 0 && (
-                    <p className="text-[8px] font-bold text-amber-400 uppercase mt-1 italic">
-                      -₹{Math.round(coinsToUse)} Wallet Credit Applied
-                    </p>
-                  )}
-                  <p className="text-[8px] font-bold text-white/30 uppercase mt-3 leading-tight italic">
-                    * Strictly prepaid model. Subscription will end on the selected date.
-                  </p>
                 </div>
-
-                <Button
-                  disabled={isSubmitting || !selectedAddressId}
-                  onClick={handleSubscribe}
-                  className="w-full h-12 sm:h-16 rounded-xl sm:rounded-[24px] bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 group transition-all border-b-4 border-emerald-700 active:translate-y-1 active:border-b-0 text-xs sm:text-sm"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Verifying...</span>
-                    </div>
-                  ) : (
-                    <span className="flex items-center gap-3">
-                      {Math.round(finalPayableTotal) === 0 ? "Pay with Coins & Activate" : "Start Subscription"}
-                      <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  )}
-                </Button>
               </div>
 
-              <div className="bg-emerald-50/80 backdrop-blur-sm p-6 rounded-[32px] border border-emerald-100/50 shadow-sm group hover:scale-[1.02] transition-transform">
-                <div className="flex gap-4">
-                  <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
-                    <Truck className="w-5 h-5 text-emerald-600" />
+              <div className="md:col-span-4 space-y-4 sm:space-y-6">
+                <div className="bg-[#0B2118] rounded-2xl md:rounded-[32px] p-4 sm:p-6 text-[#F5F3EC] shadow-2xl border border-white/10 relative overflow-hidden">
+                  <h3 className="text-lg font-black uppercase tracking-tight mb-4 sm:mb-6 flex items-center gap-2 text-[#F5F3EC]">
+                    <CreditCard className="w-5 h-5 text-[#C98A24]" /> PAYMENT <span className="text-[#C98A24]">SUMMARY</span>
+                  </h3>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between items-center text-[#AAB8B0] text-[10px] font-bold uppercase tracking-wider">
+                      <span>Drop Count</span>
+                      <span className="text-[#F5F3EC] text-xs font-bold">{totalDeliveries} Deliveries</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[#AAB8B0] text-[10px] font-bold uppercase tracking-wider">
+                      <span>Unit Price ({formatWeight(selectedWeight, unitType)})</span>
+                      <span className="text-[#F5F3EC] text-xs font-bold">₹{currentUnitPrice}</span>
+                    </div>
+
+                    {/* Summary Details */}
+                    <div className="pt-3 border-t border-white/10 space-y-2">
+                      <div className="flex justify-between items-center text-[#AAB8B0] text-[10px] font-bold uppercase tracking-wider">
+                        <span>Coins Applied</span>
+                        <span className={cn("text-xs font-bold", coinsToUse > 0 ? "text-[#C98A24]" : "text-[#AAB8B0]")}>-₹{Math.round(coinsToUse)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <h4 className="text-xs font-black text-emerald-950 uppercase tracking-tight">Zero-Contact Delivery</h4>
-                    <p className="text-[11px] font-medium text-emerald-800 leading-tight italic opacity-70">
-                      Your drops will happen automatically based on your selected frequency.
+
+                  <div className="p-4 bg-[#061A13] rounded-2xl border border-white/10 mb-6">
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Total Amount Payable</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-3xl sm:text-4xl font-black text-[#C98A24] tracking-tight">₹{Math.round(finalPayableTotal)}</p>
+                      {coinsToUse > 0 && (
+                        <p className="text-xs font-bold text-[#AAB8B0] line-through opacity-50">₹{Math.round(rawTotalPrice)}</p>
+                      )}
+                    </div>
+                    <p className="text-[8px] font-bold text-[#AAB8B0] uppercase mt-2 leading-tight">
+                      * Strictly prepaid model. Subscription ends on selected date.
                     </p>
+                  </div>
+
+                  <Button
+                    disabled={isSubmitting || !selectedAddressId}
+                    onClick={handleSubscribe}
+                    className="w-full h-13 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black uppercase tracking-wider shadow-xl transition-all border-b-4 border-[#A36D18] active:translate-y-0.5 text-xs"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Verifying...</span>
+                      </div>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        {Math.round(finalPayableTotal) === 0 ? "Pay with Coins & Activate" : "Start Subscription"}
+                        <ChevronRight className="w-4 h-4" />
+                      </span>
+                    )}
+                  </Button>
+                </div>
+
+                <div className="bg-[#0B2118] p-5 rounded-2xl border border-white/10 text-[#F5F3EC]">
+                  <div className="flex gap-3">
+                    <div className="w-9 h-9 bg-[#10291F] border border-white/10 rounded-xl flex items-center justify-center shrink-0 text-[#C98A24]">
+                      <Truck className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="text-xs font-bold text-[#F5F3EC] uppercase tracking-tight">Zero-Contact Delivery</h4>
+                      <p className="text-[11px] font-medium text-[#AAB8B0] leading-tight">
+                        Your drops will happen automatically based on your selected frequency.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -608,49 +603,52 @@ const Subscriptions = () => {
   // --- Dashboard List View ---
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="bg-[#061A13] min-h-[80vh] py-12 px-4">
+        <div className="max-w-6xl mx-auto">
         {subscriptions.length === 0 ? (
           <div className="min-h-[70vh] flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-10 animate-in fade-in zoom-in-95 duration-700">
             <div className="relative group">
-              <div className="absolute inset-0 bg-emerald-500/20 blur-3xl rounded-full group-hover:bg-emerald-500/30 transition-all" />
-              <div className="relative w-40 h-40 bg-white rounded-[48px] flex items-center justify-center shadow-2xl border-b-8 border-slate-100 rotate-6 group-hover:rotate-0 transition-transform duration-500">
-                <CalendarRange className="w-20 h-20 text-emerald-600" />
+              <div className="absolute inset-0 bg-[#C98A24]/20 blur-3xl rounded-full group-hover:bg-[#C98A24]/30 transition-all" />
+              <div className="relative w-40 h-40 bg-[#0B2118] rounded-[48px] flex items-center justify-center shadow-2xl border border-white/10 rotate-6 group-hover:rotate-0 transition-transform duration-500">
+                <CalendarRange className="w-20 h-20 text-[#C98A24]" />
               </div>
-              <div className="absolute -bottom-2 -right-2 w-14 h-14 bg-emerald-600 rounded-2xl shadow-xl border-4 border-white flex items-center justify-center text-white">
+              <div className="absolute -bottom-2 -right-2 w-14 h-14 bg-[#0F8A5F] rounded-2xl shadow-xl border-4 border-[#061A13] flex items-center justify-center text-white">
                 <Plus className="w-8 h-8" />
               </div>
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter leading-none italic">Manage Your Daily Freshness</h1>
-              <p className="text-slate-500 font-bold text-xl leading-snug max-w-lg mx-auto opacity-80 uppercase tracking-tight">
+              <h1 className="text-4xl md:text-6xl font-black text-[#F5F3EC] uppercase tracking-tighter leading-none italic">Manage Your Daily Freshness</h1>
+              <p className="text-[#AAB8B0] font-bold text-lg md:text-xl leading-snug max-w-lg mx-auto uppercase tracking-tight">
                 No active subscriptions found. Subscribe to our farm fresh milk and curd for a healthy life.
               </p>
             </div>
 
             <Button
               onClick={() => navigate("/products?context=subscription")}
-              className="h-16 px-12 rounded-[24px] bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-emerald-600/30 border-b-4 border-emerald-900 active:translate-y-1 active:border-b-0 transition-all font-display"
+              className="h-16 px-12 rounded-[24px] bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black text-sm uppercase tracking-widest shadow-2xl shadow-[#C98A24]/30 active:translate-y-1 transition-all font-display"
             >
               Start Building Subscription
             </Button>
           </div>
         ) : (
           <div className="space-y-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-10 border-b-2 border-slate-100 border-dashed">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-10 border-b border-white/10">
               <div className="flex items-center gap-6">
-                <CircularBackButton onClick={() => navigate("/")} />
+                <CircularBackButton onClick={() => navigate("/")} className="border-white/10 bg-[#0B2118] text-[#F5F3EC]" />
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Active Pipeline</span>
+                    <div className="w-3 h-3 rounded-full bg-[#0F8A5F] animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0F8A5F]">Active Pipeline</span>
                   </div>
-                  <h1 className="text-5xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter leading-none">My Subscriptions</h1>
+                  <h1 className="text-4xl md:text-6xl font-black text-[#F5F3EC] uppercase tracking-tighter leading-none">
+                    MY <span className="text-[#C98A24]">SUBSCRIPTIONS</span>
+                  </h1>
                 </div>
               </div>
               <Button
                 onClick={() => navigate("/products?context=subscription")}
-                className="h-14 px-10 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-950/20 border-b-4 border-slate-700 active:translate-y-1 active:border-b-0 transition-all"
+                className="h-14 px-10 rounded-2xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black text-xs uppercase tracking-widest shadow-xl transition-all"
               >
                 <Plus className="w-5 h-5 mr-3" /> Add Product
               </Button>
@@ -658,21 +656,21 @@ const Subscriptions = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
               {subscriptions.map(sub => (
-                <Card key={sub.id} className="rounded-2xl md:rounded-[40px] overflow-hidden border-none shadow-md hover:shadow-xl transition-all group bg-white shadow-emerald-900/5 ring-1 ring-slate-100 relative">
-                  <div className="relative h-20 bg-emerald-50 flex items-center px-4 border-b border-emerald-100/50">
+                <Card key={sub.id} className="rounded-2xl md:rounded-[32px] overflow-hidden border border-white/10 shadow-2xl transition-all group bg-[#0B2118] text-[#F5F3EC] relative">
+                  <div className="relative h-20 bg-[#10291F] flex items-center px-4 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-white rounded-xl p-1.5 shadow-sm border border-emerald-100 shrink-0">
+                      <div className="w-12 h-12 bg-[#F1EEE7] rounded-xl p-1 shadow-sm border border-white/10 shrink-0 flex items-center justify-center">
                         <img src={sub.products?.image_url || sub.products?.image} alt="" className="w-full h-full object-contain" />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-black text-emerald-900 text-base uppercase tracking-tighter leading-none mb-1 truncate max-w-[140px] sm:max-w-xs">{sub.products?.name}</h4>
+                        <h4 className="font-bold text-[#F5F3EC] text-base uppercase tracking-tight leading-none mb-1 truncate max-w-[140px] sm:max-w-xs">{sub.products?.name}</h4>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[8px] font-black uppercase tracking-wider text-emerald-600 bg-white px-1.5 py-0.5 rounded-md shadow-sm border border-emerald-100 shrink-0">
+                          <span className="text-[8px] font-bold uppercase tracking-wider text-[#AAB8B0] bg-[#061A13] px-1.5 py-0.5 rounded-md border border-white/10 shrink-0">
                             {sub.quantity} units · {formatWeight(sub.selected_weight || 1000, sub.unit_type || 'ml')}
                           </span>
                           <Badge className={cn(
                             "text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md border-none shrink-0",
-                            sub.status === 'active' ? "bg-emerald-600 text-white" : "bg-amber-500 text-white"
+                            sub.status === 'active' ? "bg-[#0F8A5F] text-white" : "bg-[#C98A24] text-[#061A13]"
                           )}>
                             {sub.status}
                           </Badge>
@@ -680,32 +678,32 @@ const Subscriptions = () => {
                       </div>
                     </div>
                   </div>
-                  <CardContent className="p-4 md:p-8 space-y-4 md:space-y-6">
+                  <CardContent className="p-4 md:p-6 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Delivery Cycle</p>
-                        <p className="text-sm font-black text-slate-800 capitalize flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-emerald-500" /> {sub.plan_type}
+                        <p className="text-[9px] font-bold uppercase text-[#AAB8B0] tracking-widest">Delivery Cycle</p>
+                        <p className="text-sm font-bold text-[#F5F3EC] capitalize flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-[#C98A24]" /> {sub.plan_type}
                         </p>
                       </div>
                       <div className="space-y-1 text-right">
-                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Upcoming Drop</p>
-                        <p className="text-sm font-black text-slate-800 flex items-center justify-end gap-2">
-                          {format(new Date(sub.next_delivery_date), "dd MMM")} <Truck className="w-4 h-4 text-emerald-500" />
+                        <p className="text-[9px] font-bold uppercase text-[#AAB8B0] tracking-widest">Upcoming Drop</p>
+                        <p className="text-sm font-bold text-[#F5F3EC] flex items-center justify-end gap-2">
+                          {format(new Date(sub.next_delivery_date), "dd MMM")} <Truck className="w-4 h-4 text-[#C98A24]" />
                         </p>
                       </div>
                     </div>
 
-                    <div className="space-y-4 py-4 border-y border-slate-50">
+                    <div className="space-y-3 py-4 border-y border-white/10">
                       <div className="flex justify-between items-center text-[10px] font-bold">
-                        <span className="text-slate-400 uppercase tracking-widest">Plan Validity</span>
-                        <span className="text-slate-700">{format(new Date(sub.start_date), "dd MMM")} - {format(new Date(sub.end_date), "dd MMM, yy")}</span>
+                        <span className="text-[#718078] uppercase tracking-widest">Plan Validity</span>
+                        <span className="text-[#AAB8B0]">{format(new Date(sub.start_date), "dd MMM")} - {format(new Date(sub.end_date), "dd MMM, yy")}</span>
                       </div>
-                      <div className="flex items-start gap-4">
-                        <MapPin className="w-4 h-4 text-slate-300 mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-4 h-4 text-[#C98A24] mt-0.5 shrink-0" />
                         <div className="space-y-0.5">
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Saved Destination</p>
-                          <p className="text-[11px] font-bold text-slate-600 leading-tight">{sub.subscriptions?.address}</p>
+                          <p className="text-[9px] font-bold text-[#718078] uppercase tracking-widest">Saved Destination</p>
+                          <p className="text-[11px] font-medium text-[#F5F3EC] leading-tight">{sub.subscriptions?.address}</p>
                         </div>
                       </div>
                     </div>
@@ -715,10 +713,7 @@ const Subscriptions = () => {
                         variant="ghost"
                         disabled={processingId === sub.id}
                         onClick={() => toggleStatus(sub.id, sub.status)}
-                        className={cn(
-                          "flex-1 font-black h-11 md:h-14 rounded-xl md:rounded-[22px] text-[9px] md:text-[10px] uppercase border-2 tracking-widest transition-all active:scale-95",
-                          sub.status === 'active' ? "border-amber-100 text-amber-600 hover:bg-amber-50" : "border-emerald-100 text-emerald-600 hover:bg-emerald-50"
-                        )}
+                        className="flex-1 font-bold h-11 rounded-xl text-[10px] uppercase border border-white/10 bg-[#10291F] text-[#C98A24] hover:bg-[#164431] transition-all"
                       >
                         {processingId === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> :
                           (sub.status === 'active' ? 'Pause Plan' : 'Resume Plan')}
@@ -727,9 +722,9 @@ const Subscriptions = () => {
                         variant="ghost"
                         disabled={processingId === sub.id}
                         onClick={() => cancelSubscription(sub.id)}
-                        className="font-black h-11 w-11 md:h-14 md:w-14 p-0 rounded-xl md:rounded-[22px] bg-rose-50 text-rose-300 hover:bg-rose-100 hover:text-rose-600 border border-rose-100 transition-all active:scale-95 shrink-0"
+                        className="font-bold h-11 w-11 p-0 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-white/10 transition-all shrink-0"
                       >
-                        {processingId === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 md:w-5 md:h-5" />}
+                        {processingId === sub.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                       </Button>
                     </div>
                   </CardContent>
@@ -738,6 +733,7 @@ const Subscriptions = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </Layout>
   );

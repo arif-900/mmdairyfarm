@@ -279,55 +279,55 @@ const OrderHistory = () => {
   return (
     <Layout>
       {/* Header */}
-      <section className="bg-primary text-primary-foreground section-padding">
+      <section className="bg-[#082D20] text-[#F5F3EC] section-padding border-b border-white/10">
         <div className="container-main">
           <CircularBackButton 
             onClick={() => navigate("/")} 
-            className="mb-8"
+            className="mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC] hover:bg-[#10291F]"
           />
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="font-display text-3xl md:text-4xl font-bold">My Orders</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="font-display text-3xl md:text-4xl font-black text-[#F5F3EC]">My Orders</h1>
             <Button
               variant="outline"
               onClick={() => fetchOrders(true)}
               disabled={refreshing}
-              className="flex items-center gap-2 border-white/20 text-white bg-white/10 hover:bg-white/20"
+              className="flex items-center gap-2 border-white/10 text-[#F5F3EC] bg-[#0B2118] hover:bg-[#10291F] hover:text-[#C98A24]"
             >
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
           </div>
-          <p className="text-primary-foreground/80 font-body">
+          <p className="text-[#AAB8B0] font-body text-sm sm:text-base">
             Track your orders and view delivery status
           </p>
         </div>
       </section>
 
       {/* Orders List */}
-      <section className="section-padding">
+      <section className="section-padding bg-[#061A13] min-h-[60vh]">
         <div className="container-main max-w-4xl">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Card key={i}>
+                <Card key={i} className="bg-[#0B2118] border-white/10">
                   <CardHeader>
-                    <Skeleton className="h-6 w-48" />
+                    <Skeleton className="h-6 w-48 bg-white/10" />
                   </CardHeader>
                   <CardContent>
-                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full bg-white/10" />
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : orders.length === 0 ? (
-            <Card className="text-center border-none shadow-soft rounded-2xl bg-white p-8">
+            <Card className="text-center border border-white/10 shadow-card rounded-2xl bg-[#0B2118] p-8 text-[#F5F3EC]">
               <CardContent className="pt-12 pb-12">
-                <ShoppingBag className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <h2 className="text-2xl font-bold text-foreground mb-2 font-display">No orders yet</h2>
-                <p className="text-muted-foreground mb-6 font-body">
+                <ShoppingBag className="w-16 h-16 mx-auto text-[#718078] mb-4" />
+                <h2 className="text-2xl font-bold text-[#F5F3EC] mb-2 font-display">No orders yet</h2>
+                <p className="text-[#AAB8B0] mb-6 font-body">
                   You haven't placed any orders yet. Start shopping for fresh dairy products!
                 </p>
-                <Button asChild>
+                <Button asChild className="bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold">
                   <Link to="/order">Place Your First Order</Link>
                 </Button>
               </CardContent>
@@ -343,27 +343,27 @@ const OrderHistory = () => {
                 const totalItems = order.order_items.reduce((acc, item) => acc + item.quantity, 0);
 
                 return (
-                  <Card key={order.id} className="relative overflow-hidden border border-border bg-white rounded-2xl shadow-soft hover:shadow-card">
+                  <Card key={order.id} className="relative overflow-hidden border border-white/10 bg-[#0B2118] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.35)] transition-all duration-300 hover:border-[#C98A24]/40 hover:shadow-[0_12px_28px_rgba(0,0,0,0.55)]">
                     <CardContent className="p-6 md:p-8 space-y-6 relative font-body">
                       
                       {/* Top Info */}
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                          <div className="w-10 h-10 bg-[#10291F] rounded-xl flex items-center justify-center text-[#C98A24] border border-white/10">
                             <Package className="w-5 h-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Order Ref</p>
-                            <h3 className="text-lg font-bold text-foreground font-mono">#{order.id.slice(0, 8).toUpperCase()}</h3>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0]">Order Ref</p>
+                            <h3 className="text-lg font-bold text-[#F5F3EC] font-mono">#{order.id.slice(0, 8).toUpperCase()}</h3>
                           </div>
                         </div>
                         
                         <div className="flex flex-wrap items-center gap-2">
                           <Badge className={cn(
                             "px-3 py-1 rounded-full border-none text-[10px] font-bold uppercase tracking-wider",
-                            order.status === 'pending' ? "bg-slate-100 text-slate-600" :
-                            order.status === 'cancelled' ? "bg-rose-500 text-white" :
-                            "bg-primary text-white"
+                            order.status === 'pending' ? "bg-amber-950/60 text-amber-300 border border-amber-800/40" :
+                            order.status === 'cancelled' ? "bg-rose-950/80 text-rose-300 border border-rose-800/50" :
+                            "bg-[#0F8A5F] text-white"
                           )}>
                             {config.label}
                           </Badge>
@@ -371,31 +371,31 @@ const OrderHistory = () => {
                       </div>
 
                       {/* Middle summary */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-2 border-y border-border/60 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-3 border-y border-white/10 text-sm">
                         <div>
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Date</p>
-                          <div className="flex items-center gap-1.5 text-foreground font-semibold">
-                            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                          <p className="text-[10px] uppercase font-bold text-[#718078] tracking-wider mb-0.5">Date</p>
+                          <div className="flex items-center gap-1.5 text-[#F5F3EC] font-semibold text-xs sm:text-sm">
+                            <Clock className="w-3.5 h-3.5 text-[#AAB8B0]" />
                             <span>{format(new Date(order.created_at), "MMM d, yyyy")}</span>
                           </div>
                         </div>
                         
                         <div>
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Items</p>
-                          <p className="text-foreground font-semibold">{totalItems} {totalItems === 1 ? "item" : "items"}</p>
+                          <p className="text-[10px] uppercase font-bold text-[#718078] tracking-wider mb-0.5">Items</p>
+                          <p className="text-[#F5F3EC] font-semibold text-xs sm:text-sm">{totalItems} {totalItems === 1 ? "item" : "items"}</p>
                         </div>
 
                         <div>
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Payment</p>
-                          <div className="flex items-center gap-1.5 text-foreground font-semibold">
-                            {order.payment_method === "cod" ? <Banknote className="w-3.5 h-3.5 text-amber-500" /> : <CreditCard className="w-3.5 h-3.5 text-blue-500" />}
+                          <p className="text-[10px] uppercase font-bold text-[#718078] tracking-wider mb-0.5">Payment</p>
+                          <div className="flex items-center gap-1.5 text-[#F5F3EC] font-semibold text-xs sm:text-sm">
+                            {order.payment_method === "cod" ? <Banknote className="w-3.5 h-3.5 text-[#C98A24]" /> : <CreditCard className="w-3.5 h-3.5 text-blue-400" />}
                             <span className="uppercase text-xs">{order.payment_method === "cod" ? "Cash" : "Online"}</span>
                           </div>
                         </div>
 
                         <div>
-                          <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">Total Amount</p>
-                          <p className="text-foreground font-bold text-base">₹{order.total_amount.toFixed(0)}</p>
+                          <p className="text-[10px] uppercase font-bold text-[#718078] tracking-wider mb-0.5">Total Amount</p>
+                          <p className="text-[#C98A24] font-black text-base">₹{order.total_amount.toFixed(0)}</p>
                         </div>
                       </div>
 
@@ -409,11 +409,11 @@ const OrderHistory = () => {
                           const isToday = msg.includes("Today");
                           return (
                             <div className={cn(
-                              "flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border self-start",
-                              isCancelled ? "bg-rose-50 text-rose-600 border-rose-100" :
-                              isDelivered ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                              isToday ? "bg-amber-50 text-amber-700 border-amber-200 animate-pulse" :
-                              "bg-blue-50 text-blue-600 border-blue-100"
+                              "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border self-start",
+                              isCancelled ? "bg-rose-950/40 text-rose-300 border-rose-900/50" :
+                              isDelivered ? "bg-[#0F8A5F]/20 text-[#4ADE80] border-[#0F8A5F]/30" :
+                              isToday ? "bg-[#C98A24]/20 text-[#D9A441] border-[#C98A24]/40 animate-pulse" :
+                              "bg-blue-950/40 text-blue-300 border-blue-900/50"
                             )}>
                               <Truck className="w-3 h-3" />
                               {msg}
@@ -427,7 +427,7 @@ const OrderHistory = () => {
                               onClick={() => handleResumePayment(order)}
                               disabled={isProcessing === order.id}
                               size="sm"
-                              className="h-10 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold uppercase text-[10px] tracking-wider"
+                              className="h-10 px-4 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] rounded-xl font-bold uppercase text-[10px] tracking-wider"
                             >
                               {isProcessing === order.id ? (
                                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -439,9 +439,8 @@ const OrderHistory = () => {
                           
                           <Button 
                             asChild 
-                            variant="default"
                             size="sm"
-                            className="h-10 px-5 rounded-xl text-[10px] font-bold uppercase tracking-wider gap-1.5"
+                            className="h-10 px-5 bg-[#0F8A5F] hover:bg-[#123B2A] text-white rounded-xl text-[10px] font-bold uppercase tracking-wider gap-1.5 border border-white/10"
                           >
                             <Link to={`/orders/${order.id}`}>
                               View Details

@@ -69,52 +69,34 @@ const FAQ = () => {
     return (
         <Layout>
             {/* Header Section */}
-            <section className="relative bg-forest-dark text-white overflow-hidden py-24 md:py-32">
-                {/* Decorative Elements */}
-                <div className="absolute inset-0 z-0 overflow-hidden">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-golden/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse" />
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/20 rounded-full -ml-20 -mb-20 blur-3xl" />
-                </div>
-
+            <section className="relative bg-[#082D20] text-[#F5F3EC] border-b border-white/10 py-16 md:py-24">
                 <div className="container-main relative z-10 pl-5">
                     <CircularBackButton 
                         onClick={() => navigate("/")} 
-                        className="mb-12"
+                        className="mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC] hover:bg-[#10291F]"
                     />
                     <div className="max-w-3xl">
-                        <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
-                            {"Frequently Asked Questions".split(" ").map((word, wIdx, words) => (
-                                <span key={wIdx} className="inline-block mr-4">
-                                    {word.split("").map((char, cIdx) => (
-                                        <span
-                                            key={cIdx}
-                                            className="inline-block animate-character-reveal opacity-0"
-                                            style={{ animationDelay: `${(wIdx * 5 + cIdx) * 0.05}s` }}
-                                        >
-                                            {char}
-                                        </span>
-                                    ))}
-                                </span>
-                            ))}
+                        <h1 className="font-display text-4xl md:text-6xl font-black mb-4 tracking-tight leading-none text-[#F5F3EC]">
+                            FREQUENTLY ASKED <span className="text-[#C98A24]">QUESTIONS</span>
                         </h1>
-                        <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
-                            Discover everything you need to know about the MMVALI farm-to-doorstep experience, our quality mandates, and how we serve you better.
+                        <p className="text-[#AAB8B0] text-base md:text-lg leading-relaxed">
+                            Discover everything you need to know about the MM Dairy farm-to-doorstep experience, our quality mandates, and how we serve you better.
                         </p>
                     </div>
                 </div>
             </section>
 
             {/* FAQ content */}
-            <section className="section-padding bg-cream/30">
+            <section className="section-padding bg-[#061A13] min-h-[60vh]">
                 <div className="container-main max-w-4xl">
-                    <div className="space-y-16">
+                    <div className="space-y-12">
                         {faqCategories.map((category, catIdx) => (
-                            <div key={catIdx} className="animate-slide-up opacity-0 [animation-fill-mode:forwards]" style={{ animationDelay: `${(catIdx + 1) * 200 + 800}ms` }}>
-                                <div className="flex items-center gap-4 mb-8">
-                                    <div className="p-3 bg-white rounded-2xl shadow-soft border border-golden/20">
+                            <div key={catIdx}>
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="p-3 bg-[#0B2118] rounded-2xl border border-white/10 text-[#C98A24]">
                                         {category.icon}
                                     </div>
-                                    <h2 className="font-display text-2xl md:text-3xl font-bold text-forest-dark">
+                                    <h2 className="font-display text-2xl md:text-3xl font-bold text-[#F5F3EC]">
                                         {category.title}
                                     </h2>
                                 </div>
@@ -123,26 +105,26 @@ const FAQ = () => {
                                     {category.items.map((item) => (
                                         <Card
                                             key={item.id}
-                                            className={`overflow-hidden transition-all duration-300 border border-golden/10 hover:border-golden/30 ${openIndex === item.id ? 'shadow-elevated ring-1 ring-golden/20' : 'shadow-soft'}`}
+                                            className={`overflow-hidden transition-all duration-300 border border-white/10 bg-[#0B2118] text-[#F5F3EC] ${openIndex === item.id ? 'shadow-xl ring-1 ring-[#C98A24]/40 border-[#C98A24]/40' : 'shadow-md'}`}
                                         >
                                             <button
                                                 onClick={() => toggleFaq(item.id)}
                                                 className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none group"
                                             >
-                                                <div className="flex items-center gap-5">
-                                                    <div className={`w-2 h-2 rounded-full transition-all duration-300 ${openIndex === item.id ? 'bg-golden scale-150 shadow-[0_0_8px_rgba(212,175,55,0.8)]' : 'bg-primary/20'}`} />
-                                                    <span className={`font-semibold text-lg transition-colors duration-300 ${openIndex === item.id ? 'text-forest-dark' : 'text-forest-light'}`}>
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-2 h-2 rounded-full transition-all duration-300 ${openIndex === item.id ? 'bg-[#C98A24] scale-150 shadow-[0_0_8px_rgba(201,138,36,0.8)]' : 'bg-white/20'}`} />
+                                                    <span className={`font-semibold text-base sm:text-lg transition-colors duration-300 ${openIndex === item.id ? 'text-[#C98A24]' : 'text-[#F5F3EC]'}`}>
                                                         {item.question}
                                                     </span>
                                                 </div>
-                                                <div className={`p-2 rounded-full transition-all duration-300 ${openIndex === item.id ? 'bg-golden text-white rotate-180' : 'bg-primary/5 text-primary'}`}>
+                                                <div className={`p-2 rounded-full transition-all duration-300 ${openIndex === item.id ? 'bg-[#C98A24] text-[#061A13] rotate-180' : 'bg-[#10291F] text-[#F5F3EC]'}`}>
                                                     <ChevronDown className="w-4 h-4" />
                                                 </div>
                                             </button>
                                             {openIndex === item.id && (
-                                                <CardContent className="pb-8 px-16 pt-0 animate-slide-up">
-                                                    <div className="h-px w-12 bg-golden/30 mb-6" />
-                                                    <p className="text-forest-light/90 leading-relaxed text-lg italic">
+                                                <CardContent className="pb-6 px-12 pt-0">
+                                                    <div className="h-px w-12 bg-[#C98A24]/30 mb-4" />
+                                                    <p className="text-[#AAB8B0] leading-relaxed text-sm md:text-base italic">
                                                         "{item.answer}"
                                                     </p>
                                                 </CardContent>
@@ -155,20 +137,17 @@ const FAQ = () => {
                     </div>
 
                     {/* Support Banner */}
-                    <div className="mt-24 bg-forest text-white rounded-[2rem] p-12 text-center relative overflow-hidden animate-slide-up shadow-elevated opacity-0 [animation-fill-mode:forwards]" style={{ animationDelay: '1.6s' }}>
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-golden/10 rounded-full blur-3xl -mr-32 -mt-32" />
-                        <div className="relative z-10">
-                            <Star className="w-12 h-12 text-golden mx-auto mb-6 animate-pulse" />
-                            <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Still seeking excellence?</h2>
-                            <p className="text-white/70 mb-10 max-w-xl mx-auto text-lg">
-                                If your question wasn't answered above, our premium concierge team is ready to assist you in personalizing your MMVALI experience.
-                            </p>
-                            <Link to="/contact">
-                                <Button size="xl" variant="accent" className="px-12 shadow-lg hover:scale-105 transition-transform">
-                                    Contact Concierge
-                                </Button>
-                            </Link>
-                        </div>
+                    <div className="mt-16 bg-[#0B2118] text-[#F5F3EC] rounded-3xl p-8 sm:p-12 text-center border border-[#C98A24]/30 shadow-2xl">
+                        <Star className="w-10 h-10 text-[#C98A24] mx-auto mb-4 animate-pulse" />
+                        <h2 className="font-display text-2xl md:text-3xl font-bold mb-3 text-[#F5F3EC]">Still seeking excellence?</h2>
+                        <p className="text-[#AAB8B0] mb-8 max-w-xl mx-auto text-sm sm:text-base">
+                            If your question wasn't answered above, our concierge team is ready to assist you in personalizing your MM Dairy experience.
+                        </p>
+                        <Link to="/contact">
+                            <Button size="xl" className="px-10 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold rounded-xl shadow-lg">
+                                Contact Support
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </section>

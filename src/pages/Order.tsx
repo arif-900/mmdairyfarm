@@ -367,16 +367,16 @@ const Order = () => {
 
   return (
     <Layout>
-      <div className="bg-slate-50 min-h-screen pb-20">
+      <div className="bg-[#061A13] min-h-screen pb-20 text-[#F5F3EC]">
         {/* Premium Checkout Header */}
-        <section className="bg-white border-b border-slate-100 pt-16 pb-8 px-6">
+        <section className="bg-[#082D20] border-b border-white/10 pt-16 pb-8 px-6">
           <div className="container-main max-w-4xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
               <div className="flex items-center gap-6">
-                <CircularBackButton onClick={step > 1 ? prevStep : () => navigate("/products")} />
+                <CircularBackButton onClick={step > 1 ? prevStep : () => navigate("/products")} className="border-white/10 bg-[#0B2118] text-[#F5F3EC]" />
                 <div>
-                  <h1 className="font-display text-4xl font-black text-slate-900 tracking-tighter italic uppercase">
-                    Checkout
+                  <h1 className="font-display text-4xl font-black text-[#F5F3EC] tracking-tight uppercase">
+                    CHECKOUT <span className="text-[#C98A24]">ORDER</span>
                   </h1>
                 </div>
               </div>

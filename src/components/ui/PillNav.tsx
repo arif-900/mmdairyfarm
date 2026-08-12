@@ -654,16 +654,16 @@ const PillNav: React.FC<PillNavProps> = ({
 
       {/* Redesigned Side Drawer Container */}
       <div 
-        className="mobile-menu-popover mobile-only fixed top-0 left-0 bottom-0 w-[320px] max-w-[85vw] h-full bg-white z-[60] flex flex-col shadow-[4px_0_25px_rgba(0,0,0,0.06)] border-r border-[#E5E7EB] font-sans" 
+        className="mobile-menu-popover mobile-only fixed top-0 left-0 bottom-0 w-[320px] max-w-[85vw] h-full bg-[#061A13] text-[#F5F3EC] z-[60] flex flex-col shadow-2xl border-r border-white/10 font-sans" 
         ref={mobileMenuRef} 
-        style={{ ...cssVars, fontFamily: "'Roboto', sans-serif" }}
+        style={{ ...cssVars, fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       >
         {/* Profile Header */}
-        <div className="p-6 bg-slate-50 border-b border-[#E5E7EB] flex flex-col gap-4 relative">
+        <div className="p-6 bg-[#082D20] border-b border-white/10 flex flex-col gap-4 relative">
           <button 
             onClick={toggleMobileMenu} 
             ref={mobileMenuCloseBtnRef}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200/50 hover:text-slate-800 transition-colors"
+            className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-[#AAB8B0] hover:bg-[#10291F] hover:text-[#C98A24] transition-colors"
             aria-label="Close menu"
           >
             <X className="w-5 h-5" />
@@ -671,7 +671,7 @@ const PillNav: React.FC<PillNavProps> = ({
 
           <div className="flex items-center gap-4 mt-2">
             {/* Circular avatar */}
-            <div className="w-12 h-12 rounded-full bg-emerald-500 text-white font-bold flex items-center justify-center text-base shrink-0 border border-emerald-600/10 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-[#C98A24] text-[#061A13] font-black flex items-center justify-center text-base shrink-0 border border-white/10 shadow-md">
               {user ? (
                 profile?.full_name 
                   ? profile.full_name.split(' ').map((n: string) => n[0]).join('').toUpperCase() 
@@ -680,10 +680,10 @@ const PillNav: React.FC<PillNavProps> = ({
             </div>
 
             <div className="min-w-0">
-              <p className="font-bold text-slate-800 text-base leading-tight truncate">
+              <p className="font-bold text-[#F5F3EC] text-base leading-tight truncate">
                 {user ? (profile?.full_name || user.email?.split('@')[0]) : "Guest User"}
               </p>
-              <p className="text-xs font-normal text-slate-400 truncate mt-0.5">
+              <p className="text-xs font-medium text-[#AAB8B0] truncate mt-0.5">
                 {user ? user.email : "Please sign in to order freshness"}
               </p>
             </div>
@@ -692,15 +692,15 @@ const PillNav: React.FC<PillNavProps> = ({
           <div className="flex items-center justify-between mt-1">
             {user ? (
               <>
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 uppercase tracking-wider">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500" /> Account Active
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0F8A5F] bg-[#10291F] px-2 py-0.5 rounded-md border border-white/10 uppercase tracking-wider">
+                  <ShieldCheck className="w-3 h-3 text-[#0F8A5F]" /> Account Active
                 </span>
                 <button 
                   onClick={() => { 
                     toggleMobileMenu(); 
                     setIsSettingsOpen(true); 
                   }}
-                  className="text-xs font-semibold text-emerald-600 hover:underline"
+                  className="text-xs font-bold text-[#C98A24] hover:underline"
                 >
                   View Profile
                 </button>
@@ -709,7 +709,7 @@ const PillNav: React.FC<PillNavProps> = ({
               <Button 
                 onClick={() => { toggleMobileMenu(); navigate('/auth'); }}
                 size="sm"
-                className="w-full rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-wider text-[10px] h-9"
+                className="w-full rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold uppercase tracking-wider text-[10px] h-9"
               >
                 Sign In
               </Button>
@@ -719,7 +719,7 @@ const PillNav: React.FC<PillNavProps> = ({
 
         {/* Group Navigation Items Container */}
         <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-2 space-y-1">
+          <div className="bg-[#0B2118] border border-white/10 rounded-2xl p-2 space-y-1">
             {drawerLinks.map(linkItem => {
               const Icon = linkItem.icon;
               const isActive = activeHref === linkItem.href;
@@ -730,12 +730,12 @@ const PillNav: React.FC<PillNavProps> = ({
                   className={cn(
                     "w-full h-[52px] min-h-[52px] rounded-xl flex items-center gap-4 px-4 transition-all duration-200 ease-in-out cursor-pointer select-none",
                     isActive 
-                      ? "bg-emerald-600 text-white shadow-sm" 
-                      : "text-slate-700 hover:bg-emerald-50/50 hover:text-emerald-700"
+                      ? "bg-[#C98A24] text-[#061A13] font-bold shadow-md" 
+                      : "text-[#F5F3EC] hover:bg-[#10291F] hover:text-[#C98A24]"
                   )}
                 >
-                  <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-white" : "text-slate-400 group-hover:text-emerald-600")} />
-                  <span className="text-sm font-medium tracking-normal text-left">{linkItem.label}</span>
+                  <Icon className={cn("w-5 h-5 shrink-0", isActive ? "text-[#061A13]" : "text-[#AAB8B0]")} />
+                  <span className="text-sm font-bold tracking-wide text-left">{linkItem.label}</span>
                 </div>
               );
 
@@ -772,13 +772,13 @@ const PillNav: React.FC<PillNavProps> = ({
 
         {/* Logout Section at the Bottom */}
         {user && (
-          <div className="p-4 border-t border-[#E5E7EB] bg-slate-50">
+          <div className="p-4 border-t border-white/10 bg-[#082D20]">
             <button 
               onClick={() => {
                 signOut();
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 h-12 min-h-[48px] rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 transition-all font-bold text-xs uppercase tracking-widest border border-rose-100/50"
+              className="w-full flex items-center justify-center gap-2 h-12 min-h-[48px] rounded-xl bg-[#10291F] text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-all font-bold text-xs uppercase tracking-wider border border-white/10"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
@@ -789,43 +789,45 @@ const PillNav: React.FC<PillNavProps> = ({
 
       {/* Profile & Settings Dialog Modal */}
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-3xl p-6 bg-white border border-slate-100 shadow-xl font-sans" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <DialogContent className="sm:max-w-[425px] rounded-3xl p-6 bg-[#0B2118] border border-white/10 shadow-2xl text-[#F5F3EC] font-sans">
           
           {viewMode === "view" && (
             <>
               <DialogHeader className="text-left space-y-1">
-                <DialogTitle className="text-xl font-bold text-slate-900">Account Details</DialogTitle>
-                <DialogDescription className="text-sm text-slate-400 font-normal">
+                <DialogTitle className="text-xl font-black text-[#F5F3EC]">
+                  ACCOUNT <span className="text-[#C98A24]">DETAILS</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs text-[#AAB8B0] font-normal">
                   Your registered profile information.
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-4 py-4 mt-2">
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-slate-400">Full Name</span>
-                  <p className="text-sm font-semibold text-slate-800">{profile?.full_name || "Not set"}</p>
+                  <span className="text-xs font-bold text-[#718078] uppercase tracking-wider">Full Name</span>
+                  <p className="text-sm font-semibold text-[#F5F3EC]">{profile?.full_name || "Not set"}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-slate-400">Phone Number</span>
-                  <p className="text-sm font-semibold text-slate-800">{profile?.phone || "Not set"}</p>
+                  <span className="text-xs font-bold text-[#718078] uppercase tracking-wider">Phone Number</span>
+                  <p className="text-sm font-semibold text-[#F5F3EC]">{profile?.phone || "Not set"}</p>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-slate-400">Email Address</span>
-                  <p className="text-sm font-semibold text-slate-800">{user?.email}</p>
+                  <span className="text-xs font-bold text-[#718078] uppercase tracking-wider">Email Address</span>
+                  <p className="text-sm font-semibold text-[#F5F3EC]">{user?.email}</p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 pt-4 border-t border-slate-100 mt-4">
+              <div className="flex flex-col gap-2 pt-4 border-t border-white/10 mt-4">
                 <Button 
                   onClick={() => setViewMode("edit_profile")}
-                  className="w-full rounded-xl h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                  className="w-full rounded-xl h-11 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold"
                 >
                   Edit Profile
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => setViewMode("change_password")}
-                  className="w-full rounded-xl h-11 border-slate-200 text-slate-700 font-bold hover:bg-slate-50"
+                  className="w-full rounded-xl h-11 border-white/10 bg-[#10291F] text-[#F5F3EC] font-bold hover:bg-[#164431]"
                 >
                   Change Password
                 </Button>
@@ -836,51 +838,53 @@ const PillNav: React.FC<PillNavProps> = ({
           {viewMode === "edit_profile" && (
             <>
               <DialogHeader className="text-left space-y-1">
-                <DialogTitle className="text-xl font-bold text-slate-900">Edit Profile</DialogTitle>
-                <DialogDescription className="text-sm text-slate-400 font-normal">
+                <DialogTitle className="text-xl font-black text-[#F5F3EC]">
+                  EDIT <span className="text-[#C98A24]">PROFILE</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs text-[#AAB8B0] font-normal">
                   Update your contact details below.
                 </DialogDescription>
               </DialogHeader>
 
               <form onSubmit={handleSaveProfile} className="space-y-4 mt-2">
                 <div className="space-y-1.5">
-                  <label htmlFor="fullName" className="text-xs font-semibold text-slate-500">Full Name</label>
+                  <label htmlFor="fullName" className="text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">Full Name</label>
                   <input
                     id="fullName"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium text-slate-800 transition-all bg-white"
+                    className="w-full h-11 px-4 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] focus:outline-none focus:border-[#C98A24] text-sm font-medium transition-all"
                     placeholder="Enter your full name"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="phone" className="text-xs font-semibold text-slate-500">Phone Number</label>
+                  <label htmlFor="phone" className="text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">Phone Number</label>
                   <input
                     id="phone"
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium text-slate-800 transition-all bg-white"
+                    className="w-full h-11 px-4 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] focus:outline-none focus:border-[#C98A24] text-sm font-medium transition-all"
                     placeholder="Enter phone number"
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+                <div className="flex gap-3 pt-4 border-t border-white/10 mt-6">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setViewMode("view")}
-                    className="flex-1 rounded-xl h-11 border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+                    className="flex-1 rounded-xl h-11 border-white/10 bg-[#10291F] text-[#F5F3EC] font-bold hover:bg-[#164431]"
                   >
                     Back
                   </Button>
                   <Button
                     type="submit"
                     disabled={updating}
-                    className="flex-1 rounded-xl h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                    className="flex-1 rounded-xl h-11 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold"
                   >
                     {updating ? "Saving..." : "Save Details"}
                   </Button>
@@ -892,65 +896,67 @@ const PillNav: React.FC<PillNavProps> = ({
           {viewMode === "change_password" && (
             <>
               <DialogHeader className="text-left space-y-1">
-                <DialogTitle className="text-xl font-bold text-slate-900">Change Password</DialogTitle>
-                <DialogDescription className="text-sm text-slate-400 font-normal">
+                <DialogTitle className="text-xl font-black text-[#F5F3EC]">
+                  CHANGE <span className="text-[#C98A24]">PASSWORD</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs text-[#AAB8B0] font-normal">
                   Provide your current password to choose a new one.
                 </DialogDescription>
               </DialogHeader>
 
               <form onSubmit={handleSavePassword} className="space-y-4 mt-2">
                 <div className="space-y-1.5">
-                  <label htmlFor="currentPassword" className="text-xs font-semibold text-slate-500">Current Password</label>
+                  <label htmlFor="currentPassword" className="text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">Current Password</label>
                   <input
                     id="currentPassword"
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium text-slate-800 transition-all bg-white"
+                    className="w-full h-11 px-4 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] focus:outline-none focus:border-[#C98A24] text-sm font-medium transition-all"
                     placeholder="Enter current password"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="newPassword" className="text-xs font-semibold text-slate-500">New Password</label>
+                  <label htmlFor="newPassword" className="text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">New Password</label>
                   <input
                     id="newPassword"
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium text-slate-800 transition-all bg-white"
+                    className="w-full h-11 px-4 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] focus:outline-none focus:border-[#C98A24] text-sm font-medium transition-all"
                     placeholder="At least 6 characters"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="confirmPassword" className="text-xs font-semibold text-slate-500">Confirm New Password</label>
+                  <label htmlFor="confirmPassword" className="text-xs font-bold text-[#AAB8B0] uppercase tracking-wider">Confirm New Password</label>
                   <input
                     id="confirmPassword"
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 text-sm font-medium text-slate-800 transition-all bg-white"
+                    className="w-full h-11 px-4 rounded-xl border border-white/10 bg-[#10291F] text-[#F5F3EC] focus:outline-none focus:border-[#C98A24] text-sm font-medium transition-all"
                     placeholder="Verify new password"
                     required
                   />
                 </div>
 
-                <div className="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+                <div className="flex gap-3 pt-4 border-t border-white/10 mt-6">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setViewMode("view")}
-                    className="flex-1 rounded-xl h-11 border-slate-200 text-slate-600 font-bold hover:bg-slate-50"
+                    className="flex-1 rounded-xl h-11 border-white/10 bg-[#10291F] text-[#F5F3EC] font-bold hover:bg-[#164431]"
                   >
                     Back
                   </Button>
                   <Button
                     type="submit"
                     disabled={updating}
-                    className="flex-1 rounded-xl h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                    className="flex-1 rounded-xl h-11 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold"
                   >
                     {updating ? "Updating..." : "Update Password"}
                   </Button>

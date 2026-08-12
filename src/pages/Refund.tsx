@@ -49,34 +49,17 @@ const Refund = () => {
     return (
         <Layout>
             {/* Header Section */}
-            <section className="relative bg-forest-dark text-white overflow-hidden py-24 md:py-32">
-                <div className="absolute inset-0 z-0 text-white">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_15%_15%,rgba(212,175,55,0.05),transparent)]" />
-                    <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_85%_85%,rgba(46,125,50,0.1),transparent)]" />
-                </div>
-
+            <section className="relative bg-[#082D20] text-[#F5F3EC] border-b border-white/10 py-16 md:py-24">
                 <div className="container-main relative z-10 pl-5">
                     <CircularBackButton 
                         onClick={() => navigate("/")} 
-                        className="mb-12"
+                        className="mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC] hover:bg-[#10291F]"
                     />
                     <div className="max-w-3xl">
-                        <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
-                            {"Refund & Cancellation".split(" ").map((word, wIdx) => (
-                                <span key={wIdx} className="inline-block mr-4">
-                                    {word.split("").map((char, cIdx) => (
-                                        <span 
-                                            key={cIdx} 
-                                            className="inline-block animate-character-reveal opacity-0"
-                                            style={{ animationDelay: `${(wIdx * 5 + cIdx) * 0.05}s` }}
-                                        >
-                                            {char}
-                                        </span>
-                                    ))}
-                                </span>
-                            ))}
+                        <h1 className="font-display text-4xl md:text-6xl font-black mb-4 tracking-tight leading-none text-[#F5F3EC]">
+                            REFUND & <span className="text-[#C98A24]">CANCELLATION</span>
                         </h1>
-                        <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
+                        <p className="text-[#AAB8B0] text-base md:text-lg leading-relaxed">
                             Integrity in every transaction. Our policy on cancellations and our benchmark for excellence refunds.
                         </p>
                     </div>
@@ -84,65 +67,57 @@ const Refund = () => {
             </section>
 
             {/* Content Section */}
-            <section className="section-padding bg-cream/20">
+            <section className="section-padding bg-[#061A13] min-h-[60vh]">
                 <div className="container-main max-w-5xl">
-                    <div className="mb-16 bg-white rounded-3xl p-8 md:p-12 border border-golden/10 shadow-soft animate-slide-up [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
-                        <div className="flex items-center gap-4 mb-6">
-                            <RefreshCw className="w-8 h-8 text-golden" />
-                            <h2 className="font-display text-2xl font-bold text-forest-dark">The Guarantee of Purity</h2>
+                    <div className="mb-12 bg-[#0B2118] rounded-3xl p-8 md:p-10 border border-white/10 shadow-2xl">
+                        <div className="flex items-center gap-4 mb-4">
+                            <RefreshCw className="w-8 h-8 text-[#C98A24]" />
+                            <h2 className="font-display text-2xl font-bold text-[#F5F3EC]">The Guarantee of Purity</h2>
                         </div>
-                        <p className="text-lg text-forest-light leading-relaxed">
-                            At MMVALI Farm, we believe in the absolute quality of our dairy. Because excellence is non-negotiable and our products are farm-fresh, we have established these guidelines to protect both our purity standards and your peace of mind.
+                        <p className="text-[#AAB8B0] leading-relaxed text-sm md:text-base">
+                            At MM Dairy Farm, we believe in the absolute quality of our dairy. Because excellence is non-negotiable and our products are farm-fresh, we have established these guidelines to protect both our purity standards and your peace of mind.
                         </p>
                     </div>
 
-                    <div className="grid gap-10">
+                    <div className="grid gap-6">
                         {sections.map((section, index) => {
                             const IconComponent = section.icon;
                             return (
-                                <div 
-                                    key={index}
-                                    className="animate-slide-up opacity-0 [animation-fill-mode:forwards]"
-                                    style={{ animationDelay: `${1200 + index * 150}ms` }}
-                                >
-                                    <div className="flex flex-col md:flex-row gap-8 items-start group">
+                                <div key={index} className="bg-[#0B2118] rounded-2xl p-6 border border-white/10 shadow-xl">
+                                    <div className="flex flex-col md:flex-row gap-6 items-start">
                                         <div className="flex-shrink-0">
-                                            <div className="w-16 h-16 rounded-2xl bg-white border border-golden/20 flex items-center justify-center shadow-soft group-hover:shadow-elevated transition-all duration-500 group-hover:rotate-6">
-                                                <IconComponent className="w-8 h-8 text-golden" />
+                                            <div className="w-14 h-14 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center text-[#C98A24]">
+                                                <IconComponent className="w-7 h-7" />
                                             </div>
                                         </div>
-                                        <div className="flex-1 space-y-4">
-                                            <h3 className="font-display text-2xl font-bold text-forest-dark">{section.title}</h3>
-                                            <p className="text-forest-light/80 leading-relaxed text-lg">
+                                        <div className="flex-1 space-y-3">
+                                            <h3 className="font-display text-xl font-bold text-[#F5F3EC]">{section.title}</h3>
+                                            <p className="text-[#AAB8B0] leading-relaxed text-sm">
                                                 {section.content}
                                             </p>
                                             {section.list && (
-                                                <div className="grid gap-3 pt-2">
+                                                <div className="grid gap-2 pt-2">
                                                     {section.list.map((item, itemIdx) => (
-                                                        <div key={itemIdx} className="flex items-start gap-4 p-4 bg-white/40 rounded-xl border border-golden/5 group-hover:border-golden/15 transition-colors">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-golden mt-2 shrink-0" />
-                                                            <span className="text-base text-forest-light/90">{item}</span>
+                                                        <div key={itemIdx} className="flex items-start gap-3 p-3 bg-[#10291F] rounded-xl border border-white/10">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-[#C98A24] mt-1.5 shrink-0" />
+                                                            <span className="text-xs text-[#AAB8B0]">{item}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                    {index < sections.length - 1 && (
-                                        <div className="h-px w-full bg-gradient-to-r from-transparent via-golden/20 to-transparent my-10" />
-                                    )}
                                 </div>
                             );
                         })}
                     </div>
 
-                    <div className="mt-24 p-12 bg-forest rounded-[3rem] text-center shadow-elevated animate-slide-up [animation-delay:2000ms] opacity-0 [animation-fill-mode:forwards]">
-                        <div className="max-w-xl mx-auto space-y-6">
-                            <h2 className="font-display text-3xl font-bold text-white">Trust, Verified.</h2>
-                            <p className="text-white/60 leading-relaxed italic">
+                    <div className="mt-16 p-8 bg-[#0B2118] rounded-3xl border border-[#C98A24]/30 text-center">
+                        <div className="max-w-xl mx-auto space-y-3">
+                            <h2 className="font-display text-2xl font-bold text-[#F5F3EC]">Trust, Verified.</h2>
+                            <p className="text-[#AAB8B0] text-xs leading-relaxed italic">
                                 "Our policies are built on the same integrity as our farming. Pure products, transparent promises."
                             </p>
-                            <div className="h-px w-16 bg-golden/40 mx-auto" />
                         </div>
                     </div>
                 </div>

@@ -77,113 +77,112 @@ const SubscriptionSuccess = () => {
 
   return (
     <Layout>
-      <section className="bg-slate-50 py-16 min-h-screen">
+      <section className="bg-[#061A13] py-12 min-h-screen text-[#F5F3EC]">
         <div className="max-w-4xl mx-auto px-4">
           
-          <div className="text-center space-y-4 mb-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="w-24 h-24 bg-emerald-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-emerald-600/40 rotate-12">
-               <CheckCircle2 className="w-12 h-12 text-white" />
+          <div className="text-center space-y-4 mb-10">
+            <div className="w-20 h-20 bg-[#10291F] border border-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#C98A24] shadow-2xl">
+               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter uppercase italic">
-              Payment Successful 🎉
+            <h1 className="text-4xl md:text-5xl font-black text-[#F5F3EC] tracking-tight uppercase">
+              PAYMENT <span className="text-[#C98A24]">SUCCESSFUL</span> 🎉
             </h1>
-            <p className="text-xl text-slate-500 font-bold max-w-xl mx-auto leading-tight italic uppercase tracking-tighter">
-              Your subscription for {product.name} is now locked & active.
+            <p className="text-sm text-[#AAB8B0] font-bold max-w-xl mx-auto leading-relaxed uppercase tracking-wider">
+              Your subscription for {product.name} is now active & scheduled.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-12 gap-8 items-start">
+          <div className="grid md:grid-cols-12 gap-6 items-start">
             {/* Left: Product Info */}
-            <div className="md:col-span-7 bg-white rounded-[40px] p-8 shadow-2xl border border-slate-100 animate-in fade-in slide-in-from-left-8 duration-700 delay-150 fill-mode-both">
-              <div className="flex items-center gap-6 mb-8 pb-8 border-b border-slate-50">
-                 <div className="w-24 h-24 rounded-3xl bg-slate-50 flex items-center justify-center p-3 border border-slate-100">
+            <div className="md:col-span-7 bg-[#0B2118] rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 text-[#F5F3EC]">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-white/10">
+                 <div className="w-20 h-20 rounded-2xl bg-[#F1EEE7] flex items-center justify-center p-2 border border-white/10 shrink-0">
                     <img src={product.image} alt="" className="w-full h-full object-contain" />
                  </div>
                  <div>
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">{product.name}</h2>
-                    <p className="text-emerald-600 font-black uppercase tracking-widest text-xs mt-1">
+                    <h2 className="text-2xl font-bold text-[#F5F3EC] tracking-tight">{product.name}</h2>
+                    <p className="text-[#C98A24] font-bold uppercase tracking-wider text-xs mt-1">
                        PREPAID SUBSCRIPTION • {config.quantity}x {config.weight >= 1000 ? `${config.weight/1000}L` : `${config.weight}ml`}
                     </p>
                  </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 gap-6">
                  <div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Frequency</h4>
-                    <p className="text-xl font-black text-slate-800 capitalize leading-none">{config.frequency}</p>
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Frequency</h4>
+                    <p className="text-lg font-bold text-[#F5F3EC] capitalize">{config.frequency}</p>
                  </div>
                  <div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Delivery Time</h4>
-                    <p className="text-xl font-black text-slate-800 capitalize leading-none">{config.timing}</p>
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Delivery Time</h4>
+                    <p className="text-lg font-bold text-[#F5F3EC] capitalize">{config.timing}</p>
                  </div>
                  <div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Start Date</h4>
-                    <p className="font-bold text-slate-700">{format(new Date(config.startDate), "dd MMMM, yyyy")}</p>
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Start Date</h4>
+                    <p className="font-bold text-[#F5F3EC]">{format(new Date(config.startDate), "dd MMMM, yyyy")}</p>
                  </div>
                  <div>
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Duration</h4>
-                    <p className="font-bold text-slate-700">
+                    <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Duration</h4>
+                    <p className="font-bold text-[#F5F3EC]">
                        {config.endDate ? `Until ${format(new Date(config.endDate), "dd MMM, yyyy")}` : 'Until Cancelled'}
                     </p>
                  </div>
               </div>
 
-              <div className="mt-10 p-6 rounded-3xl bg-slate-900 text-white flex justify-between items-center">
+              <div className="mt-8 p-5 rounded-2xl bg-[#061A13] border border-white/10 text-[#F5F3EC] flex justify-between items-center">
                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Total Paid (Prepaid)</p>
-                    <p className="text-3xl font-black italic">₹{totalAmount}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Total Paid (Prepaid)</p>
+                    <p className="text-2xl font-black text-[#C98A24]">₹{totalAmount}</p>
                  </div>
                  <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Target Drops</p>
-                    <p className="text-2xl font-black opacity-80">{totalDeliveries} Deliveries</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#AAB8B0] mb-1">Target Drops</p>
+                    <p className="text-xl font-bold text-[#F5F3EC]">{totalDeliveries} Deliveries</p>
                  </div>
               </div>
             </div>
 
             {/* Right: Operational Info & CTAs */}
-            <div className="md:col-span-5 space-y-6 animate-in fade-in slide-in-from-right-8 duration-700 delay-300 fill-mode-both">
-               <div className="bg-white rounded-[40px] p-8 shadow-lg border border-slate-100 flex flex-col gap-6">
-                  <div className="flex gap-4">
-                     <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                        <Zap className="w-6 h-6" />
+            <div className="md:col-span-5 space-y-6">
+               <div className="bg-[#0B2118] rounded-3xl p-6 shadow-2xl border border-white/10 flex flex-col gap-5 text-[#F5F3EC]">
+                  <div className="flex gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 text-[#C98A24] flex items-center justify-center shrink-0">
+                        <Zap className="w-5 h-5" />
                      </div>
                      <div>
-                        <h4 className="font-black text-slate-900 text-sm uppercase tracking-tight">Starts Immediately</h4>
-                        <p className="text-xs font-bold text-slate-400 mt-1">Your first delivery is scheduled for {format(new Date(config.startDate), "dd MMM")}.</p>
+                        <h4 className="font-bold text-[#F5F3EC] text-xs uppercase tracking-wider">Starts Immediately</h4>
+                        <p className="text-[11px] font-medium text-[#AAB8B0] mt-0.5">First drop on {format(new Date(config.startDate), "dd MMM")}.</p>
                      </div>
                   </div>
 
-                  <div className="flex gap-4">
-                     <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
-                        <Package className="w-6 h-6" />
+                  <div className="flex gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 text-[#C98A24] flex items-center justify-center shrink-0">
+                        <Package className="w-5 h-5" />
                      </div>
                      <div>
-                        <h4 className="font-black text-slate-900 text-sm uppercase tracking-tight">Zero Hassle Delivery</h4>
-                        <p className="text-xs font-bold text-slate-400 mt-1">No OTP or Cash required. Rider will drop the items and update status.</p>
+                        <h4 className="font-bold text-[#F5F3EC] text-xs uppercase tracking-wider">Zero Hassle Delivery</h4>
+                        <p className="text-[11px] font-medium text-[#AAB8B0] mt-0.5">No OTP required. Rider will drop and notify.</p>
                      </div>
                   </div>
 
-                  <div className="flex gap-4">
-                     <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
-                        <ShieldCheck className="w-6 h-6" />
+                  <div className="flex gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 text-[#C98A24] flex items-center justify-center shrink-0">
+                        <ShieldCheck className="w-5 h-5" />
                      </div>
                      <div>
-                        <h4 className="font-black text-slate-900 text-sm uppercase tracking-tight">Automatic Fulfillment</h4>
-                        <p className="text-xs font-bold text-slate-400 mt-1">Manage, pause, or resume anytime from your dashboard.</p>
+                        <h4 className="font-bold text-[#F5F3EC] text-xs uppercase tracking-wider">Automatic Fulfillment</h4>
+                        <p className="text-[11px] font-medium text-[#AAB8B0] mt-0.5">Pause or manage anytime from your dashboard.</p>
                      </div>
                   </div>
                </div>
 
-               <div className="flex flex-col gap-4">
+               <div className="flex flex-col gap-3">
                   <Button 
-                    className="w-full h-16 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[24px] font-black uppercase tracking-widest text-sm shadow-xl shadow-emerald-600/20 active:scale-95 transition-all"
+                    className="w-full h-14 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] rounded-xl font-bold uppercase tracking-wider text-xs shadow-xl transition-all"
                     onClick={() => navigate('/orders')}
                   >
-                    Go to Dashboard <ArrowRight className="w-5 h-5 ml-3" />
+                    Go to Dashboard <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                   <Button 
-                    variant="ghost"
-                    className="w-full h-16 bg-white border-2 border-slate-100 text-slate-400 rounded-[24px] font-black uppercase tracking-widest text-xs hover:bg-slate-50 hover:text-slate-600 active:scale-95 transition-all"
+                    className="w-full h-14 bg-[#10291F] text-[#F5F3EC] border border-white/20 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-[#164431] transition-all"
                     onClick={() => navigate('/')}
                   >
                     <Home className="w-4 h-4 mr-2" /> Back to Home

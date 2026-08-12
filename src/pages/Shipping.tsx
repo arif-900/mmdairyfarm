@@ -54,34 +54,17 @@ const Shipping = () => {
     return (
         <Layout>
             {/* Header Section */}
-            <section className="relative bg-forest-dark text-white overflow-hidden py-24 md:py-32 text-white">
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,rgba(212,175,55,0.05),transparent)]" />
-                    <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_80%,rgba(46,125,50,0.1),transparent)]" />
-                </div>
-
+            <section className="relative bg-[#082D20] text-[#F5F3EC] border-b border-white/10 py-16 md:py-24">
                 <div className="container-main relative z-10 pl-5">
                     <CircularBackButton 
                         onClick={() => navigate("/")} 
-                        className="mb-12"
+                        className="mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC] hover:bg-[#10291F]"
                     />
                     <div className="max-w-3xl">
-                        <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
-                            {"Shipping & Delivery".split(" ").map((word, wIdx) => (
-                                <span key={wIdx} className="inline-block mr-4">
-                                    {word.split("").map((char, cIdx) => (
-                                        <span 
-                                            key={cIdx} 
-                                            className="inline-block animate-character-reveal opacity-0"
-                                            style={{ animationDelay: `${(wIdx * 5 + cIdx) * 0.05}s` }}
-                                        >
-                                            {char}
-                                        </span>
-                                    ))}
-                                </span>
-                            ))}
+                        <h1 className="font-display text-4xl md:text-6xl font-black mb-4 tracking-tight leading-none text-[#F5F3EC]">
+                            SHIPPING & <span className="text-[#C98A24]">DELIVERY</span>
                         </h1>
-                        <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
+                        <p className="text-[#AAB8B0] text-base md:text-lg leading-relaxed">
                             From the Bhanakacherla farm to your doorstep. Absolute freshness, guaranteed by elite logistics.
                         </p>
                     </div>
@@ -89,67 +72,59 @@ const Shipping = () => {
             </section>
 
             {/* Content Section */}
-            <section className="section-padding bg-cream/20">
+            <section className="section-padding bg-[#061A13] min-h-[60vh]">
                 <div className="container-main max-w-5xl">
-                    <div className="mb-16 bg-white rounded-3xl p-8 md:p-12 border border-golden/10 shadow-soft animate-slide-up [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
-                        <div className="flex items-center gap-4 mb-6">
-                            <Sparkles className="w-8 h-8 text-golden" />
-                            <h2 className="font-display text-2xl font-bold text-forest-dark">The Cold Chain Promise</h2>
+                    <div className="mb-12 bg-[#0B2118] rounded-3xl p-8 md:p-10 border border-white/10 shadow-2xl">
+                        <div className="flex items-center gap-4 mb-4">
+                            <Sparkles className="w-8 h-8 text-[#C98A24]" />
+                            <h2 className="font-display text-2xl font-bold text-[#F5F3EC]">The Cold Chain Promise</h2>
                         </div>
-                        <p className="text-lg text-forest-light leading-relaxed">
+                        <p className="text-[#AAB8B0] leading-relaxed text-sm md:text-base">
                             Dairy products are living essentials. Our logistics infrastructure is engineered to preserve the nutritional sanctity of our milk through a meticulous cold chain, ensuring the 'Fresh From Our Farm' promise is kept with every delivery.
                         </p>
                     </div>
 
-                    <div className="grid gap-12">
+                    <div className="grid gap-6">
                         {sections.map((section, index) => {
                             const IconComponent = section.icon;
                             return (
-                                <div 
-                                    key={index}
-                                    className="animate-slide-up opacity-0 [animation-fill-mode:forwards]"
-                                    style={{ animationDelay: `${1200 + index * 150}ms` }}
-                                >
-                                    <div className="grid md:grid-cols-12 gap-8 items-start">
-                                        <div className="md:col-span-1">
-                                            <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center border border-golden/10 shadow-soft">
-                                                <IconComponent className="w-6 h-6 text-golden" />
+                                <div key={index} className="bg-[#0B2118] rounded-2xl p-6 border border-white/10 shadow-xl">
+                                    <div className="flex flex-col md:flex-row gap-6 items-start">
+                                        <div className="flex-shrink-0">
+                                            <div className="w-14 h-14 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center text-[#C98A24]">
+                                                <IconComponent className="w-7 h-7" />
                                             </div>
                                         </div>
-                                        <div className="md:col-span-11 space-y-4">
-                                            <h3 className="font-display text-2xl font-bold text-forest-dark">{section.title}</h3>
-                                            <p className="text-forest-light/80 leading-relaxed text-lg">
+                                        <div className="flex-1 space-y-3">
+                                            <h3 className="font-display text-xl font-bold text-[#F5F3EC]">{section.title}</h3>
+                                            <p className="text-[#AAB8B0] leading-relaxed text-sm">
                                                 {section.content}
                                             </p>
                                             {section.list && (
-                                                <div className="grid gap-2 pt-4">
+                                                <div className="grid gap-2 pt-2">
                                                     {section.list.map((item, itemIdx) => (
-                                                        <div key={itemIdx} className="flex items-center gap-3">
-                                                            <div className="w-1 h-1 rounded-full bg-golden" />
-                                                            <span className="text-base text-forest-light/70 italic tracking-tight">{item}</span>
+                                                        <div key={itemIdx} className="flex items-center gap-3 p-3 bg-[#10291F] rounded-xl border border-white/10">
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-[#C98A24] shrink-0" />
+                                                            <span className="text-xs text-[#AAB8B0] italic">{item}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                    {index < sections.length - 1 && (
-                                        <div className="h-px w-32 bg-golden/20 my-12" />
-                                    )}
                                 </div>
                             );
                         })}
                     </div>
 
-                    <div className="mt-24 p-12 bg-forest rounded-[3rem] relative overflow-hidden shadow-elevated animate-slide-up [animation-delay:2000ms] opacity-0 [animation-fill-mode:forwards]">
-                         <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-                         <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                            <Truck className="w-12 h-12 text-golden animate-float" />
-                            <h2 className="font-display text-3xl font-bold text-white">Always Fresh, Always On Time.</h2>
-                            <p className="text-white/60 max-w-lg mx-auto">
+                    <div className="mt-16 p-8 bg-[#0B2118] rounded-3xl border border-[#C98A24]/30 text-center">
+                        <div className="max-w-xl mx-auto space-y-3">
+                            <Truck className="w-10 h-10 text-[#C98A24] mx-auto animate-float" />
+                            <h2 className="font-display text-2xl font-bold text-[#F5F3EC]">Always Fresh, Always On Time.</h2>
+                            <p className="text-[#AAB8B0] text-xs leading-relaxed">
                                 Every morning, our team travels the Kurnool roads to bring the farm to you. Pure goodness, delivered with passion.
                             </p>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </section>

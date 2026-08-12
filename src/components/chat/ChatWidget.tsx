@@ -99,14 +99,14 @@ export function ChatWidget() {
                     const parts = cleanLine.split(/(\*\*.*?\*\*)/g);
                     const renderedLine = parts.map((part, i) => {
                         if (part.startsWith('**') && part.endsWith('**')) {
-                            return <strong key={i} className="font-extrabold text-forest underline-offset-2 decoration-forest/30">{part.slice(2, -2)}</strong>;
+                            return <strong key={i} className="font-extrabold text-[#C98A24] underline-offset-2 decoration-[#C98A24]/30">{part.slice(2, -2)}</strong>;
                         }
                         
                         // Handle Emails
                         const emailParts = part.split(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
                         return emailParts.map((ePart, ei) => {
                             if (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+$/gi.test(ePart)) {
-                                return <a key={`${i}-${ei}`} href={`mailto:${ePart}`} className="text-blue-600 font-bold underline hover:text-blue-800 transition-colors">{ePart}</a>;
+                                return <a key={`${i}-${ei}`} href={`mailto:${ePart}`} className="text-[#C98A24] font-bold underline hover:text-[#D9A441] transition-colors">{ePart}</a>;
                             }
                             return ePart;
                         });
@@ -115,9 +115,9 @@ export function ChatWidget() {
                     return (
                         <div key={lineIdx} className={isBullet ? "flex gap-2.5 items-start pl-1 group" : ""}>
                             {isBullet && (
-                                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-gradient-to-br from-primary to-emerald-600 flex-shrink-0 shadow-sm group-hover:scale-125 transition-transform" />
+                                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#C98A24] flex-shrink-0 shadow-sm group-hover:scale-125 transition-transform" />
                             )}
-                            <span className={isBullet ? "text-[13.5px] leading-relaxed text-slate-700" : "text-[13.5px] leading-relaxed inline-block"}>
+                            <span className={isBullet ? "text-[13.5px] leading-relaxed text-[#F5F3EC]" : "text-[13.5px] leading-relaxed inline-block text-[#F5F3EC]"}>
                                 {renderedLine}
                             </span>
                         </div>
@@ -180,75 +180,79 @@ export function ChatWidget() {
         <>
             {/* FAB */}
             <Button
-                className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 z-50 p-0 flex items-center justify-center transition-transform hover:scale-105 overflow-hidden border-2 border-white ring-2 ring-forest/20"
+                className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-2xl bg-[#061A13] hover:bg-[#0B2118] z-50 p-1 flex items-center justify-center transition-all hover:scale-105 overflow-hidden border-2 border-[#C98A24] ring-2 ring-[#C98A24]/30"
                 onClick={() => setIsOpen(true)}
                 style={{ display: isOpen ? "none" : "flex" }}
                 aria-label="Open MilkMind AI chat"
             >
-                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="h-full w-full object-cover p-1 bg-white" />
+                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="w-full h-full object-contain rounded-full bg-[#061A13]" />
             </Button>
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-6 right-6 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col border border-gray-100 animate-in slide-in-from-bottom-5">
+                <div className="fixed bottom-6 right-6 w-80 sm:w-96 bg-[#08251A] rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col border border-white/10 animate-in slide-in-from-bottom-5">
 
                     {/* Header */}
-                    <div className="bg-primary text-white p-4 flex justify-between items-center rounded-t-2xl shadow-sm">
+                    <div className="bg-[#061A13] text-[#F5F3EC] p-4 flex justify-between items-center rounded-t-2xl border-b border-white/10 shadow-sm">
                         <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 rounded-full bg-white p-0.5 shadow-md shrink-0 overflow-hidden">
-                                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="h-full w-full object-cover rounded-full" />
+                            <div className="h-9 w-9 rounded-full bg-[#061A13] p-0.5 shadow-md shrink-0 overflow-hidden border border-[#C98A24] flex items-center justify-center">
+                                <img src="/milkmind-ai-logo.png" alt="MilkMind AI" className="w-full h-full object-contain rounded-full" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-sm leading-none flex items-center gap-1">
+                                <h3 className="font-bold text-sm leading-none flex items-center gap-1.5 text-[#F5F3EC]">
                                     MilkMind AI
-                                    <span className="text-[10px] bg-amber-400/30 text-amber-200 px-1.5 py-0.5 rounded-full font-extrabold uppercase">Copilot</span>
+                                    <span className="text-[10px] bg-[#C98A24]/20 text-[#C98A24] border border-[#C98A24]/30 px-1.5 py-0.5 rounded-full font-extrabold uppercase">Copilot</span>
                                 </h3>
-                                <p className="text-xs text-white/80 mt-0.5">{isLoading ? "Analyzing..." : "Online • Dairy Assistant"}</p>
+                                <p className="text-xs text-[#9AAFA4] mt-0.5">{isLoading ? "Analyzing..." : "Online • Dairy Assistant"}</p>
                             </div>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-white hover:bg-white/20 rounded-full" onClick={() => setIsOpen(false)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-[#AAB8B0] hover:text-white hover:bg-white/10 rounded-full" onClick={() => setIsOpen(false)}>
                             <X className="h-5 w-5" />
                         </Button>
                     </div>
 
-                    {/* Messages */}
-                    <div className="h-80 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-gray-50/50 to-white">
+                    {/* Messages Container */}
+                    <div className="h-80 overflow-y-auto p-4 space-y-4 bg-[#0B2118] custom-scrollbar">
                         {userId ? (
                             <>
                                 {messages.map(msg => (
                                     <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                                        <div className={`max-w-[85%] p-4 rounded-3xl shadow-sm text-sm border transition-all duration-300 ${
+                                        <div className={`max-w-[85%] p-3.5 rounded-2xl shadow-md text-sm border transition-all duration-300 ${
                                             msg.role === "user"
-                                                ? "bg-gradient-to-br from-primary to-emerald-600 text-white rounded-tr-none border-primary/20 shadow-primary/10"
-                                                : "bg-white border-slate-100 text-slate-800 rounded-tl-none shadow-slate-200/50"
+                                                ? "bg-[#C98A24] text-[#061A13] font-bold rounded-tr-none border-[#C98A24]"
+                                                : "bg-[#10291F] border-white/10 text-[#F5F3EC] rounded-tl-none"
                                         }`}>
-                                            {renderContent(msg.content)}
+                                            {msg.role === "user" ? (
+                                                <p className="text-xs sm:text-sm leading-relaxed text-[#061A13] font-semibold">{msg.content}</p>
+                                            ) : (
+                                                renderContent(msg.content)
+                                            )}
                                         </div>
                                     </div>
                                 ))}
 
                                 {isLoading && (
                                     <div className="flex justify-start">
-                                        <div className="bg-white border border-gray-100 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
-                                            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                                            <span className="text-sm text-gray-500">Typing…</span>
+                                        <div className="bg-[#10291F] border border-white/10 p-3 rounded-2xl rounded-tl-sm shadow-sm flex items-center gap-2">
+                                            <Loader2 className="h-4 w-4 animate-spin text-[#C98A24]" />
+                                            <span className="text-xs text-[#9AAFA4] font-medium">Typing…</span>
                                         </div>
                                     </div>
                                 )}
                             </>
                         ) : (
                             <div className="h-full flex flex-col items-center justify-center text-center p-4 space-y-5 animate-in fade-in duration-500">
-                                <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center shadow-inner mb-2">
-                                    <Lock className="h-8 w-8 text-primary" />
+                                <div className="h-16 w-16 bg-[#10291F] border border-white/10 rounded-full flex items-center justify-center shadow-inner">
+                                    <Lock className="h-7 w-7 text-[#C98A24]" />
                                 </div>
-                                <div className="space-y-2">
-                                    <h4 className="font-extrabold text-slate-900 text-lg">Login Required</h4>
-                                    <p className="text-[13.5px] text-slate-500 leading-relaxed max-w-[240px] mx-auto">
+                                <div className="space-y-1.5">
+                                    <h4 className="font-extrabold text-[#F5F3EC] text-base">Login Required</h4>
+                                    <p className="text-xs text-[#9AAFA4] leading-relaxed max-w-[240px] mx-auto">
                                         To chat with our <strong>AI Support Agent</strong> and get instant help, please sign in.
                                     </p>
                                 </div>
-                                <Link to="/auth" onClick={() => setIsOpen(false)} className="w-full pt-4">
-                                    <Button className="w-full rounded-2xl shadow-xl shadow-primary/20 font-bold py-6 text-xs uppercase tracking-[1px] h-auto">
+                                <Link to="/auth" onClick={() => setIsOpen(false)} className="w-full pt-2">
+                                    <Button className="w-full rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black py-5 text-xs uppercase tracking-wider h-auto border border-[#C98A24] shadow-lg">
                                         Sign In Now
                                     </Button>
                                 </Link>
@@ -260,28 +264,28 @@ export function ChatWidget() {
                     {/* Email escalation & Input - Only if logged in */}
                     {userId && (
                         <>
-                            <div className="bg-blue-50 px-4 py-2 border-t border-b border-blue-100 flex items-center justify-between">
-                                <span className="text-xs text-blue-800 flex items-center gap-1">
-                                    <MessageSquareWarning className="h-3 w-3" /> Need human help?
+                            <div className="bg-[#061A13] px-4 py-2 border-t border-b border-white/10 flex items-center justify-between text-xs">
+                                <span className="text-[#9AAFA4] flex items-center gap-1.5">
+                                    <MessageSquareWarning className="h-3.5 w-3.5 text-[#C98A24]" /> Need human help?
                                 </span>
-                                <a href="mailto:mmvalidairyfarm@gmail.com" className="text-xs font-semibold text-blue-700 hover:text-blue-800 underline">
+                                <a href="mailto:mmvalidairyfarm@gmail.com" className="font-bold text-[#C98A24] hover:underline">
                                     Email Us
                                 </a>
                             </div>
 
-                            <div className="p-3 bg-white flex items-center gap-2 rounded-b-2xl">
+                            <div className="p-3 bg-[#08251A] flex items-center gap-2 rounded-b-2xl border-t border-white/10">
                                 <input
                                     ref={inputRef}
                                     type="text"
                                     placeholder="Type your message…"
-                                    className="flex-1 bg-gray-50 text-sm border-0 rounded-full px-4 py-2 focus:ring-1 focus:ring-primary focus:outline-none"
+                                    className="flex-1 bg-[#10291F] text-[#F5F3EC] placeholder:text-[#718078] text-xs sm:text-sm border border-white/10 rounded-xl px-4 py-2.5 focus:border-[#C98A24] focus:outline-none"
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
                                     disabled={isLoading}
                                 />
-                                <Button size="icon" className="rounded-full h-9 w-9 flex-shrink-0" onClick={handleSend} disabled={!input.trim() || isLoading}>
-                                    <Send className="h-4 w-4 -ml-0.5" />
+                                <Button size="icon" className="rounded-xl h-10 w-10 flex-shrink-0 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13]" onClick={handleSend} disabled={!input.trim() || isLoading}>
+                                    <Send className="h-4 w-4" />
                                 </Button>
                             </div>
                         </>

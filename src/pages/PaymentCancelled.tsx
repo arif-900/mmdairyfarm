@@ -26,33 +26,36 @@ const PaymentCancelled = () => {
 
   return (
     <Layout>
-      <section className="section-padding min-h-[70vh] flex items-center">
-        <div className="container-main text-center max-w-md mx-auto animate-scale-in">
-          <div className="flex justify-center sm:justify-start mb-6">
-            <CircularBackButton onClick={() => navigate("/products")} />
+      <section className="bg-[#061A13] min-h-[85vh] flex items-center justify-center p-4 sm:p-6 text-[#F5F3EC]">
+        <div className="bg-[#0B2118] border border-white/10 p-8 sm:p-10 rounded-3xl text-center max-w-md w-full shadow-2xl space-y-6">
+          <div className="flex justify-start mb-2">
+            <CircularBackButton onClick={() => navigate("/products")} className="border-white/10 bg-[#10291F] text-[#F5F3EC]" />
           </div>
-          <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-            <XCircle className="w-10 h-10 text-destructive" />
+          
+          <div className="w-20 h-20 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto text-rose-400">
+            <XCircle className="w-10 h-10" />
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground mb-4">
-            Payment Cancelled
-          </h1>
-          <p className="text-muted-foreground mb-8">
-            Your payment was cancelled. Don't worry - no charges were made to your account.
-            You can try again whenever you're ready.
-          </p>
+
+          <div className="space-y-2">
+            <h1 className="font-display text-3xl font-black text-[#F5F3EC] uppercase tracking-tight">
+              PAYMENT <span className="text-rose-400">CANCELLED</span>
+            </h1>
+            <p className="text-xs text-[#AAB8B0] leading-relaxed">
+              Your payment was cancelled. Don't worry - no charges were made to your account. You can try again whenever you're ready.
+            </p>
+          </div>
 
           {orderId && (
-            <p className="text-sm text-muted-foreground mb-6">
-              Order Reference: <span className="font-mono">{orderId.slice(0, 8).toUpperCase()}</span>
+            <p className="text-xs font-bold text-[#AAB8B0]">
+              Order Reference: <span className="font-mono text-[#C98A24]">#{orderId.slice(0, 8).toUpperCase()}</span>
             </p>
           )}
 
-          <div className="space-y-3">
-            <Button variant="accent" size="lg" className="w-full" asChild>
+          <div className="space-y-3 pt-2">
+            <Button size="lg" className="w-full h-14 rounded-xl font-bold text-xs uppercase tracking-wider bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] border border-[#C98A24] shadow-xl" asChild>
               <Link to="/order">Try Again</Link>
             </Button>
-            <Button variant="outline" size="lg" className="w-full" asChild>
+            <Button size="lg" className="w-full h-14 rounded-xl font-bold text-xs uppercase tracking-wider bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431] border border-white/20 shadow-xl" asChild>
               <Link to="/products">Browse Products</Link>
             </Button>
           </div>

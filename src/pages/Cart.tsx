@@ -29,41 +29,45 @@ interface CartItemCardProps {
 const CartItemCard = memo(function CartItemCard({ item, onToggle, onUpdateQty, onRemove }: CartItemCardProps) {
   return (
     <div className={cn(
-      "group bg-white rounded-2xl p-2.5 pr-4 border flex items-center gap-3 shadow-[0_2px_10px_rgba(0,0,0,0.01)]",
-      item.selected ? "border-primary/20 shadow-md shadow-primary/5" : "border-slate-100 opacity-60 grayscale-[0.5]"
+      "group bg-[#0B2118] rounded-2xl p-3 pr-4 border flex items-center gap-3 shadow-xl transition-all",
+      item.selected ? "border-[#C98A24]/40 bg-[#0B2118]" : "border-white/10 opacity-50 grayscale"
     )}>
       <button onClick={() => onToggle(item.id)}
         className={cn(
-          "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0",
-          item.selected ? "bg-primary border-primary text-white shadow-sm" : "bg-white border-slate-200"
+          "w-6 h-6 rounded-lg border flex items-center justify-center transition-all shrink-0",
+          item.selected ? "bg-[#C98A24] border-[#C98A24] text-[#061A13] shadow-sm font-bold" : "bg-[#10291F] border-white/10"
         )}
       >
-        {item.selected && <div className="w-2 h-2 bg-white rounded-full animate-in zoom-in duration-300" />}
+        {item.selected && <div className="w-2 h-2 bg-[#061A13] rounded-full animate-in zoom-in duration-300" />}
       </button>
-      <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
-        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full object-contain p-1.5" alt={item.name} />
+      <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#F1EEE7] border border-white/10 shrink-0 flex items-center justify-center p-1">
+        <img src={item.image} loading="lazy" decoding="async" className="w-full h-full !object-contain" alt={item.name} />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-bold text-slate-800 text-xs sm:text-sm truncate">{item.name}</h3>
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
-          {formatWeight(item.selectedWeight, item.unitType)} • ₹{item.calculatedPrice} / unit
+        <h3 className="font-bold text-[#F5F3EC] text-xs sm:text-sm truncate">{item.name}</h3>
+        <p className="text-[9px] font-bold text-[#AAB8B0] uppercase tracking-wider mt-0.5">
+          {formatWeight(item.selectedWeight, item.unitType)} • <span className="text-[#C98A24]">₹{item.calculatedPrice}</span> / unit
         </p>
         <div className="flex items-center gap-4 mt-2 lg:hidden">
-          <div className="flex items-center bg-slate-50 rounded-lg p-0.5 px-2 border border-slate-100">
-            <button onClick={() => onUpdateQty(item.id, -1)} className="p-1 hover:text-primary transition-colors"><Minus className="w-2.5 h-2.5" /></button>
-            <span className="w-6 text-center text-xs font-bold">{item.quantity}</span>
-            <button onClick={() => onUpdateQty(item.id, 1)} className="p-1 hover:text-primary transition-colors"><Plus className="w-2.5 h-2.5" /></button>
+          <div className="flex items-center bg-[#10291F] rounded-lg p-0.5 px-2 border border-white/10">
+            <button onClick={() => onUpdateQty(item.id, -1)} className="p-1 text-[#F5F3EC] hover:text-[#C98A24] transition-colors"><Minus className="w-2.5 h-2.5" /></button>
+            <span className="w-6 text-center text-xs font-bold text-[#F5F3EC]">{item.quantity}</span>
+            <button onClick={() => onUpdateQty(item.id, 1)} className="p-1 text-[#F5F3EC] hover:text-[#C98A24] transition-colors"><Plus className="w-2.5 h-2.5" /></button>
           </div>
         </div>
       </div>
-      <div className="hidden lg:flex items-center bg-slate-50 rounded-xl p-0.5 px-3 border border-slate-100 shadow-inner">
-        <button onClick={() => onUpdateQty(item.id, -1)} className="w-7 h-7 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Minus className="w-3 h-3" /></button>
-        <span className="w-10 text-center text-xs font-bold text-slate-800">{item.quantity}</span>
-        <button onClick={() => onUpdateQty(item.id, 1)} className="w-7 h-7 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90 shadow-sm"><Plus className="w-3 h-3" /></button>
+      <div className="hidden lg:flex items-center bg-[#10291F] rounded-xl p-0.5 px-3 border border-white/10">
+        <button onClick={() => onUpdateQty(item.id, -1)} className="w-7 h-7 rounded-lg bg-[#0B2118] border border-white/10 flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-all active:scale-90"><Minus className="w-3 h-3" /></button>
+        <span className="w-8 text-center text-xs font-bold text-[#F5F3EC]">{item.quantity}</span>
+        <button onClick={() => onUpdateQty(item.id, 1)} className="w-7 h-7 rounded-lg bg-[#0B2118] border border-white/10 flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-all active:scale-90"><Plus className="w-3 h-3" /></button>
       </div>
-      <div className="text-right shrink-0 min-w-[80px]">
-        <p className="font-bold text-slate-900 text-sm sm:text-base tracking-tight">₹{item.calculatedPrice * item.quantity}</p>
-        <button onClick={() => onRemove(item.id)} className="text-[9px] font-bold text-rose-500 uppercase tracking-wider hover:underline mt-1 flex items-center gap-1 ml-auto"><Trash2 className="w-2.5 h-2.5" /> Remove</button>
+      <div className="text-right shrink-0">
+        <p className="font-display font-black text-sm text-[#C98A24]">
+          ₹{item.calculatedPrice * item.quantity}
+        </p>
+        <button onClick={() => onRemove(item.id)} className="p-1 text-[#718078] hover:text-rose-400 transition-colors mt-1">
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
@@ -133,23 +137,23 @@ const Cart = () => {
 
   return (
     <Layout>
-      <div className="bg-slate-50 min-h-screen pb-20 font-body">
+      <div className="bg-[#061A13] min-h-screen pb-20 font-body text-[#F5F3EC]">
         {/* Navigation Header */}
-        <section className="bg-white border-b border-slate-100 pt-16 pb-8 px-6">
+        <section className="bg-[#082D20] border-b border-white/10 pt-16 pb-8 px-6">
           <div className="container-main max-w-5xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
               <div className="flex items-center gap-6">
                 <button 
                   onClick={() => navigate("/products")}
-                  className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all shadow-sm group"
+                  className="w-12 h-12 rounded-full bg-[#0B2118] border border-white/10 flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-all shadow-sm group"
                 >
                   <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <div>
-                  <h1 className="font-display text-4xl font-black text-slate-900 tracking-tighter italic uppercase">
-                    Your <span className="text-primary">Cart</span>
+                  <h1 className="font-display text-4xl font-black text-[#F5F3EC] tracking-tighter uppercase">
+                    YOUR <span className="text-[#C98A24]">CART</span>
                   </h1>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                  <p className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-widest mt-1">
                     {totalItems} Items selected for checkout
                   </p>
                 </div>
@@ -160,24 +164,23 @@ const Cart = () => {
 
         <div className="container-main max-w-5xl px-4 mt-12 pb-20">
           {items.length === 0 ? (
-            <div className="bg-white rounded-[48px] p-20 text-center border border-slate-100 shadow-xl shadow-slate-200/50">
-              <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
-                <ShoppingBag className="w-12 h-12 text-slate-200" />
+            <div className="bg-[#0B2118] rounded-3xl p-16 text-center border border-white/10 shadow-2xl">
+              <div className="w-20 h-20 bg-[#10291F] border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 text-[#C98A24]">
+                <ShoppingBag className="w-10 h-10" />
               </div>
-              <h2 className="text-3xl font-black text-slate-800 italic uppercase mb-4 tracking-tight">Your cart is empty</h2>
-              <p className="text-slate-400 font-bold uppercase text-xs tracking-[0.2em] mb-10 max-w-xs mx-auto">
+              <h2 className="text-3xl font-black text-[#F5F3EC] uppercase mb-3 tracking-tight">Your cart is empty</h2>
+              <p className="text-[#AAB8B0] font-bold uppercase text-xs tracking-widest mb-8 max-w-xs mx-auto">
                 Looks like you haven't added any farm fresh products yet.
               </p>
               <Button 
                 onClick={() => navigate("/products")}
-                className="h-16 px-10 rounded-3xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-xl shadow-primary/30 active:scale-95 transition-all"
+                className="h-14 px-8 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-bold uppercase tracking-widest shadow-xl active:scale-95 transition-all"
               >
                 Start Shopping
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-              {/* Items List */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="space-y-4">
                     {items.map((item) => (
@@ -191,12 +194,11 @@ const Cart = () => {
                     ))}
                 </div>
 
-                {/* Suggested Add-ons with Analysis */}
                 {suggestions.length > 0 && (
-                  <div className="bg-white rounded-[32px] p-6 border border-slate-100 space-y-4 shadow-sm font-body">
+                  <div className="bg-[#0B2118] rounded-[32px] p-6 border border-white/10 space-y-4 font-body">
                     <div>
-                      <h3 className="font-display text-sm font-black text-slate-800 uppercase tracking-wider">Suggested Add-ons</h3>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Recommended pairings & nutrition analysis</p>
+                      <h3 className="font-display text-sm font-black text-[#F5F3EC] uppercase tracking-wider">Suggested Add-ons</h3>
+                      <p className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-widest">Recommended pairings & nutrition analysis</p>
                     </div>
                     <div className="grid grid-cols-1 gap-4">
                       {suggestions.map((prod) => {
@@ -205,55 +207,33 @@ const Cart = () => {
                         const currentPrice = calculatePrice(prod.basePricePerKg || prod.price, activeWeight);
 
                         return (
-                          <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-primary/5 rounded-2xl border border-primary/10 gap-4">
+                          <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#10291F] rounded-2xl border border-white/5 gap-4">
                             <div className="flex items-start gap-4">
-                              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-slate-100 shrink-0">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-white/10 shrink-0">
                                 <img src={prod.image} loading="lazy" decoding="async" className="w-full h-full object-cover" alt={prod.name} />
                               </div>
                               <div className="space-y-0.5">
                                 <div className="flex items-center gap-2">
-                                  <p className="font-black text-slate-800 text-xs">{prod.name}</p>
-                                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none text-[8px] font-bold uppercase py-0 px-1.5 h-4">
-                                    Analysis
-                                  </Badge>
+                                  <p className="font-black text-[#F5F3EC] text-xs">{prod.name}</p>
                                 </div>
-                                <p className="text-[11px] text-muted-foreground leading-snug max-w-md">
-                                  {productAnalyses[prod.name] || productAnalyses["default"]}
-                                </p>
-                                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+                                <p className="text-[9px] font-bold text-[#AAB8B0] uppercase tracking-wider">
                                   ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
                                 </p>
                               </div>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
-                              {/* Weight Selector */}
-                              {prod.availableWeights && prod.availableWeights.length > 1 && (
-                                <select
-                                  value={activeWeight}
-                                  onChange={(e) => setSelectedWeights(prev => ({ ...prev, [prod.id]: Number(e.target.value) }))}
-                                  className="bg-white border border-slate-200 rounded-xl px-2 h-8 text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-primary/30 transition-colors"
-                                >
-                                  {prod.availableWeights.map(w => (
-                                    <option key={w} value={w}>
-                                      {formatWeight(w, prod.unitType || "g")}
-                                    </option>
-                                  ))}
-                                </select>
-                              )}
-
-                              {/* Quantity Selector */}
-                              <div className="flex items-center bg-white rounded-lg p-0.5 border border-slate-200">
+                              <div className="flex items-center bg-[#0B2118] rounded-lg p-0.5 border border-white/10">
                                 <button 
                                   onClick={() => adjustQty(prod.id, -1)}
-                                  className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                  className="w-6 h-6 rounded-md bg-[#10291F] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors"
                                 >
                                   <Minus className="w-3 h-3" />
                                 </button>
-                                <span className="w-6 text-center text-xs font-bold text-slate-800">{qty}</span>
+                                <span className="w-6 text-center text-xs font-bold text-[#F5F3EC]">{qty}</span>
                                 <button 
                                   onClick={() => adjustQty(prod.id, 1)}
-                                  className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                  className="w-6 h-6 rounded-md bg-[#10291F] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors"
                                 >
                                   <Plus className="w-3.5 h-3.5" />
                                 </button>
@@ -272,10 +252,9 @@ const Cart = () => {
                                     unitType: prod.unitType || "g",
                                     deliveryDays: prod.deliveryDays || 0
                                   });
-                                  // Reset quantity back to 1
                                   setQuantities(prev => ({ ...prev, [prod.id]: 1 }));
                                 }}
-                                className="h-8 px-3 bg-primary hover:bg-primary/95 text-white text-[9px] font-bold uppercase tracking-wider rounded-lg shrink-0 shadow-sm"
+                                className="h-8 px-3 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] text-[9px] font-bold uppercase tracking-wider rounded-lg shrink-0 shadow-sm"
                               >
                                 + Add to Cart
                               </Button>
@@ -291,86 +270,84 @@ const Cart = () => {
                   <Button 
                     variant="ghost" 
                     onClick={() => navigate("/products")}
-                    className="text-slate-400 hover:text-primary font-black uppercase text-[10px] tracking-widest group"
+                    className="text-[#AAB8B0] hover:text-[#C98A24] font-bold uppercase text-xs tracking-widest group"
                   >
                     <Plus className="w-4 h-4 mr-2" /> Add more products
                   </Button>
-                  <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">
+                  <p className="text-[10px] font-bold text-[#718078] uppercase tracking-widest italic">
                     Pure & Fresh From Our Farm
                   </p>
                 </div>
               </div>
 
-              {/* Order Summary */}
               <div className="lg:sticky lg:top-24 space-y-6">
-                <div className="bg-white rounded-[40px] p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-6">
+                <div className="bg-[#0B2118] rounded-3xl p-8 shadow-2xl border border-white/10 space-y-6">
                   <div>
-                    <h2 className="font-display text-2xl font-black text-slate-800 italic uppercase tracking-tight">Summary</h2>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Review your order before checkout</p>
+                    <h2 className="font-display text-2xl font-black text-[#F5F3EC] uppercase tracking-tight">Summary</h2>
+                    <p className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-widest mt-1">Review your order before checkout</p>
                   </div>
 
-                  {/* Free Delivery Promo widget */}
                   {selectedItems.length > 0 && (
-                    <div className="p-4 bg-primary/5 border border-primary/10 rounded-2xl space-y-2">
-                      <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-primary">
+                    <div className="p-4 bg-[#10291F] border border-white/10 rounded-2xl space-y-2">
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-[#C98A24]">
                         <span>Free Delivery Progress</span>
                         <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
                       </div>
-                      <div className="w-full bg-slate-100/60 rounded-full h-1.5 overflow-hidden shadow-inner">
+                      <div className="w-full bg-[#0B2118] rounded-full h-2 overflow-hidden border border-white/10">
                         <div 
-                          className="bg-primary h-full transition-all duration-500 rounded-full" 
+                          className="bg-[#C98A24] h-full transition-all duration-500 rounded-full"
                           style={{ width: `${Math.min(100, (subtotal / 1000) * 100)}%` }}
                         />
                       </div>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">
+                      <p className="text-[10px] text-[#AAB8B0] leading-relaxed pt-1">
                         {subtotal >= 1000 ? (
-                          <span className="font-semibold text-emerald-600">
+                          <span className="font-bold text-[#4ADE80]">
                             🎉 Your order qualifies for FREE delivery!
                           </span>
                         ) : (
                           <span>
-                            Add <strong>₹{(1000 - subtotal).toFixed(0)}</strong> more for <strong>FREE Delivery</strong>!
+                            Add <strong className="text-[#C98A24]">₹{(1000 - subtotal).toFixed(0)}</strong> more for <strong className="text-[#C98A24]">FREE Delivery</strong>!
                           </span>
                         )}
                       </p>
                     </div>
                   )}
 
-                  <div className="space-y-4 pt-4 border-t border-slate-100">
-                    <div className="flex justify-between items-center text-slate-500">
-                      <span className="text-[10px] font-black uppercase tracking-widest">Subtotal ({selectedItems.length} items)</span>
-                      <span className="font-black italic">₹{subtotal}</span>
+                  <div className="space-y-4 pt-4 border-t border-white/10">
+                    <div className="flex justify-between items-center text-[#AAB8B0]">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Subtotal ({selectedItems.length} items)</span>
+                      <span className="font-black text-[#F5F3EC]">₹{subtotal}</span>
                     </div>
-                    <div className="flex justify-between items-center text-slate-500">
-                      <span className="text-[10px] font-black uppercase tracking-widest">Estimated Shipping</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <div className="flex justify-between items-center text-[#AAB8B0]">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Estimated Shipping</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#4ADE80] bg-[#10291F] px-2 py-0.5 rounded-md border border-white/10">
                         {subtotal >= 1000 ? "FREE" : "Calculated next step"}
                       </span>
                     </div>
-                    <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
+                    <div className="pt-4 border-t border-white/10 flex justify-between items-center">
                       <div>
-                        <p className="text-xs font-black uppercase tracking-widest text-slate-800">Total Amount</p>
-                        <p className="text-[8px] font-bold text-slate-400 uppercase mt-0.5">Incl. all taxes</p>
+                        <p className="text-xs font-black uppercase tracking-widest text-[#F5F3EC]">Total Amount</p>
+                        <p className="text-[8px] font-bold text-[#718078] uppercase mt-0.5">Incl. all taxes</p>
                       </div>
-                      <span className="text-4xl font-black text-slate-900 tracking-tighter italic">₹{subtotal}</span>
+                      <span className="text-3xl font-black text-[#C98A24] tracking-tight">₹{subtotal}</span>
                     </div>
                   </div>
 
                   <Button 
                     disabled={selectedItems.length === 0}
                     onClick={() => navigate("/order")}
-                    className="w-full h-16 rounded-3xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/30 group active:scale-95 transition-all flex items-center justify-between px-8"
+                    className="w-full h-14 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black uppercase tracking-widest shadow-xl group transition-all flex items-center justify-between px-6"
                   >
                     <span>Checkout</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
 
-                  <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex gap-4">
-                    <Zap className="w-5 h-5 text-amber-600 shrink-0 mt-1" />
+                  <div className="bg-[#10291F] rounded-2xl p-4 border border-white/10 flex gap-3 items-start">
+                    <Zap className="w-5 h-5 text-[#C98A24] shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Fast Delivery</p>
-                      <p className="text-[10px] font-bold text-amber-700/70 mt-1 leading-relaxed">
-                        Orders placed before 8 PM will be delivered by tomorrow morning.
+                      <p className="text-[10px] font-black text-[#F5F3EC] uppercase tracking-widest">Fast Morning Delivery</p>
+                      <p className="text-[10px] font-bold text-[#AAB8B0] mt-0.5 leading-relaxed">
+                        Orders placed before 10 PM will be delivered tomorrow morning.
                       </p>
                     </div>
                   </div>
@@ -378,13 +355,13 @@ const Cart = () => {
 
                 {/* Trust Badges */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Secure Payment</span>
+                  <div className="bg-[#0B2118] rounded-2xl p-4 flex items-center gap-3 border border-white/10">
+                    <ShieldCheck className="w-5 h-5 text-[#C98A24]" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-[#AAB8B0]">Secure Payment</span>
                   </div>
-                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
-                    <Truck className="w-5 h-5 text-emerald-600" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Farm Fresh</span>
+                  <div className="bg-[#0B2118] rounded-2xl p-4 flex items-center gap-3 border border-white/10">
+                    <Truck className="w-5 h-5 text-[#C98A24]" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-[#AAB8B0]">Farm Fresh</span>
                   </div>
                 </div>
               </div>

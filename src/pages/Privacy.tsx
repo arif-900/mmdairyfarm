@@ -54,34 +54,17 @@ const Privacy = () => {
     return (
         <Layout>
             {/* Header Section */}
-            <section className="relative bg-forest-dark text-white overflow-hidden py-24 md:py-32">
-                <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_20%,rgba(212,175,55,0.05),transparent)]" />
-                    <div className="absolute bottom-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_80%,rgba(46,125,50,0.1),transparent)]" />
-                </div>
-
+            <section className="relative bg-[#082D20] text-[#F5F3EC] border-b border-white/10 py-16 md:py-24">
                 <div className="container-main relative z-10 pl-5">
                     <CircularBackButton 
                         onClick={() => navigate("/")} 
-                        className="mb-12"
+                        className="mb-8 border-white/10 bg-[#0B2118] text-[#F5F3EC] hover:bg-[#10291F]"
                     />
                     <div className="max-w-3xl">
-                        <h1 className="font-display text-4xl md:text-6xl font-bold mb-8 leading-tight">
-                            {"Privacy Policy".split(" ").map((word, wIdx) => (
-                                <span key={wIdx} className="inline-block mr-4">
-                                    {word.split("").map((char, cIdx) => (
-                                        <span 
-                                            key={cIdx} 
-                                            className="inline-block animate-character-reveal opacity-0"
-                                            style={{ animationDelay: `${(wIdx * 5 + cIdx) * 0.05}s` }}
-                                        >
-                                            {char}
-                                        </span>
-                                    ))}
-                                </span>
-                            ))}
+                        <h1 className="font-display text-4xl md:text-6xl font-black mb-4 tracking-tight leading-none text-[#F5F3EC]">
+                            PRIVACY <span className="text-[#C98A24]">POLICY</span>
                         </h1>
-                        <p className="text-white/70 text-lg md:text-xl leading-relaxed animate-slide-up [animation-delay:800ms] opacity-0 [animation-fill-mode:forwards]">
+                        <p className="text-[#AAB8B0] text-base md:text-lg leading-relaxed">
                             Official policy regarding the collection, processing, and security of user data.
                         </p>
                     </div>
@@ -89,46 +72,42 @@ const Privacy = () => {
             </section>
 
             {/* Content Section */}
-            <section className="section-padding bg-cream/20">
+            <section className="section-padding bg-[#061A13] min-h-[60vh]">
                 <div className="container-main max-w-5xl">
-                    <div className="mb-16 bg-white rounded-3xl p-8 md:p-12 border border-golden/10 shadow-soft animate-slide-up [animation-delay:1000ms] opacity-0 [animation-fill-mode:forwards]">
-                        <div className="flex items-center gap-4 mb-6">
-                            <Shield className="w-8 h-8 text-golden" />
-                            <h2 className="font-display text-2xl font-bold text-forest-dark">Data Protection & Privacy Standards</h2>
+                    <div className="mb-12 bg-[#0B2118] rounded-3xl p-8 md:p-10 border border-white/10 shadow-2xl">
+                        <div className="flex items-center gap-4 mb-4">
+                            <Shield className="w-8 h-8 text-[#C98A24]" />
+                            <h2 className="font-display text-2xl font-bold text-[#F5F3EC]">Data Protection & Privacy Standards</h2>
                         </div>
-                        <p className="text-lg text-forest-light leading-relaxed">
+                        <p className="text-[#AAB8B0] leading-relaxed text-sm md:text-base">
                             MM Dairy Farm is committed to the protection of customer privacy and operational data security. This document details how we process user data in compliance with applicable information technology laws and e-commerce guidelines in India.
                         </p>
                     </div>
 
-                    <div className="grid gap-8 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2">
                         {sections.map((section, index) => {
                             const IconComponent = section.icon;
                             return (
-                                <div 
-                                    key={index}
-                                    className="animate-slide-up opacity-0 [animation-fill-mode:forwards]"
-                                    style={{ animationDelay: `${1200 + index * 100}ms` }}
-                                >
-                                    <Card className="h-full bg-white/50 backdrop-blur-sm hover:translate-y-[-5px] transition-all duration-500 border border-golden/5 hover:border-golden/20 hover:shadow-elevated rounded-2xl group">
+                                <div key={index}>
+                                    <Card className="h-full bg-[#0B2118] border border-white/10 hover:border-[#C98A24]/40 hover:shadow-xl rounded-2xl group transition-all">
                                         <CardHeader className="pb-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="rounded-xl bg-primary/5 p-3 group-hover:bg-golden/10 transition-colors">
-                                                    <IconComponent className="w-6 h-6 text-primary group-hover:text-golden transition-colors" />
+                                                <div className="rounded-xl bg-[#10291F] p-3 text-[#C98A24] border border-white/10 group-hover:bg-[#C98A24] group-hover:text-[#061A13] transition-colors">
+                                                    <IconComponent className="w-6 h-6" />
                                                 </div>
-                                                <CardTitle className="text-xl font-display font-bold text-forest-dark">{section.title}</CardTitle>
+                                                <CardTitle className="text-xl font-display font-bold text-[#F5F3EC]">{section.title}</CardTitle>
                                             </div>
                                         </CardHeader>
                                         <CardContent>
-                                            <p className="text-forest-light/80 leading-relaxed text-sm mb-4">
+                                            <p className="text-[#AAB8B0] leading-relaxed text-sm mb-4">
                                                 {section.content}
                                             </p>
                                             {section.list && (
                                                 <ul className="space-y-2">
                                                     {section.list.map((item, itemIdx) => (
                                                         <li key={itemIdx} className="flex items-start gap-2">
-                                                            <div className="w-1 h-1 rounded-full bg-golden mt-2 shrink-0" />
-                                                            <span className="text-xs text-forest-light/70">{item}</span>
+                                                            <div className="w-1.5 h-1.5 rounded-full bg-[#C98A24] mt-1.5 shrink-0" />
+                                                            <span className="text-xs text-[#AAB8B0]">{item}</span>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -140,9 +119,9 @@ const Privacy = () => {
                         })}
                     </div>
 
-                    <div className="mt-20 text-center animate-slide-up [animation-delay:2000ms] opacity-0 [animation-fill-mode:forwards]">
-                        <div className="h-px w-24 bg-golden/30 mx-auto mb-8" />
-                        <p className="text-forest-light/60 text-sm max-w-lg mx-auto italic">
+                    <div className="mt-16 text-center">
+                        <div className="h-px w-24 bg-[#C98A24]/30 mx-auto mb-6" />
+                        <p className="text-[#718078] text-xs max-w-lg mx-auto italic">
                             This document is legally binding. Continued use of MM Dairy Farm services constitutes acceptance of these data privacy practices. For data removal requests, please contact our support team.
                         </p>
                     </div>

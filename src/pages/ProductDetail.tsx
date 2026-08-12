@@ -6,14 +6,14 @@ import { useStoreProducts, Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { calculatePrice, formatWeight } from "@/utils/pricing";
-import { 
-  Loader2, 
-  Minus, 
-  Plus, 
-  ShoppingBag, 
-  Zap, 
-  Calendar, 
-  Truck, 
+import {
+  Loader2,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Zap,
+  Calendar,
+  Truck,
   ShieldCheck,
   ChevronLeft,
   Star,
@@ -82,7 +82,7 @@ const ProductDetail = () => {
       unitType,
       deliveryDays,
     });
-    
+
     setTimeout(() => {
       setIsAdding(false);
       toast({
@@ -125,17 +125,12 @@ const ProductDetail = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-b from-cream/20 via-white to-cream/20">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/[0.03] blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-golden/[0.03] blur-3xl" />
-        </div>
-
+      <div className="min-h-screen bg-[#061A13] text-[#F5F3EC]">
         <div className="relative">
           <div className="container-main pt-6">
-            <button 
+            <button
               onClick={() => navigate("/products")}
-              className="flex items-center gap-2 text-earth/50 hover:text-primary transition-colors font-body font-bold uppercase text-xs tracking-widest mb-6"
+              className="flex items-center gap-2 text-[#AAB8B0] hover:text-[#C98A24] transition-colors font-body font-bold uppercase text-xs tracking-widest mb-6"
             >
               <ChevronLeft className="w-4 h-4" />
               Back to Shop
@@ -145,24 +140,24 @@ const ProductDetail = () => {
           <div className="container-main pb-16">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
               <div className="space-y-4">
-                <div className="aspect-square bg-white rounded-[10px] p-10 shadow-card border border-forest/5 flex items-center justify-center sticky top-24">
-                  <img 
-                    src={image} 
-                    alt={name} 
-                    className="w-full h-full object-contain hover:scale-105 transition-transform duration-700"
+                <div className="aspect-square bg-[#F1EEE7] rounded-[24px] p-8 sm:p-10 shadow-2xl border border-white/10 flex items-center justify-center sticky top-24">
+                  <img
+                    src={image}
+                    alt={name}
+                    className="w-full h-full !object-contain object-center hover:scale-105 transition-transform duration-700"
                   />
-                  
+
                   {isOnSale && (
                     <div className="absolute top-6 left-6">
-                      <span className="bg-destructive text-destructive-foreground font-body font-bold px-4 py-1.5 rounded-[10px] tracking-wider uppercase text-xs shadow-lg">
-                        Flash Sale
+                      <span className="bg-[#C98A24] text-white font-body font-extrabold px-4 py-1.5 rounded-[10px] tracking-wider uppercase text-xs shadow-lg">
+                        Save {Math.round(((originalPrice! - (basePricePerKg || Number(price))) / originalPrice!) * 100)}%
                       </span>
                     </div>
                   )}
-                  
+
                   {isOutOfStock && (
-                    <div className="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-[10px] flex items-center justify-center z-10">
-                      <span className="bg-forest text-cream font-display font-bold px-8 py-4 rounded-[10px] shadow-elevated uppercase tracking-widest text-lg">
+                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm rounded-[24px] flex items-center justify-center z-10">
+                      <span className="bg-[#0B2118] text-[#F5F3EC] font-display font-bold px-8 py-4 rounded-xl border border-white/10 uppercase tracking-widest text-lg">
                         Currently Unavailable
                       </span>
                     </div>
@@ -173,11 +168,11 @@ const ProductDetail = () => {
               <div className="space-y-8">
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-primary/10 text-primary font-body font-bold px-3 py-1 rounded-[10px] text-[10px] uppercase tracking-widest">Farm Fresh</span>
-                    <span className="bg-golden/10 text-golden-dark font-body font-bold px-3 py-1 rounded-[10px] text-[10px] uppercase tracking-widest">Premium Quality</span>
+                    <span className="bg-[#0F8A5F]/20 text-[#4ADE80] border border-[#0F8A5F]/30 font-body font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-widest">Farm Fresh</span>
+                    <span className="bg-[#C98A24]/20 text-[#D9A441] border border-[#C98A24]/30 font-body font-bold px-3 py-1 rounded-full text-[10px] uppercase tracking-widest">100% Pure Quality</span>
                   </div>
-                  
-                  <h1 className="font-display text-4xl md:text-5xl font-bold text-forest leading-[1.1]">
+
+                  <h1 className="font-display text-4xl md:text-5xl font-black text-[#F5F3EC] leading-[1.1]">
                     {name}
                   </h1>
 
@@ -187,61 +182,61 @@ const ProductDetail = () => {
                         key={i}
                         className={cn(
                           "w-4 h-4",
-                          i < Math.floor(rating || 0) ? "text-golden fill-golden" : "text-forest/10"
+                          i < Math.floor(rating || 0) ? "text-[#C98A24] fill-[#C98A24]" : "text-white/20"
                         )}
                       />
                     ))}
-                    <span className="text-xs font-body font-semibold text-earth/40 ml-1">
+                    <span className="text-xs font-body font-semibold text-[#AAB8B0] ml-1">
                       ({reviewCount || 0} reviews)
                     </span>
                   </div>
 
                   <div className="flex items-end gap-4 pt-2">
                     <div className="flex items-end gap-3">
-                      <span className="text-4xl font-display font-bold text-primary">₹{currentPrice}</span>
+                      <span className="text-4xl font-display font-black text-[#C98A24]">₹{currentPrice}</span>
                       {isOnSale && (
-                        <span className="text-lg font-body text-earth/40 line-through mb-1">₹{calculatedOriginalPrice}</span>
+                        <span className="text-lg font-body text-[#718078] line-through mb-1">₹{calculatedOriginalPrice}</span>
                       )}
                     </div>
-                    <span className="h-8 w-px bg-forest/10" />
-                    <span className="text-xs font-body font-semibold text-earth/40 uppercase tracking-widest">
+                    <span className="h-8 w-px bg-white/10" />
+                    <span className="text-xs font-body font-bold text-[#AAB8B0] uppercase tracking-widest">
                       per {formatWeight(selectedWeight, unitType as any)}
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-6">
-                  <p className="text-earth/70 text-base leading-relaxed font-body">
+                  <p className="text-[#AAB8B0] text-base leading-relaxed font-body">
                     {description}
                   </p>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-3 p-4 bg-cream/50 rounded-[10px]">
-                      <div className="w-10 h-10 rounded-[10px] bg-primary/10 flex items-center justify-center">
-                        <Truck className="w-5 h-5 text-primary" />
+                    <div className="flex items-center gap-3 p-4 bg-[#0B2118] border border-white/10 rounded-2xl">
+                      <div className="w-10 h-10 rounded-xl bg-[#10291F] flex items-center justify-center text-[#C98A24] border border-white/10">
+                        <Truck className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-body font-bold text-earth/40 uppercase tracking-widest">Delivery</p>
-                        <p className="text-sm font-display font-bold text-forest">{deliveryDays || 1} {deliveryDays === 1 ? 'Day' : 'Days'}</p>
+                        <p className="text-[10px] font-body font-bold text-[#718078] uppercase tracking-widest">Delivery</p>
+                        <p className="text-sm font-display font-bold text-[#F5F3EC]">{deliveryDays || 1} {deliveryDays === 1 ? 'Day' : 'Days'}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-4 bg-cream/50 rounded-[10px]">
-                      <div className="w-10 h-10 rounded-[10px] bg-golden/10 flex items-center justify-center">
-                        <ShieldCheck className="w-5 h-5 text-golden" />
+                    <div className="flex items-center gap-3 p-4 bg-[#0B2118] border border-white/10 rounded-2xl">
+                      <div className="w-10 h-10 rounded-xl bg-[#10291F] flex items-center justify-center text-[#C98A24] border border-white/10">
+                        <ShieldCheck className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-body font-bold text-earth/40 uppercase tracking-widest">Quality</p>
-                        <p className="text-sm font-display font-bold text-forest">100% Pure</p>
+                        <p className="text-[10px] font-body font-bold text-[#718078] uppercase tracking-widest">Quality</p>
+                        <p className="text-sm font-display font-bold text-[#F5F3EC]">100% Pure</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-[10px] p-6 shadow-card border border-forest/5 space-y-6">
+                <div className="bg-[#0B2118] rounded-2xl p-6 shadow-xl border border-white/10 space-y-6">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-body font-bold uppercase tracking-widest text-earth/50">Select Variant</label>
-                      <span className="text-[10px] font-body font-bold text-primary uppercase tracking-widest bg-primary/5 px-2 py-0.5 rounded-[10px]">Required</span>
+                      <label className="text-[10px] font-body font-bold uppercase tracking-widest text-[#AAB8B0]">Select Variant</label>
+                      <span className="text-[10px] font-body font-bold text-[#C98A24] uppercase tracking-widest bg-[#C98A24]/10 px-2 py-0.5 rounded-md border border-[#C98A24]/20">Required</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {availableWeights?.map((weight) => (
@@ -250,10 +245,10 @@ const ProductDetail = () => {
                           onClick={() => setSelectedWeight(weight)}
                           disabled={isOutOfStock}
                           className={cn(
-                            "min-w-[90px] h-12 rounded-[10px] font-body font-bold text-xs uppercase transition-all flex items-center justify-center border-2 px-5",
+                            "min-w-[90px] h-12 rounded-xl font-body font-bold text-xs uppercase transition-all flex items-center justify-center border px-5",
                             selectedWeight === weight
-                              ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
-                              : "bg-cream/50 border-transparent text-earth/50 hover:border-primary/30 hover:text-primary"
+                              ? "bg-[#C98A24] border-[#C98A24] text-[#061A13] shadow-lg font-black"
+                              : "bg-[#10291F] border-white/10 text-[#F5F3EC] hover:border-[#C98A24]/40"
                           )}
                         >
                           {formatWeight(weight, (unitType as "g" | "ml") || "g")}
@@ -265,42 +260,42 @@ const ProductDetail = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between gap-6">
                       <div className="flex-1 space-y-3">
-                        <label className="text-[10px] font-body font-bold uppercase tracking-widest text-earth/50">Quantity</label>
-                        <div className="flex items-center justify-between bg-cream/50 rounded-[10px] p-1 h-14">
-                          <button 
+                        <label className="text-[10px] font-body font-bold uppercase tracking-widest text-[#AAB8B0]">Quantity</label>
+                        <div className="flex items-center justify-between bg-[#10291F] border border-white/10 rounded-xl p-1 h-14">
+                          <button
                             onClick={() => handleQuantityDelta(-1)}
-                            className="w-10 h-10 rounded-[10px] bg-white flex items-center justify-center text-forest hover:text-primary transition-colors shadow-sm"
+                            className="w-10 h-10 rounded-lg bg-[#0B2118] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors border border-white/10"
                           >
                             <Minus className="h-4 w-4" />
                           </button>
-                          <span className="text-lg font-display font-bold text-forest">{quantity}</span>
-                          <button 
+                          <span className="text-lg font-display font-bold text-[#F5F3EC]">{quantity}</span>
+                          <button
                             onClick={() => handleQuantityDelta(1)}
                             disabled={stock !== undefined && quantity >= stock}
-                            className="w-10 h-10 rounded-[10px] bg-white flex items-center justify-center text-forest hover:text-primary transition-colors shadow-sm disabled:opacity-30"
+                            className="w-10 h-10 rounded-lg bg-[#0B2118] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors border border-white/10 disabled:opacity-30"
                           >
                             <Plus className="h-4 w-4" />
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="flex-1 space-y-3">
-                        <label className="text-[10px] font-body font-bold uppercase tracking-widest text-earth/50 text-right block">Subtotal</label>
+                        <label className="text-[10px] font-body font-bold uppercase tracking-widest text-[#AAB8B0] text-right block">Subtotal</label>
                         <div className="h-14 flex items-center justify-end">
-                          <span className="text-3xl font-display font-bold text-forest">₹{currentPrice * quantity}</span>
+                          <span className="text-3xl font-display font-black text-[#C98A24]">₹{currentPrice * quantity}</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Button 
+                      <Button
                         disabled={isOutOfStock || isAdding}
                         onClick={handleAddToCart}
                         className={cn(
-                          "h-14 rounded-[10px] font-body font-bold text-xs tracking-widest shadow-lg transition-all active:scale-[0.98] uppercase flex items-center justify-center gap-3",
-                          isAdding 
-                            ? "bg-primary text-white shadow-primary/30" 
-                            : "bg-primary hover:bg-primary/90 text-white shadow-primary/30"
+                          "h-14 rounded-xl font-body font-bold text-xs tracking-widest shadow-lg transition-all active:scale-[0.98] uppercase flex items-center justify-center gap-3",
+                          isAdding
+                            ? "bg-[#0F8A5F] text-white"
+                            : "bg-[#0F8A5F] hover:bg-[#123B2A] text-white"
                         )}
                       >
                         {isAdding ? "DONE!" : (
@@ -310,47 +305,47 @@ const ProductDetail = () => {
                           </>
                         )}
                       </Button>
-                      <Button 
+                      <Button
                         disabled={isOutOfStock}
                         onClick={handleBuyNow}
-                        className="h-14 rounded-[10px] bg-golden hover:bg-golden-dark text-white font-body font-bold text-xs uppercase tracking-widest shadow-lg shadow-golden/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                        className="h-14 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-body font-bold text-xs uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                       >
                         <Zap className="w-5 h-5" />
                         BUY NOW
                       </Button>
                     </div>
 
-                    <Button 
+                    <Button
                       disabled={isOutOfStock}
                       onClick={() => {
                         navigate(`/subscriptions?productId=${product.id}&weight=${selectedWeight}&unitType=${unitType || 'ml'}&quantity=${quantity}&add-config=true`);
                       }}
-                      className="h-14 rounded-[10px] bg-forest hover:bg-forest-dark text-cream font-body font-bold text-xs uppercase tracking-widest shadow-lg shadow-forest/20 active:scale-[0.98] transition-all flex items-center justify-center gap-3 w-full"
+                      className="h-14 rounded-xl bg-[#10291F] border border-[#C98A24]/40 hover:bg-[#164431] text-[#F5F3EC] font-body font-bold text-xs uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3 w-full"
                     >
-                      <Calendar className="w-5 h-5" />
+                      <Calendar className="w-5 h-5 text-[#C98A24]" />
                       START MONTHLY SUBSCRIPTION
                     </Button>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center space-y-2 p-4 bg-cream/30 rounded-[10px]">
-                    <div className="w-10 h-10 rounded-[10px] bg-primary/10 flex items-center justify-center mx-auto">
-                      <Leaf className="w-5 h-5 text-primary" />
+                  <div className="text-center space-y-2 p-4 bg-[#0B2118] border border-white/10 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-[#10291F] flex items-center justify-center mx-auto text-[#0F8A5F]">
+                      <Leaf className="w-5 h-5" />
                     </div>
-                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-earth/50">Organic Feed</p>
+                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-[#AAB8B0]">Organic Feed</p>
                   </div>
-                  <div className="text-center space-y-2 p-4 bg-cream/30 rounded-[10px]">
-                    <div className="w-10 h-10 rounded-[10px] bg-golden/10 flex items-center justify-center mx-auto">
-                      <Award className="w-5 h-5 text-golden" />
+                  <div className="text-center space-y-2 p-4 bg-[#0B2118] border border-white/10 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-[#10291F] flex items-center justify-center mx-auto text-[#C98A24]">
+                      <Award className="w-5 h-5" />
                     </div>
-                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-earth/50">Zero Additives</p>
+                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-[#AAB8B0]">Zero Additives</p>
                   </div>
-                  <div className="text-center space-y-2 p-4 bg-cream/30 rounded-[10px]">
-                    <div className="w-10 h-10 rounded-[10px] bg-primary/10 flex items-center justify-center mx-auto">
-                      <ShieldCheck className="w-5 h-5 text-primary" />
+                  <div className="text-center space-y-2 p-4 bg-[#0B2118] border border-white/10 rounded-2xl">
+                    <div className="w-10 h-10 rounded-xl bg-[#10291F] flex items-center justify-center mx-auto text-[#0F8A5F]">
+                      <ShieldCheck className="w-5 h-5" />
                     </div>
-                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-earth/50">Lab Tested</p>
+                    <p className="text-[9px] font-body font-bold uppercase tracking-wider text-[#AAB8B0]">Lab Tested</p>
                   </div>
                 </div>
               </div>

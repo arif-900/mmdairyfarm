@@ -17,6 +17,7 @@ import ScrollToTop from "@/components/layout/ScrollToTop";
 const Index = lazy(() => import("./pages/Index"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Crafts = lazy(() => import("./pages/Crafts"));
 const Cart = lazy(() => import("./pages/Cart"));
 const OrderHistory = lazy(() => import("./pages/OrderHistory"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
@@ -42,6 +43,7 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Unauthorized = lazy(() => import("./pages/Unauthorized"));
 const DesignShowcase = lazy(() => import("./pages/DesignShowcase"));
+const OfflineFallback = lazy(() => import("./pages/OfflineFallback"));
 
 const queryClient = new QueryClient();
 
@@ -85,6 +87,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/crafts" element={<Crafts />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/order" element={<Order />} />
                     <Route
@@ -133,6 +136,7 @@ const App = () => (
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/unauthorized" element={<Unauthorized />} />
                     <Route path="/design-showcase" element={<DesignShowcase />} />
+                    <Route path="/offline" element={<OfflineFallback />} />
 
                     {/* Admin Routes */}
                     <Route

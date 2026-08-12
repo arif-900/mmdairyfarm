@@ -48,7 +48,7 @@ const FloatingProductCard = memo(function FloatingProductCard(props: FloatingPro
 
         {/* Outer White Card Container with responsive padding and border */}
         <div className="relative rounded-xl md:rounded-[20px] overflow-hidden bg-white border border-[#F1F5F9] p-2.5 md:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-transform duration-300 group-hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)] group-hover:-translate-y-[6px] group-hover:scale-[1.02]">
-          
+
           {/* Image Section */}
           <div className="relative aspect-[4/3] rounded-lg md:rounded-[16px] overflow-hidden bg-[#FAFAFA] flex items-center justify-center border border-slate-50 mb-1.5 md:mb-4">
             <img
