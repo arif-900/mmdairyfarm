@@ -177,19 +177,17 @@ export function MakingOfSection() {
                         <img
                           src={`https://img.youtube.com/vi/${getYouTubeId(video.url)}/hqdefault.jpg`}
                           alt={video.title}
+                          width="480"
+                          height="360"
                           loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : video.type === 'upload' && video.url ? (
-                        <video
-                          src={video.url}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          muted
-                          preload="metadata"
                         />
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-[#08251A] text-[#9AAFA4]">
-                          <Video className="w-12 h-12 text-[#C98A24] opacity-40" />
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-[#08251A] text-[#9AAFA4] relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#10291F] via-[#08251A] to-[#061A13]" />
+                          <Video className="w-10 h-10 text-[#C98A24] opacity-50 relative z-10" />
+                          <span className="text-[10px] font-bold text-[#C98A24]/70 uppercase tracking-widest mt-1.5 relative z-10">Craft Process</span>
                         </div>
                       )}
 

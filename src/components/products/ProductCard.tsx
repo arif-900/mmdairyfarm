@@ -29,6 +29,8 @@ const ProductCard = memo(function ProductCard(product: ProductCardProps) {
         <img
           src={image}
           alt={name}
+          width="400"
+          height="300"
           loading="lazy"
           decoding="async"
           className="w-4/5 h-4/5 object-contain p-2 transition-transform duration-500 group-hover:scale-105"

@@ -1,121 +1,43 @@
-import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Tag, Sparkles, ShoppingBag, ShieldCheck, Heart, Leaf, Award, CheckCircle2, Play } from "lucide-react";
+import { ArrowRight, ShoppingBag, ShieldCheck, Heart, Leaf, Award, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { useStoreProducts } from "@/data/products";
-import heroPoster from "@/assets/hero-farm-1200.webp";
+import heroPoster1200 from "@/assets/hero-farm-1200.webp";
+import heroPoster640 from "@/assets/hero-farm-640.webp";
 import TextType from "@/components/ui/TextType";
-import { supabase } from "../integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { MakingOfSection } from "@/components/home/MakingOfSection";
+import { PromoCarousel } from "@/components/home/PromoCarousel";
 
 const Index = () => {
   const navigate = useNavigate();
-  const [promo, setPromo] = useState<{ isActive: boolean, title: string, description: string, promoCode: string } | null>(null);
   const { products, loading } = useStoreProducts();
   const { addItem } = useCart();
-
-  useEffect(() => {
-    const fetchPromo = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("app_settings")
-          .select("value")
-          .eq("key", "promo_banner")
-          .maybeSingle();
-
-        if (error) {
-          console.error("Error fetching promo_banner:", error);
-          return;
-        }
-
-        if (data && data.value) {
-          let parsed = data.value;
-          if (typeof parsed === 'string') {
-            try { parsed = JSON.parse(parsed); } catch (e) { }
-          }
-          if (parsed && typeof parsed === 'object') {
-            if (parsed.isActive) {
-              setPromo(parsed);
-            } else {
-              setPromo(null);
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Unexpected error in fetchPromo:", err);
-      }
-    };
-
-    fetchPromo();
-
-    const channel = supabase
-      .channel('promo-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'app_settings',
-          filter: 'key=eq.promo_banner'
-        },
-        () => fetchPromo()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   // Limit to ONLY 4 products for homepage
   const homepageProducts = products.slice(0, 4);
 
   return (
     <Layout>
-      {/* 1. PROMO BANNER */}
-      {promo && (
-        <div className="sticky top-20 z-40 bg-gradient-to-r from-[#061A13] via-[#08251A] to-[#061A13] py-3.5 px-6 text-[#F5F3EC] text-sm md:text-base border-b border-[#C98A24]/30 shadow-xl">
-          <div className="container-main mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
-            <div className="flex items-center gap-3">
-              <div className="bg-[#C98A24]/20 p-2 rounded-full hidden sm:block">
-                <Tag className="w-5 h-5 text-[#C98A24]" />
-              </div>
-              <div>
-                <span className="font-display font-extrabold text-base md:text-lg text-[#C98A24] mr-2">{promo.title}</span>
-                <span className="opacity-90">{promo.description}</span>
-              </div>
-            </div>
-            {promo.promoCode && (
-              <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors cursor-pointer px-4 py-1.5 rounded-lg flex-shrink-0 border border-white/20 whitespace-nowrap">
-                <span className="opacity-80 text-xs uppercase tracking-wider font-bold">Use Code</span>
-                <span className="font-mono font-black tracking-widest text-sm text-[#D9A441]">{promo.promoCode}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* 1. IMAGE PROMOTIONAL CAROUSEL (DYNAMIC ADMIN BANNERS) */}
+      <PromoCarousel />
 
       {/* 2. CINEMATIC HERO SECTION */}
       <section className="relative min-h-[70vh] sm:min-h-[82vh] flex items-center bg-[#061A13] text-[#F5F3EC] overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
-            src={heroPoster}
+            src={heroPoster1200}
+            srcSet={`${heroPoster640} 640w, ${heroPoster1200} 1200w`}
+            sizes="(max-width: 768px) 100vw, 1200px"
             alt="MMVALI Dairy Farm"
+            width="1200"
+            height="800"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover blur-[1px] scale-105 opacity-40"
           />
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000 z-10"
-            onCanPlayThrough={(e) => (e.currentTarget.style.opacity = "0.55")}
-          >
-            <source src="/farm.mp4" type="video/mp4" />
-          </video>
           {/* Dark luxury gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#061A13] via-[#061A13]/85 to-transparent z-20" />
         </div>
@@ -203,9 +125,10 @@ const Index = () => {
           {/* 4 PRODUCT GRID (2 Columns on Mobile, 4 Columns on Desktop) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {homepageProducts.map((product) => (
-              <div
+              <Link
                 key={product.id}
-                className="group bg-[#0B2118] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden hover:-translate-y-1 hover:border-[#C98A24]/40 hover:shadow-2xl transition-all duration-300 flex flex-col"
+                to={`/product/${product.id}`}
+                className="group bg-[#0B2118] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden hover:-translate-y-1 hover:border-[#C98A24]/40 hover:shadow-2xl transition-all duration-300 flex flex-col cursor-pointer"
               >
                 {/* Image Frame */}
                 <div className="h-36 sm:h-52 bg-[#F4EFE5] overflow-hidden p-2.5 sm:p-4 relative flex items-center justify-center">
@@ -215,6 +138,10 @@ const Index = () => {
                   <img
                     src={product.image}
                     alt={product.name}
+                    width="300"
+                    height="225"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full !object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
@@ -240,22 +167,27 @@ const Index = () => {
 
                     <Button
                       size="icon"
-                      onClick={() => addItem({
-                        productId: product.id,
-                        name: product.name,
-                        selectedWeight: product.selectedWeight || 1,
-                        calculatedPrice: product.price,
-                        quantity: 1,
-                        image: product.image,
-                        unitType: product.unitType || 'unit'
-                      })}
+                      aria-label={`Add ${product.name} to cart`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        addItem({
+                          productId: product.id,
+                          name: product.name,
+                          selectedWeight: product.selectedWeight || 1,
+                          calculatedPrice: product.price,
+                          quantity: 1,
+                          image: product.image,
+                          unitType: product.unitType || 'unit'
+                        });
+                      }}
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#10291F] hover:bg-[#C98A24] text-[#F5F3EC] hover:text-[#061A13] border border-white/10 transition-colors shrink-0"
                     >
                       <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </Button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 

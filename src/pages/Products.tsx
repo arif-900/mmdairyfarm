@@ -129,7 +129,10 @@ const Products = () => {
                         <img
                           src={product.image}
                           alt={product.name}
+                          width="300"
+                          height="255"
                           loading="lazy"
+                          decoding="async"
                           className="w-full h-full !object-contain object-center transition-transform duration-300 ease-out group-hover:scale-[1.025]"
                         />
 
