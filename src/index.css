@@ -165,7 +165,7 @@
   }
 
   .container-main {
-    @apply max-w-7xl mx-auto w-full;
+    @apply max-w-7xl mx-auto w-full px-[10px] sm:px-6 lg:px-8;
   }
 
   .text-gradient-brand {

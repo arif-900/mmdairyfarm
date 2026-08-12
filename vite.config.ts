@@ -59,7 +59,9 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
-        sourcemap: true
+        sourcemap: true,
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api/, /^\/admin/]
       },
     }),
   ],
