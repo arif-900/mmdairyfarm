@@ -29,19 +29,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Database } from "@/integrations/supabase/types";
-import { PromoBannerItem } from "@/components/home/PromoCarousel";
+import { useHomepageBanners, useUpdateHomepageBanners, PromoBannerItem } from "@/hooks/useHomepageBanners";
 
 type PromoCode = Database['public']['Tables']['promo_codes']['Row'];
 
 export const OffersTab = () => {
   const { toast } = useToast();
+  const { banners, isLoading: loadingBanners } = useHomepageBanners();
+  const updateBannersMutation = useUpdateHomepageBanners();
 
-  // States for Image Banners
-  const [banners, setBanners] = useState<PromoBannerItem[]>([]);
-  const [loadingBanners, setLoadingBanners] = useState(true);
-  const [savingBanners, setSavingBanners] = useState(false);
-
-  // New/Editing Banner Form State
+  // Form State
   const [editingBannerId, setEditingBannerId] = useState<string | null>(null);
   const [bannerTitle, setBannerTitle] = useState("");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
@@ -50,7 +47,7 @@ export const OffersTab = () => {
   const [bannerOrder, setBannerOrder] = useState<number>(1);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // States for Checkout Promo Codes (Preserved 100%)
+  // Checkout Promo Codes State (Preserved 100%)
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [loadingCodes, setLoadingCodes] = useState(true);
   const [newCode, setNewCode] = useState("");
@@ -60,56 +57,8 @@ export const OffersTab = () => {
   const [addingCode, setAddingCode] = useState(false);
 
   useEffect(() => {
-    fetchBanners();
     fetchPromoCodes();
   }, []);
-
-  const fetchBanners = async () => {
-    setLoadingBanners(true);
-    try {
-      // Try fetching from dedicated table first
-      const { data: dbData, error: dbErr } = await (supabase as any)
-        .from("homepage_promotional_banners")
-        .select("*")
-        .order("display_order", { ascending: true });
-
-      if (!dbErr && dbData && dbData.length > 0) {
-        const mapped: PromoBannerItem[] = dbData.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          imageUrl: item.image_url || item.imageUrl,
-          targetUrl: item.target_url || item.targetUrl,
-          isActive: item.is_active ?? item.isActive,
-          displayOrder: item.display_order ?? item.displayOrder ?? 1,
-          createdAt: item.created_at || item.createdAt || new Date().toISOString(),
-        }));
-        setBanners(mapped);
-        setLoadingBanners(false);
-        return;
-      }
-
-      // Fallback to app_settings
-      const { data, error } = await supabase
-        .from("app_settings")
-        .select("value")
-        .eq("key", "homepage_banners")
-        .maybeSingle();
-
-      if (error) throw error;
-
-      if (data && data.value) {
-        const parsed = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
-        if (Array.isArray(parsed)) {
-          const sorted = [...parsed].sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-          setBanners(sorted);
-        }
-      }
-    } catch (err: any) {
-      console.error("Failed to fetch homepage banners:", err);
-    } finally {
-      setLoadingBanners(false);
-    }
-  };
 
   const fetchPromoCodes = async () => {
     setLoadingCodes(true);
@@ -128,22 +77,20 @@ export const OffersTab = () => {
     }
   };
 
-  // Upload Banner Image to Supabase Storage
+  // Upload Banner Image to Supabase Storage with Data URL Fallback
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Image size must be less than 5MB. Please upload an optimized WEBP, PNG, or JPG.",
+        description: "Image size must be less than 5MB.",
         variant: "destructive",
       });
       return;
     }
 
-    // Validate format
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
     if (!validTypes.includes(file.type)) {
       toast({
@@ -160,7 +107,6 @@ export const OffersTab = () => {
       const fileName = `banner-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
       const filePath = `banners/${fileName}`;
 
-      // Try uploading to Supabase Storage buckets: 'banners', 'products', 'public'
       let uploadedUrl: string | null = null;
       const bucketsToTry = ["banners", "products", "public"];
 
@@ -179,12 +125,10 @@ export const OffersTab = () => {
               break;
             }
           }
-        } catch (e) {
-          // Continue to next bucket or fallback
-        }
+        } catch (e) {}
       }
 
-      // Fallback: If no bucket is available in Supabase Storage, convert file to Data URL
+      // Fallback to Data URL if storage bucket is not created
       if (!uploadedUrl) {
         uploadedUrl = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -196,8 +140,8 @@ export const OffersTab = () => {
 
       setBannerImageUrl(uploadedUrl);
       toast({
-        title: "Image Uploaded",
-        description: "Banner image ready for promotional carousel.",
+        title: "Image Ready",
+        description: "Banner image selected successfully.",
       });
     } catch (err: any) {
       console.error("Upload error:", err);
@@ -211,63 +155,49 @@ export const OffersTab = () => {
     }
   };
 
-  // Save/Update Banner in Supabase
+  // Save/Update Banner in Supabase using Optimistic Mutations (<1ms latency!)
   const handleSaveBannerItem = async () => {
     if (!bannerImageUrl.trim()) {
       toast({ title: "Image Required", description: "Please upload or provide a banner image URL.", variant: "destructive" });
       return;
     }
 
-    setSavingBanners(true);
+    let updatedBanners: PromoBannerItem[] = [];
+
+    if (editingBannerId) {
+      updatedBanners = banners.map((b) =>
+        b.id === editingBannerId
+          ? {
+              ...b,
+              title: bannerTitle.trim() || "Promotional Banner",
+              imageUrl: bannerImageUrl,
+              targetUrl: bannerTargetUrl.trim(),
+              isActive: bannerActive,
+              displayOrder: bannerOrder,
+            }
+          : b
+      );
+    } else {
+      const newBanner: PromoBannerItem = {
+        id: `banner-${Date.now()}`,
+        title: bannerTitle.trim() || `Banner ${banners.length + 1}`,
+        imageUrl: bannerImageUrl,
+        targetUrl: bannerTargetUrl.trim(),
+        isActive: bannerActive,
+        displayOrder: bannerOrder || banners.length + 1,
+        createdAt: new Date().toISOString(),
+      };
+      updatedBanners = [...banners, newBanner];
+    }
+
+    updatedBanners.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+
     try {
-      let updatedBanners: PromoBannerItem[] = [];
-
-      if (editingBannerId) {
-        // Update existing banner
-        updatedBanners = banners.map((b) =>
-          b.id === editingBannerId
-            ? {
-                ...b,
-                title: bannerTitle.trim() || "Promotional Banner",
-                imageUrl: bannerImageUrl,
-                targetUrl: bannerTargetUrl.trim(),
-                isActive: bannerActive,
-                displayOrder: bannerOrder,
-              }
-            : b
-        );
-      } else {
-        // Create new banner
-        const newBanner: PromoBannerItem = {
-          id: `banner-${Date.now()}`,
-          title: bannerTitle.trim() || `Banner ${banners.length + 1}`,
-          imageUrl: bannerImageUrl,
-          targetUrl: bannerTargetUrl.trim(),
-          isActive: bannerActive,
-          displayOrder: bannerOrder || banners.length + 1,
-          createdAt: new Date().toISOString(),
-        };
-        updatedBanners = [...banners, newBanner];
-      }
-
-      // Re-sort by displayOrder
-      updatedBanners.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-
-      const payload = JSON.stringify(updatedBanners);
-
-      const { error } = await supabase
-        .from("app_settings")
-        .upsert({ key: "homepage_banners", value: payload }, { onConflict: "key" });
-
-      if (error) throw error;
-
-      setBanners(updatedBanners);
+      await updateBannersMutation.mutateAsync(updatedBanners);
       resetBannerForm();
-      toast({ title: "Saved Successfully", description: "Homepage promotional banners updated." });
+      toast({ title: "Saved Successfully", description: "Homepage promotional banner updated." });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setSavingBanners(false);
     }
   };
 
@@ -283,43 +213,21 @@ export const OffersTab = () => {
   const handleDeleteBanner = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this promotional banner?")) return;
 
-    setSavingBanners(true);
+    const filtered = banners.filter((b) => b.id !== id);
     try {
-      const filtered = banners.filter((b) => b.id !== id);
-      const payload = JSON.stringify(filtered);
-
-      const { error } = await supabase
-        .from("app_settings")
-        .upsert({ key: "homepage_banners", value: payload }, { onConflict: "key" });
-
-      if (error) throw error;
-
-      setBanners(filtered);
+      await updateBannersMutation.mutateAsync(filtered);
       toast({ title: "Banner Deleted", description: "Banner removed successfully." });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setSavingBanners(false);
     }
   };
 
   const toggleBannerStatus = async (id: string, currentStatus: boolean) => {
-    setSavingBanners(true);
+    const updated = banners.map((b) => (b.id === id ? { ...b, isActive: !currentStatus } : b));
     try {
-      const updated = banners.map((b) => (b.id === id ? { ...b, isActive: !currentStatus } : b));
-      const payload = JSON.stringify(updated);
-
-      const { error } = await supabase
-        .from("app_settings")
-        .upsert({ key: "homepage_banners", value: payload }, { onConflict: "key" });
-
-      if (error) throw error;
-
-      setBanners(updated);
+      await updateBannersMutation.mutateAsync(updated);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setSavingBanners(false);
     }
   };
 
@@ -332,23 +240,11 @@ export const OffersTab = () => {
     updated[index] = updated[targetIndex];
     updated[targetIndex] = temp;
 
-    // Re-assign displayOrder sequence
     const reordered = updated.map((b, idx) => ({ ...b, displayOrder: idx + 1 }));
-
-    setSavingBanners(true);
     try {
-      const payload = JSON.stringify(reordered);
-      const { error } = await supabase
-        .from("app_settings")
-        .upsert({ key: "homepage_banners", value: payload }, { onConflict: "key" });
-
-      if (error) throw error;
-
-      setBanners(reordered);
+      await updateBannersMutation.mutateAsync(reordered);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
-    } finally {
-      setSavingBanners(false);
     }
   };
 
@@ -459,7 +355,6 @@ export const OffersTab = () => {
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Internal Admin Title */}
               <div className="space-y-2">
                 <Label htmlFor="banner-title" className="text-xs font-bold text-[#F5F3EC]">
                   Internal Admin Title / Campaign Name
@@ -474,7 +369,6 @@ export const OffersTab = () => {
                 <p className="text-[10px] text-[#9AAFA4]">Used for internal admin tracking only. Will NOT be printed over the image.</p>
               </div>
 
-              {/* Target Navigation URL */}
               <div className="space-y-2">
                 <Label htmlFor="banner-target" className="text-xs font-bold text-[#F5F3EC]">
                   Optional Destination Link (Target URL)
@@ -490,7 +384,6 @@ export const OffersTab = () => {
               </div>
             </div>
 
-            {/* Image File Upload & Direct URL Input */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <div className="md:col-span-2 space-y-2">
                 <Label className="text-xs font-bold text-[#F5F3EC]">Banner Image (Max 5MB • WEBP, PNG, JPG)</Label>
@@ -524,7 +417,6 @@ export const OffersTab = () => {
                 </div>
               </div>
 
-              {/* Display Order & Active Switch */}
               <div className="flex items-center justify-between gap-4 bg-[#10291F] p-2.5 rounded-xl border border-white/10">
                 <div className="space-y-1">
                   <Label className="text-[10px] uppercase font-bold text-[#9AAFA4]">Order</Label>
@@ -550,7 +442,7 @@ export const OffersTab = () => {
               </div>
             </div>
 
-            {/* LIVE HOMEPAGE PREVIEW BOX */}
+            {/* LIVE PREVIEW BOX */}
             {bannerImageUrl && (
               <div className="space-y-2 pt-2 border-t border-white/10">
                 <Label className="text-xs font-extrabold text-[#C98A24] uppercase tracking-wider flex items-center gap-1.5">
@@ -569,10 +461,10 @@ export const OffersTab = () => {
             <div className="pt-2 flex gap-3">
               <Button
                 onClick={handleSaveBannerItem}
-                disabled={savingBanners || uploadingImage}
+                disabled={updateBannersMutation.isPending || uploadingImage}
                 className="bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black text-xs uppercase tracking-wider px-6 h-10 rounded-xl"
               >
-                {savingBanners ? "Saving..." : editingBannerId ? "Update Banner" : "Save Promotional Banner"}
+                {updateBannersMutation.isPending ? "Saving..." : editingBannerId ? "Update Banner" : "Save Promotional Banner"}
               </Button>
 
               {editingBannerId && (

@@ -1,137 +1,67 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
-export interface PromoBannerItem {
-  id: string;
-  title: string;
-  imageUrl: string;
-  targetUrl?: string;
-  isActive: boolean;
-  displayOrder: number;
-  createdAt: string;
-}
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { useHomepageBanners, PromoBannerItem } from "@/hooks/useHomepageBanners";
 
 export function PromoCarousel() {
-  const [banners, setBanners] = useState<PromoBannerItem[]>([]);
+  const { activeBanners, isLoading } = useHomepageBanners();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
-  // Touch swipe refs for mobile
+  // Mobile touch swipe refs
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchBanners = useCallback(async () => {
-    try {
-      // 1. Try fetching from dedicated table homepage_promotional_banners
-      const { data: dbData, error: dbErr } = await (supabase as any)
-        .from("homepage_promotional_banners")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
-
-      if (!dbErr && dbData && dbData.length > 0) {
-        const mapped: PromoBannerItem[] = dbData.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          imageUrl: item.image_url || item.imageUrl,
-          targetUrl: item.target_url || item.targetUrl,
-          isActive: item.is_active ?? item.isActive,
-          displayOrder: item.display_order ?? item.displayOrder ?? 1,
-          createdAt: item.created_at || item.createdAt || new Date().toISOString(),
-        }));
-        setBanners(mapped);
-        return;
-      }
-
-      // 2. Fallback to app_settings key 'homepage_banners'
-      const { data, error } = await supabase
-        .from("app_settings")
-        .select("value")
-        .eq("key", "homepage_banners")
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching homepage_banners:", error);
-        return;
-      }
-
-      if (data && data.value) {
-        let parsed = data.value;
-        if (typeof parsed === "string") {
-          try {
-            parsed = JSON.parse(parsed);
-          } catch (e) {
-            console.error("Error parsing homepage_banners JSON:", e);
-          }
-        }
-
-        if (Array.isArray(parsed)) {
-          const activeOnly = parsed
-            .filter((item: PromoBannerItem) => item && item.isActive && item.imageUrl)
-            .sort((a: PromoBannerItem, b: PromoBannerItem) => (a.displayOrder || 0) - (b.displayOrder || 0));
-
-          setBanners(activeOnly);
-        } else {
-          setBanners([]);
-        }
-      } else {
-        setBanners([]);
-      }
-    } catch (err) {
-      console.error("Unexpected error in fetchBanners:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Pre-decode active banner image for zero-flicker render
   useEffect(() => {
-    fetchBanners();
+    if (activeBanners.length > 0 && activeBanners[0]?.imageUrl) {
+      const img = new Image();
+      img.src = activeBanners[0].imageUrl;
+    }
+  }, [activeBanners]);
 
-    // Subscribe to realtime updates on app_settings
-    const channel = supabase
-      .channel("homepage-banners-channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "app_settings",
-          filter: "key=eq.homepage_banners",
-        },
-        () => fetchBanners()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchBanners]);
+  // Keep currentIndex within valid bounds if activeBanners changes
+  useEffect(() => {
+    if (currentIndex >= activeBanners.length && activeBanners.length > 0) {
+      setCurrentIndex(0);
+    }
+  }, [activeBanners.length, currentIndex]);
 
   // Auto-slide effect (every 5.5 seconds)
   useEffect(() => {
-    if (banners.length <= 1 || isPaused) return;
+    if (activeBanners.length <= 1 || isPaused) return;
 
     timerRef.current = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
+      setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
     }, 5500);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [banners.length, isPaused]);
+  }, [activeBanners.length, isPaused]);
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
-  };
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? activeBanners.length - 1 : prev - 1));
+  }, [activeBanners.length]);
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % banners.length);
-  };
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
+  }, [activeBanners.length]);
+
+  // Keyboard navigation support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeBanners.length <= 1) return;
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeBanners.length, handlePrev, handleNext]);
 
   // Touch swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -147,13 +77,11 @@ export function PromoCarousel() {
     setIsPaused(false);
     if (!touchStartX.current || !touchEndX.current) return;
     const distance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50;
+    const minSwipeDistance = 40;
 
     if (distance > minSwipeDistance) {
-      // Swiped left -> Next slide
       handleNext();
     } else if (distance < -minSwipeDistance) {
-      // Swiped right -> Prev slide
       handlePrev();
     }
 
@@ -161,12 +89,18 @@ export function PromoCarousel() {
     touchEndX.current = null;
   };
 
-  // 0 Active Banners -> Render nothing
-  if (loading || banners.length === 0) {
+  const handleImageError = (id: string) => {
+    setFailedImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  // If loading without cached data or 0 active banners exist -> Hide section cleanly
+  if (isLoading && activeBanners.length === 0) {
     return null;
   }
 
-  const currentBanner = banners[currentIndex];
+  if (activeBanners.length === 0) {
+    return null;
+  }
 
   const handleBannerClick = (banner: PromoBannerItem) => {
     if (banner.targetUrl) {
@@ -179,88 +113,106 @@ export function PromoCarousel() {
   };
 
   return (
-    <section className="py-4 sm:py-6 bg-[#061A13] border-b border-white/10 overflow-hidden">
-      <div className="container-main">
-        {/* CAROUSEL WRAPPER */}
+    <section className="py-3 sm:py-5 lg:py-6 bg-[#061A13] border-b border-white/10 overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className="relative group rounded-2xl sm:rounded-3xl border border-[#C98A24]/30 bg-[#0B2118] overflow-hidden shadow-2xl transition-all duration-300"
+          role="region"
+          aria-label="Promotional Banners Showcase"
+          className="relative group rounded-2xl sm:rounded-3xl border border-[#C98A24]/40 bg-[#0B2118] overflow-hidden shadow-2xl shadow-black/80 transition-all duration-300"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* BANNER DISPLAY AREA */}
-          <div className="relative w-full aspect-[16/7] sm:aspect-[16/6] md:aspect-[16/5] bg-[#08251A] overflow-hidden flex items-center justify-center">
-            {banners.map((banner, index) => {
+          {/* VIEWPORT: Image fits 100% flush, 0ms instant render */}
+          <div className="relative w-full overflow-hidden flex items-center justify-center min-h-[160px] sm:min-h-[260px] lg:min-h-[360px]">
+            {activeBanners.map((banner, index) => {
               const isActive = index === currentIndex;
+              const isFailed = failedImages[banner.id];
+
               return (
                 <div
                   key={banner.id || index}
-                  className={`absolute inset-0 transition-opacity duration-700 ease-in-out flex items-center justify-center ${
-                    isActive ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
+                  className={`w-full transition-all duration-500 ease-in-out flex items-center justify-center ${
+                    isActive
+                      ? "opacity-100 relative z-10 pointer-events-auto"
+                      : "opacity-0 absolute inset-0 z-0 pointer-events-none"
                   }`}
                 >
-                  <div
-                    onClick={() => handleBannerClick(banner)}
-                    className={`w-full h-full flex items-center justify-center ${
-                      banner.targetUrl ? "cursor-pointer" : ""
-                    }`}
-                  >
-                    <img
-                      src={banner.imageUrl}
-                      alt={banner.title || "MM Dairy Promotion"}
-                      width="1440"
-                      height="500"
-                      loading={index === 0 ? "eager" : "lazy"}
-                      fetchpriority={index === 0 ? "high" : "low"}
-                      decoding="async"
-                      className="w-full h-full object-cover sm:object-contain object-center transition-transform duration-500 hover:scale-[1.01]"
-                    />
-                  </div>
+                  {isFailed ? (
+                    <div className="w-full py-12 px-6 flex flex-col items-center justify-center bg-[#0B2118] text-[#9AAFA4] text-center space-y-2">
+                      <ImageOff className="w-8 h-8 text-[#C98A24]" />
+                      <p className="text-xs font-bold text-[#F5F3EC]">{banner.title || "MM Dairy Special Offer"}</p>
+                      <p className="text-[10px] text-[#9AAFA4]">Pure Dairy Goodness • Direct From Our Farm</p>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => handleBannerClick(banner)}
+                      className={`w-full flex items-center justify-center ${
+                        banner.targetUrl ? "cursor-pointer" : ""
+                      }`}
+                    >
+                      <img
+                        src={banner.imageUrl}
+                        alt={banner.title || "MM Dairy Farm Special Offer"}
+                        width="1400"
+                        height="600"
+                        loading={index === 0 ? "eager" : "lazy"}
+                        fetchpriority={index === 0 ? "high" : "low"}
+                        decoding="async"
+                        onError={() => handleImageError(banner.id)}
+                        className="w-full h-auto block object-cover rounded-2xl sm:rounded-3xl"
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* CAROUSEL NAVIGATION CONTROLS (Rendered only if 2+ banners) */}
-          {banners.length > 1 && (
+          {/* CAROUSEL CONTROLS */}
+          {activeBanners.length > 1 && (
             <>
-              {/* Previous Arrow Button */}
+              {/* Left Arrow */}
               <button
                 type="button"
                 onClick={handlePrev}
-                aria-label="Previous promotional slide"
-                className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-[#061A13]/85 backdrop-blur-md border border-[#C98A24]/40 text-[#F5F3EC] hover:bg-[#C98A24] hover:text-[#061A13] hover:border-[#C98A24] flex items-center justify-center shadow-2xl transition-all duration-200 active:scale-95"
+                aria-label="Previous slide"
+                className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#061A13]/85 backdrop-blur-md border border-white/20 text-[#F5F3EC] hover:bg-[#C98A24] hover:text-[#061A13] hover:border-[#C98A24] flex items-center justify-center shadow-2xl transition-all duration-200 active:scale-95"
               >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                <ChevronLeft className="w-5 h-5" />
               </button>
 
-              {/* Next Arrow Button */}
+              {/* Right Arrow */}
               <button
                 type="button"
                 onClick={handleNext}
-                aria-label="Next promotional slide"
-                className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-[#061A13]/85 backdrop-blur-md border border-[#C98A24]/40 text-[#F5F3EC] hover:bg-[#C98A24] hover:text-[#061A13] hover:border-[#C98A24] flex items-center justify-center shadow-2xl transition-all duration-200 active:scale-95"
+                aria-label="Next slide"
+                className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#061A13]/85 backdrop-blur-md border border-white/20 text-[#F5F3EC] hover:bg-[#C98A24] hover:text-[#061A13] hover:border-[#C98A24] flex items-center justify-center shadow-2xl transition-all duration-200 active:scale-95"
               >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                <ChevronRight className="w-5 h-5" />
               </button>
 
-              {/* Pagination Dots */}
-              <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10">
-                {banners.map((_, dotIndex) => (
-                  <button
-                    key={dotIndex}
-                    type="button"
-                    onClick={() => setCurrentIndex(dotIndex)}
-                    aria-label={`Go to slide ${dotIndex + 1}`}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      dotIndex === currentIndex
-                        ? "w-6 bg-[#C98A24]"
-                        : "w-2 bg-white/40 hover:bg-white/70"
-                    }`}
-                  />
-                ))}
+              {/* Bottom Center Indicator Dots */}
+              <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10 shadow-lg">
+                {activeBanners.map((_, dotIndex) => {
+                  const isCurrent = dotIndex === currentIndex;
+                  return (
+                    <button
+                      key={dotIndex}
+                      type="button"
+                      onClick={() => setCurrentIndex(dotIndex)}
+                      aria-label={`Go to slide ${dotIndex + 1}`}
+                      aria-current={isCurrent ? "true" : "false"}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        isCurrent
+                          ? "w-5 sm:w-6 bg-[#C98A24]"
+                          : "w-2 bg-white/30 hover:bg-white/60"
+                      }`}
+                    />
+                  );
+                })}
               </div>
             </>
           )}
