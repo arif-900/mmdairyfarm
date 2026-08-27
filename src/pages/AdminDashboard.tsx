@@ -367,11 +367,11 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-[#061A13] text-[#F5F3EC] flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -379,25 +379,25 @@ const AdminDashboard = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:sticky top-0 left-0 z-40 h-full w-64 bg-card border-r border-forest/10 flex flex-col transition-transform duration-300 ease-in-out",
+          "fixed lg:sticky top-0 left-0 z-40 h-full w-64 bg-[#0B2118] border-r border-white/10 flex flex-col transition-transform duration-300 ease-in-out",
           "lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Sidebar Header */}
-        <div className="p-5 border-b border-forest/10 flex items-center justify-between">
+        <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-forest rounded-[10px] flex items-center justify-center">
-              <Store className="h-5 w-5 text-white" />
+            <div className="w-9 h-9 bg-[#10291F] border border-white/10 rounded-xl flex items-center justify-center text-[#C98A24]">
+              <Store className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-display font-bold text-forest text-sm leading-tight">Admin</h2>
-              <p className="text-[8px] text-muted-foreground font-black uppercase tracking-[0.2em]">MMVALI Dairy</p>
+              <h2 className="font-display font-bold text-[#F5F3EC] text-sm leading-tight">Admin</h2>
+              <p className="text-[8px] text-[#AAB8B0] font-black uppercase tracking-[0.2em]">MM Dairy</p>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden w-8 h-8 rounded-[10px] hover:bg-forest/5 flex items-center justify-center text-muted-foreground"
+            className="lg:hidden w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-[#AAB8B0]"
           >
             <X className="w-4 h-4" />
           </button>
@@ -410,7 +410,7 @@ const AdminDashboard = () => {
             if (visibleItems.length === 0) return null;
             return (
               <div key={category.label} className="space-y-1">
-                <p className="px-3 text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-80">
+                <p className="px-3 text-[9px] font-black text-[#718078] uppercase tracking-[0.2em]">
                   {category.label}
                 </p>
                 <div className="space-y-0.5">
@@ -424,16 +424,16 @@ const AdminDashboard = () => {
                           setSidebarOpen(false);
                         }}
                         className={cn(
-                          "w-full flex items-center gap-3 px-3 py-2 rounded-[10px] text-[11px] font-bold uppercase tracking-wider transition-all",
+                          "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all",
                           activeTab === item.value
-                            ? "bg-forest text-white shadow-md shadow-forest/15"
-                            : "text-muted-foreground hover:bg-forest/5 hover:text-forest"
+                            ? "bg-[#C98A24] text-[#061A13] shadow-md font-black"
+                            : "text-[#AAB8B0] hover:bg-[#10291F] hover:text-[#F5F3EC]"
                         )}
                       >
                         <Icon
                           className={cn(
                             "w-3.5 h-3.5 flex-shrink-0",
-                            activeTab === item.value ? "text-white" : "text-muted-foreground group-hover:text-forest"
+                            activeTab === item.value ? "text-[#061A13]" : "text-[#AAB8B0]"
                           )}
                         />
                         <span>{item.label}</span>
@@ -447,10 +447,10 @@ const AdminDashboard = () => {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-forest/10">
+        <div className="p-4 border-t border-white/10">
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-[10px] text-sm font-bold text-rose-500 hover:bg-rose-50 transition-all"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold text-rose-400 hover:bg-rose-500/10 transition-all"
           >
             <LogOut className="w-4 h-4" />
             <span className="text-xs uppercase tracking-widest">Sign Out</span>
@@ -461,22 +461,24 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 min-w-0">
         {/* Top Header */}
-        <header className="border-b bg-card/80 backdrop-blur-xl sticky top-0 z-20">
+        <header className="border-b border-white/10 bg-[#082D20] backdrop-blur-xl sticky top-0 z-20">
           <div className="px-4 py-3 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden w-9 h-9 rounded-[10px] bg-forest/5 flex items-center justify-center text-forest hover:bg-forest/10"
+                className="lg:hidden w-9 h-9 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center text-[#F5F3EC]"
               >
                 <Menu className="w-5 h-5" />
               </button>
               <div className="hidden sm:flex items-center gap-4">
-                <div className="w-10 h-10 bg-forest/5 rounded-[10px] flex items-center justify-center border border-forest/10">
-                  <Store className="h-6 w-6 text-forest" />
+                <div className="w-10 h-10 bg-[#10291F] rounded-xl flex items-center justify-center border border-white/10 text-[#C98A24]">
+                  <Store className="h-6 w-6" />
                 </div>
                 <div>
-                  <h1 className="text-lg font-black text-forest uppercase tracking-tight leading-none mb-0.5">Admin Portal</h1>
-                  <p className="text-[9px] text-muted-foreground font-black tracking-[0.2em] uppercase opacity-60">MMVALI Dairy Farm</p>
+                  <h1 className="text-lg font-black text-[#F5F3EC] uppercase tracking-tight leading-none mb-0.5">
+                    ADMIN <span className="text-[#C98A24]">PORTAL</span>
+                  </h1>
+                  <p className="text-[9px] text-[#AAB8B0] font-bold tracking-[0.2em] uppercase">MM Dairy Farm</p>
                 </div>
               </div>
             </div>
@@ -485,15 +487,15 @@ const AdminDashboard = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsScannerOpen(true)}
-                className="bg-forest/5 text-forest border-forest/10 hover:bg-forest/10 shadow-sm flex px-4 rounded-[10px] h-10 transition-all group"
+                className="bg-[#10291F] text-[#F5F3EC] border-white/10 hover:bg-[#164431] shadow-sm flex px-4 rounded-xl h-10 transition-all group"
               >
-                <ScanLine className="h-4 w-4 sm:mr-2 group-hover:rotate-12 transition-transform" />
-                <span className="hidden sm:inline font-black uppercase text-[10px] tracking-widest">Scan Pack</span>
+                <ScanLine className="h-4 w-4 sm:mr-2 text-[#C98A24]" />
+                <span className="hidden sm:inline font-bold uppercase text-[10px] tracking-widest">Scan Pack</span>
               </Button>
-              <div className="h-6 w-px bg-forest/10 mx-1 hidden sm:block" />
+              <div className="h-6 w-px bg-white/10 mx-1 hidden sm:block" />
               <button
                 onClick={handleSignOut}
-                className="h-10 w-10 rounded-[10px] hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100 flex items-center justify-center text-muted-foreground"
+                className="h-10 w-10 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 transition-all border border-transparent flex items-center justify-center text-[#AAB8B0]"
               >
                 <LogOut className="h-4 w-4" />
               </button>

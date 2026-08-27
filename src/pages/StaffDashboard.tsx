@@ -222,34 +222,36 @@ const StaffDashboard = () => {
     });
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-[#061A13] text-[#F5F3EC]">
             {/* Header */}
-            <header className="border-b bg-card/80 backdrop-blur-xl sticky top-0 z-20">
+            <header className="border-b border-white/10 bg-[#082D20] backdrop-blur-xl sticky top-0 z-20">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 bg-forest/5 rounded-[10px] flex items-center justify-center border border-forest/10 transition-transform group-hover:scale-110">
-                            <Store className="h-7 w-7 text-forest" />
+                        <div className="w-12 h-12 bg-[#10291F] rounded-xl flex items-center justify-center border border-white/10 text-[#C98A24]">
+                            <Store className="h-7 w-7" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-black text-forest uppercase tracking-tighter leading-none mb-1">Staff Portal</h1>
-                            <p className="text-[10px] text-muted-foreground font-black tracking-[0.2em] uppercase opacity-60">Operations Unit</p>
+                            <h1 className="text-2xl font-black text-[#F5F3EC] uppercase tracking-tight leading-none mb-1">
+                                STAFF <span className="text-[#C98A24]">PORTAL</span>
+                            </h1>
+                            <p className="text-[10px] text-[#AAB8B0] font-bold tracking-[0.2em] uppercase">Operations Unit</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-4">
-                        <Button variant="outline" size="sm" onClick={() => setIsScannerOpen(true)} className="bg-forest/5 text-forest border-forest/10 hover:bg-forest/10 shadow-sm flex px-4 rounded-[10px] h-11 transition-all group hidden sm:flex">
-                            <ScanLine className="h-5 w-5 sm:mr-2 group-hover:rotate-12 transition-transform" />
-                            <span className="font-black uppercase text-[11px] tracking-widest">Scan Pack</span>
+                        <Button variant="outline" size="sm" onClick={() => setIsScannerOpen(true)} className="bg-[#10291F] text-[#F5F3EC] border-white/10 hover:bg-[#164431] shadow-sm flex px-4 rounded-xl h-11 transition-all group hidden sm:flex">
+                            <ScanLine className="h-5 w-5 sm:mr-2 text-[#C98A24]" />
+                            <span className="font-bold uppercase text-[11px] tracking-widest">Scan Pack</span>
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => navigate("/delivery/dashboard")} className="hidden md:flex px-4 rounded-[10px] h-11 border-forest/10 font-black uppercase text-[11px] tracking-widest transition-all">
-                            <Package className="h-4 w-4 mr-2" />
+                        <Button variant="outline" size="sm" onClick={() => navigate("/delivery/dashboard")} className="hidden md:flex px-4 rounded-xl h-11 border-white/10 bg-[#10291F] text-[#F5F3EC] font-bold uppercase text-[11px] tracking-widest hover:bg-[#164431]">
+                            <Package className="h-4 w-4 mr-2 text-[#C98A24]" />
                             <span>Dispatch</span>
                         </Button>
-                        <div className="h-8 w-px bg-forest/10 mx-1 hidden sm:block" />
+                        <div className="h-8 w-px bg-white/10 mx-1 hidden sm:block" />
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={handleSignOut}
-                            className="h-11 w-11 rounded-[10px] hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100"
+                            className="h-11 w-11 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 transition-all text-[#AAB8B0]"
                         >
                             <LogOut className="h-5 w-5" />
                         </Button>
@@ -262,17 +264,17 @@ const StaffDashboard = () => {
                 {/* Main Content Tabs */}
                 <Tabs defaultValue="operations" className="space-y-6">
                     <div className="overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-                        <TabsList className="bg-cream-dark/30 backdrop-blur-sm flex justify-start gap-1 p-1.5 h-14 rounded-[10px] min-w-max border border-forest/5 shadow-soft">
-                            <TabsTrigger value="operations" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Console</TabsTrigger>
-                            <TabsTrigger value="orders" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Orders</TabsTrigger>
-                            <TabsTrigger value="products" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Products</TabsTrigger>
-                            <TabsTrigger value="delivery" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Logistics</TabsTrigger>
-                            <TabsTrigger value="settlements" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Invoices</TabsTrigger>
-                            <TabsTrigger value="chat" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Chat</TabsTrigger>
-                            <TabsTrigger value="announcements" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Announce</TabsTrigger>
-                            <TabsTrigger value="feedback" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Feedback</TabsTrigger>
-                            <TabsTrigger value="offers" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Offers</TabsTrigger>
-                            <TabsTrigger value="videos" className="rounded-[10px] px-6 font-black uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-forest data-[state=active]:text-white data-[state=active]:shadow-lg">Story</TabsTrigger>
+                        <TabsList className="bg-[#0B2118] flex justify-start gap-1 p-1.5 h-14 rounded-2xl min-w-max border border-white/10">
+                            <TabsTrigger value="operations" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Console</TabsTrigger>
+                            <TabsTrigger value="orders" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Orders</TabsTrigger>
+                            <TabsTrigger value="products" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Products</TabsTrigger>
+                            <TabsTrigger value="delivery" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Logistics</TabsTrigger>
+                            <TabsTrigger value="settlements" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Invoices</TabsTrigger>
+                            <TabsTrigger value="chat" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Chat</TabsTrigger>
+                            <TabsTrigger value="announcements" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Announce</TabsTrigger>
+                            <TabsTrigger value="feedback" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Feedback</TabsTrigger>
+                            <TabsTrigger value="offers" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Offers</TabsTrigger>
+                            <TabsTrigger value="videos" className="rounded-xl px-6 font-bold uppercase text-[11px] tracking-widest transition-all data-[state=active]:bg-[#C98A24] data-[state=active]:text-[#061A13]">Story</TabsTrigger>
                         </TabsList>
                     </div>
 

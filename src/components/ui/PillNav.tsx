@@ -15,8 +15,10 @@ import {
   Phone, 
   Settings, 
   ShieldCheck, 
+  Download,
   X 
 } from 'lucide-react';
+import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { 
@@ -375,6 +377,8 @@ const PillNav: React.FC<PillNavProps> = ({
     ['--pill-text']: resolvedPillTextColor
   } as React.CSSProperties;
 
+  const { isStandalone, handleInstall } = usePWAInstall();
+
   const drawerLinks = [
     { href: "/", label: "Home", icon: Home },
     { href: "/products", label: "Store", icon: Store },
@@ -382,6 +386,7 @@ const PillNav: React.FC<PillNavProps> = ({
     { href: "/wallet", label: "Wallet", icon: Wallet },
     { href: "/orders", label: "Orders", icon: ShoppingBag },
     { href: "/contact", label: "Contact", icon: Phone },
+    ...(!isStandalone ? [{ href: "#install-app", label: "Install App", icon: Download }] : []),
     { href: "#", label: "Settings", icon: Settings },
   ];
 
@@ -739,6 +744,8 @@ const PillNav: React.FC<PillNavProps> = ({
                 </div>
               );
 
+              const isInstallApp = linkItem.label === "Install App";
+
               return (
                 <div key={linkItem.label}>
                   {isSettings ? (
@@ -751,6 +758,16 @@ const PillNav: React.FC<PillNavProps> = ({
                           navigate('/auth');
                         }
                       }} 
+                      className="group"
+                    >
+                      {content}
+                    </div>
+                  ) : isInstallApp ? (
+                    <div
+                      onClick={() => {
+                        toggleMobileMenu();
+                        handleInstall();
+                      }}
                       className="group"
                     >
                       {content}

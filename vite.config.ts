@@ -61,7 +61,23 @@ export default defineConfig({
         clientsClaim: true,
         sourcemap: true,
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/api/, /^\/admin/]
+        navigateFallbackDenylist: [/^\/api/, /^\/admin/],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*|\/products\/.*|\/banners\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'optimized-images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
       },
     }),
   ],

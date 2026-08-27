@@ -586,52 +586,11 @@ const DeliveryDashboard = () => {
   const historyOrders = filteredOrders.filter(o => o.assigned_to === user?.id && (o.status === 'delivered' || o.status === 'cancelled'));
 
   return (
-    <div className="min-h-screen bg-cream pb-28 md:pb-24 relative overflow-x-hidden font-body">
-      {/* Offline Mode Banner */}
-      {isOffline && (
-        <div className="sticky top-0 z-[60] bg-slate-800 text-white px-6 py-3 flex items-center justify-between shadow-2xl animate-in slide-in-from-top duration-500">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-[10px] animate-pulse">
-              <Zap className="h-5 w-5 text-amber-400" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Offline Mode</p>
-              <p className="text-sm font-bold opacity-90">Showing cached deliveries. Updates will sync automatically when online.</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Urgent Settlement Banner */}
-      {profile?.settlement_requested && (
-        <div className="sticky top-0 z-[60] bg-rose-600 text-white px-6 py-3 flex items-center justify-between shadow-2xl animate-in slide-in-from-top duration-500">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-[10px] animate-pulse">
-              <AlertCircle className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Office Action Required</p>
-              <p className="text-sm font-bold opacity-90">Please handover your collected cash to the office now.</p>
-            </div>
-          </div>
-          <Button
-            onClick={() => setIsSettlementModalOpen(true)}
-            variant="outline"
-            className="bg-white text-rose-600 border-none hover:bg-rose-50 font-black text-[10px] uppercase tracking-widest h-8 rounded-[10px]"
-          >
-            Handle Cash
-          </Button>
-        </div>
-      )}
-
-      {/* Ambient Background Elements */}
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-forest/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-golden/5 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#061A13] text-[#F5F3EC] pb-28 md:pb-24 relative overflow-x-hidden font-body">
       {/* Dynamic Premium Header */}
       <header
         className={cn(
-          "sticky top-0 z-50 bg-cream-dark/80 backdrop-blur-3xl border-b border-earth-light/20 transition-all duration-500",
+          "sticky top-0 z-50 bg-[#082D20] backdrop-blur-3xl border-b border-white/10 transition-all duration-500",
           isScrolled ? "py-3 px-3 sm:px-6 shadow-md" : "py-5 px-3 sm:px-6 shadow-none"
         )}
       >
@@ -639,28 +598,19 @@ const DeliveryDashboard = () => {
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <div
               className={cn(
-                "bg-gradient-to-br from-forest to-forest-dark rounded-[10px] flex items-center justify-center shadow-lg shadow-forest/20 ring-4 ring-forest/5 transition-all duration-500 shrink-0",
+                "bg-[#10291F] border border-white/10 text-[#C98A24] rounded-xl flex items-center justify-center transition-all duration-500 shrink-0",
                 isScrolled ? "w-9 h-9" : "w-12 h-12"
               )}
             >
-              <Bike className={cn("text-white transition-all", isScrolled ? "h-4.5 w-4.5" : "h-6 w-6")} />
+              <Bike className={cn("text-[#C98A24] transition-all", isScrolled ? "h-4.5 w-4.5" : "h-6 w-6")} />
             </div>
             <div className="min-w-0">
-              <h1 className={cn("font-display font-black text-earth tracking-tight leading-none mb-1 transition-all truncate max-w-[120px] xs:max-w-[160px] sm:max-w-none", isScrolled ? "text-base" : "text-lg sm:text-2xl")}>
-                {isScrolled ? "Today's Route" : (profile?.full_name || 'Partner')}
+              <h1 className={cn("font-display font-black text-[#F5F3EC] tracking-tight leading-none mb-1 transition-all truncate", isScrolled ? "text-base" : "text-lg sm:text-2xl")}>
+                DELIVERY <span className="text-[#C98A24]">DASHBOARD</span>
               </h1>
-              {!isScrolled && (
-                <div className="flex items-center gap-1.5">
-                  <span className="flex items-center gap-1 px-1.5 py-0.5 bg-forest-light/15 text-forest rounded-full text-[9px] font-bold uppercase tracking-wider shrink-0">
-                    Active
-                  </span>
-                  {profile?.phone && (
-                    <span className="text-[10px] font-medium text-earth-light truncate">
-                      {profile.phone}
-                    </span>
-                  )}
-                </div>
-              )}
+              <p className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-wider">
+                {profile?.full_name || 'Rider Agent'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -668,7 +618,7 @@ const DeliveryDashboard = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsScannerOpen(true)}
-              className="rounded-[10px] w-10 h-10 bg-forest/10 text-forest hover:bg-forest/20 transition-all border border-forest/20 shadow-sm"
+              className="rounded-xl w-10 h-10 bg-[#10291F] text-[#C98A24] border border-white/10"
             >
               <ScanLine className="h-5 w-5" />
             </Button>
@@ -676,15 +626,15 @@ const DeliveryDashboard = () => {
               variant="ghost"
               size="icon"
               onClick={fetchMyOrders}
-              className="rounded-[10px] w-10 h-10 hover:bg-earth-light/10 transition-all border border-earth-light/30"
+              className="rounded-xl w-10 h-10 bg-[#10291F] text-[#F5F3EC] border border-white/10"
             >
-              <RefreshCw className={cn("h-4 w-4 text-earth", loading && "animate-spin")} />
+              <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={handleSignOut}
-              className="rounded-[10px] w-10 h-10 hover:bg-rose-50 hover:text-rose-600 transition-all border border-earth-light/30 hover:border-rose-100"
+              className="rounded-xl w-10 h-10 bg-[#10291F] text-rose-400 border border-white/10 hover:bg-rose-500/10"
             >
               <LogOut className="h-4 w-4" />
             </Button>

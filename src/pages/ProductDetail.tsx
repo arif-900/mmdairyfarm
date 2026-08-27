@@ -144,6 +144,11 @@ const ProductDetail = () => {
                   <img
                     src={image}
                     alt={name}
+                    width="600"
+                    height="600"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full !object-contain object-center hover:scale-105 transition-transform duration-700"
                   />
 

@@ -17,8 +17,18 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@MMVALIDairy" />
 
-  <!-- Custom Favicon -->
+  <!-- Custom Favicon & Early PWA Prompt Capture -->
   <link rel="icon" type="image/png" href="/favicon.png" />
+  <script>
+    window.deferredPWAInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window.deferredPWAInstallPrompt = e;
+      if (window.onPWAInstallable) {
+        window.onPWAInstallable(e);
+      }
+    });
+  </script>
   <meta name="theme-color" content="#16a34a" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -45,9 +55,10 @@
   <link rel="apple-touch-startup-image" href="/icons/apple-splash-640-1136.png"
     media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
 
-  <!-- Google Fonts Preconnect and Unified Stylesheet -->
+  <!-- Google Fonts & Supabase Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fgeyphtaehvbitwcnvoa.supabase.co" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto:wght@400;500;700;900&display=swap"
     rel="stylesheet">

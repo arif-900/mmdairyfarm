@@ -236,164 +236,164 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
     );
 
     return (
-        <div className="space-y-8 animate-fade-in">
+        <div className="space-y-8 text-[#F5F3EC]">
             {/* Metric Overview Row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* 1. Today's Revenue */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <TrendingUp className="h-10 w-10 text-forest" />
+                        <TrendingUp className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Today's Revenue</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">Today's Revenue</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-forest">₹{dailyRevenue.toFixed(0)}</h3>
-                        <p className="text-[8px] text-green-600 font-bold mt-0.5">+{dailyOrders.length} orders today</p>
+                        <h3 className="text-xl font-black text-[#C98A24]">₹{dailyRevenue.toFixed(0)}</h3>
+                        <p className="text-[8px] text-[#4ADE80] font-bold mt-0.5">+{dailyOrders.length} orders today</p>
                     </CardContent>
                 </Card>
 
                 {/* 2. Today's Orders */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <ShoppingBag className="h-10 w-10 text-emerald-600" />
+                        <ShoppingBag className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Today's Orders</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">Today's Orders</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-slate-800">{dailyOrders.length}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Real-time status</p>
+                        <h3 className="text-xl font-black text-[#F5F3EC]">{dailyOrders.length}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Real-time status</p>
                     </CardContent>
                 </Card>
 
                 {/* 3. Active Subscriptions */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <CalendarHeart className="h-10 w-10 text-rose-500" />
+                        <CalendarHeart className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Active Subscriptions</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">Active Subscriptions</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-rose-600">{activeSubs}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Recurring cycles active</p>
+                        <h3 className="text-xl font-black text-[#C98A24]">{activeSubs}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Recurring cycles active</p>
                     </CardContent>
                 </Card>
 
                 {/* 4. Low Stock Alerts */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
                         <AlertCircle className="h-10 w-10 text-amber-500" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Low Stock Alerts</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">Low Stock Alerts</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-amber-600">{lowStock}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Items &lt;= 10 units</p>
+                        <h3 className="text-xl font-black text-amber-400">{lowStock}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Items &lt;= 10 units</p>
                     </CardContent>
                 </Card>
 
                 {/* 5. COD Collections Pending */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <HandCoins className="h-10 w-10 text-indigo-500" />
+                        <HandCoins className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">COD Pending</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">COD Pending</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-indigo-600">₹{codPending.toFixed(0)}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Outstanding in field</p>
+                        <h3 className="text-xl font-black text-[#C98A24]">₹{codPending.toFixed(0)}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Outstanding in field</p>
                     </CardContent>
                 </Card>
 
                 {/* 6. Unread Feedback */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <MessageSquare className="h-10 w-10 text-sky-500" />
+                        <MessageSquare className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Unresolved Feedback</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">Unresolved Feedback</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-sky-600">{unreadFeedbacks}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Requires operational review</p>
+                        <h3 className="text-xl font-black text-[#C98A24]">{unreadFeedbacks}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Requires operational review</p>
                     </CardContent>
                 </Card>
 
                 {/* 7. Selected Month Revenue */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <DollarSign className="h-10 w-10 text-golden" />
+                        <DollarSign className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{format(selectedMonth, "MMM")} Revenue</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">{format(selectedMonth, "MMM")} Revenue</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-golden-dark">₹{totalMonthlyRevenue.toFixed(0)}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Total completed &amp; paid</p>
+                        <h3 className="text-xl font-black text-[#C98A24]">₹{totalMonthlyRevenue.toFixed(0)}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Total completed &amp; paid</p>
                     </CardContent>
                 </Card>
 
                 {/* 8. Selected Month Orders */}
-                <Card className="card-elevated border-none overflow-hidden relative group rounded-[10px] shadow-soft bg-white">
+                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <Users className="h-10 w-10 text-earth" />
+                        <Users className="h-10 w-10 text-[#C98A24]" />
                     </div>
                     <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">{format(selectedMonth, "MMM")} Orders</p>
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">{format(selectedMonth, "MMM")} Orders</p>
                     </CardHeader>
                     <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-earth">{totalMonthlyOrders}</h3>
-                        <p className="text-[8px] text-muted-foreground font-bold mt-0.5">Volume for this period</p>
+                        <h3 className="text-xl font-black text-[#F5F3EC]">{totalMonthlyOrders}</h3>
+                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Volume for this period</p>
                     </CardContent>
                 </Card>
             </div>
 
             {/* Quick Actions Panel */}
-            <div className="bg-white/80 backdrop-blur-md p-6 rounded-[10px] border border-white/40 shadow-soft space-y-3">
-                <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-700 flex items-center gap-2">
+            <div className="bg-[#0B2118] p-6 rounded-2xl border border-white/10 shadow-xl space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#C98A24] flex items-center gap-2">
                     ⚡ Quick Operations
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    <button onClick={() => onTabChange?.("products")} className="flex flex-col items-center justify-center p-4 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-100 rounded-[10px] transition-all group text-center gap-2">
+                    <button onClick={() => onTabChange?.("products")} className="flex flex-col items-center justify-center p-4 bg-[#10291F] hover:bg-[#164431] border border-white/10 rounded-xl transition-all group text-center gap-2">
                         <span className="text-2xl font-bold group-hover:scale-110 transition-transform">📦</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-emerald-800">+ Add Product</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#F5F3EC]">+ Add Product</span>
                     </button>
                     
-                    <button onClick={() => onTabChange?.("whatsapp")} className="flex flex-col items-center justify-center p-4 bg-green-50 hover:bg-green-100/80 border border-green-100 rounded-[10px] transition-all group text-center gap-2">
+                    <button onClick={() => onTabChange?.("whatsapp")} className="flex flex-col items-center justify-center p-4 bg-[#10291F] hover:bg-[#164431] border border-white/10 rounded-xl transition-all group text-center gap-2">
                         <span className="text-2xl font-bold group-hover:scale-110 transition-transform">💬</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-green-700">Broadcast WhatsApp</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#F5F3EC]">Broadcast WhatsApp</span>
                     </button>
 
-                    <button onClick={() => onTabChange?.("offers")} className="flex flex-col items-center justify-center p-4 bg-amber-50 hover:bg-amber-100/80 border border-amber-100 rounded-[10px] transition-all group text-center gap-2">
+                    <button onClick={() => onTabChange?.("offers")} className="flex flex-col items-center justify-center p-4 bg-[#10291F] hover:bg-[#164431] border border-white/10 rounded-xl transition-all group text-center gap-2">
                         <span className="text-2xl font-bold group-hover:scale-110 transition-transform">🏷️</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-amber-700">+ Create Offer</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#F5F3EC]">+ Create Offer</span>
                     </button>
 
-                    <button onClick={() => onTabChange?.("announcements")} className="flex flex-col items-center justify-center p-4 bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-100 rounded-[10px] transition-all group text-center gap-2">
+                    <button onClick={() => onTabChange?.("announcements")} className="flex flex-col items-center justify-center p-4 bg-[#10291F] hover:bg-[#164431] border border-white/10 rounded-xl transition-all group text-center gap-2">
                         <span className="text-2xl font-bold group-hover:scale-110 transition-transform">📢</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-indigo-700">Announce</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#F5F3EC]">Announce</span>
                     </button>
 
-                    <button onClick={() => onTabChange?.("tracking")} className="flex flex-col items-center justify-center p-4 bg-rose-50 hover:bg-rose-100/80 border border-rose-100 rounded-[10px] transition-all group text-center gap-2">
+                    <button onClick={() => onTabChange?.("tracking")} className="flex flex-col items-center justify-center p-4 bg-[#10291F] hover:bg-[#164431] border border-white/10 rounded-xl transition-all group text-center gap-2">
                         <span className="text-2xl font-bold group-hover:scale-110 transition-transform">🚚</span>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-rose-700">Route Tracking</span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-[#F5F3EC]">Route Tracking</span>
                     </button>
                 </div>
             </div>
 
             {/* Header with Month Picker */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/50 backdrop-blur-md p-4 rounded-[10px] border border-white/40 shadow-soft">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0B2118] p-4 rounded-2xl border border-white/10 shadow-xl">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-forest/10 rounded-[10px]">
-                        <Calendar className="h-5 w-5 text-forest" />
+                    <div className="p-2.5 bg-[#10291F] rounded-xl text-[#C98A24] border border-white/10">
+                        <Calendar className="h-5 w-5" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-black text-forest uppercase tracking-tight">Financial Trends</h2>
-                        <p className="text-[11px] text-muted-foreground font-bold italic">
+                        <h2 className="text-lg font-black text-[#F5F3EC] uppercase tracking-tight">Financial Trends</h2>
+                        <p className="text-[11px] text-[#AAB8B0] font-bold">
                             Analyzing {format(selectedMonth, "MMMM yyyy")} Lifecycle
                         </p>
                     </div>
@@ -401,7 +401,7 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                 <div className="flex items-center gap-2">
                     <input
                         type="month"
-                        className="bg-white border border-forest/10 rounded-[10px] px-4 py-2 text-sm font-bold text-forest focus:ring-2 focus:ring-forest outline-none shadow-sm transition-all"
+                        className="bg-[#10291F] border border-white/10 rounded-xl px-4 py-2 text-sm font-bold text-[#F5F3EC] focus:border-[#C98A24] outline-none shadow-sm transition-all"
                         value={format(selectedMonth, "yyyy-MM")}
                         onChange={(e) => {
                             if (e.target.value) {
@@ -414,38 +414,31 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
             </div>
 
             {/* Revenue Trend Chart */}
-            <Card className="bg-[#FAF9F6] border-none shadow-sm">
+            <Card className="bg-[#0B2118] border border-white/10 shadow-xl text-[#F5F3EC]">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2 text-[#2D3748]">
-                        <span className="text-gray-600">📈</span> Revenue Trend ({format(selectedMonth, "MMMM")})
+                    <CardTitle className="text-lg flex items-center gap-2 text-[#F5F3EC]">
+                        <span>📈</span> Revenue Trend ({format(selectedMonth, "MMMM")})
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="h-[300px] w-full mt-4">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="hsl(38 85% 55%)" stopOpacity={0.8}/>
-                                        <stop offset="95%" stopColor="hsl(38 85% 55%)" stopOpacity={0}/>
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(45 20% 85%)" />
-                                <XAxis dataKey="date" tick={{ fontSize: 10, fontWeight: 700 }} stroke="#718096" interval="preserveStartEnd" minTickGap={20} />
-                                <YAxis yAxisId="left" tick={{ fontSize: 12, fontWeight: 700 }} stroke="#718096" />
-                                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fontWeight: 700 }} stroke="#718096" />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.08)" />
+                                <XAxis dataKey="date" tick={{ fontSize: 10, fontWeight: 700, fill: "#AAB8B0" }} stroke="rgba(255,255,255,0.2)" interval="preserveStartEnd" minTickGap={20} />
+                                <YAxis yAxisId="left" tick={{ fontSize: 12, fontWeight: 700, fill: "#AAB8B0" }} stroke="rgba(255,255,255,0.2)" />
+                                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 12, fontWeight: 700, fill: "#AAB8B0" }} stroke="rgba(255,255,255,0.2)" />
                                 <RechartsTooltip 
                                     contentStyle={{ 
                                         borderRadius: "12px", 
-                                        border: "1px solid hsl(45 20% 85%)", 
-                                        boxShadow: "var(--shadow-soft)",
-                                        backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                        backdropFilter: "blur(4px)"
+                                        border: "1px solid rgba(255,255,255,0.12)", 
+                                        backgroundColor: "#061A13",
+                                        color: "#F5F3EC"
                                     }} 
                                 />
-                                <Legend wrapperStyle={{ fontSize: "12px", fontWeight: 700, paddingTop: "20px" }} />
-                                <Line yAxisId="left" type="monotone" dataKey="Orders" stroke="hsl(142 45% 28%)" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: "white" }} activeDot={{ r: 6 }} />
-                                <Line yAxisId="right" type="monotone" dataKey="Revenue" name="Revenue (₹)" stroke="hsl(38 85% 55%)" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: "white" }} activeDot={{ r: 6 }} />
+                                <Legend wrapperStyle={{ fontSize: "12px", fontWeight: 700, paddingTop: "20px", color: "#F5F3EC" }} />
+                                <Line yAxisId="left" type="monotone" dataKey="Orders" stroke="#4ADE80" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: "#061A13" }} activeDot={{ r: 6 }} />
+                                <Line yAxisId="right" type="monotone" dataKey="Revenue" name="Revenue (₹)" stroke="#C98A24" strokeWidth={3} dot={{ r: 4, strokeWidth: 2, fill: "#061A13" }} activeDot={{ r: 6 }} />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -454,34 +447,33 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Top Products */}
-                <Card className="bg-[#FAF9F6] border-none shadow-sm">
+                <Card className="bg-[#0B2118] border border-white/10 shadow-xl text-[#F5F3EC]">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center gap-2 text-[#2D3748]">
-                            <span className="text-green-600">📊</span> Top Products ({format(selectedMonth, "MMM")})
+                        <CardTitle className="text-lg flex items-center gap-2 text-[#F5F3EC]">
+                            <span>📊</span> Top Products ({format(selectedMonth, "MMM")})
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {productSalesData.length === 0 ? (
-                            <div className="h-[250px] flex items-center justify-center text-gray-400 text-sm">
+                            <div className="h-[250px] flex items-center justify-center text-[#AAB8B0] text-sm">
                                 No sales data for {format(selectedMonth, "MMMM")}
                             </div>
                         ) : (
                             <div className="h-[250px] w-full mt-4">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={productSalesData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(45 20% 85%)" />
-                                        <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 700 }} angle={-45} textAnchor="end" height={60} stroke="#718096" />
-                                        <YAxis tick={{ fontSize: 12, fontWeight: 700 }} stroke="#718096" />
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.08)" />
+                                        <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 700, fill: "#AAB8B0" }} angle={-45} textAnchor="end" height={60} stroke="rgba(255,255,255,0.2)" />
+                                        <YAxis tick={{ fontSize: 12, fontWeight: 700, fill: "#AAB8B0" }} stroke="rgba(255,255,255,0.2)" />
                                         <RechartsTooltip 
                                             contentStyle={{ 
                                                 borderRadius: "12px", 
-                                                border: "1px solid hsl(45 20% 85%)", 
-                                                boxShadow: "var(--shadow-soft)",
-                                                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                                backdropFilter: "blur(4px)"
+                                                border: "1px solid rgba(255,255,255,0.12)", 
+                                                backgroundColor: "#061A13",
+                                                color: "#F5F3EC"
                                             }} 
                                         />
-                                        <Bar dataKey="Quantity Sold" fill="hsl(142 45% 28%)" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                                        <Bar dataKey="Quantity Sold" fill="#C98A24" radius={[6, 6, 0, 0]} maxBarSize={40} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
@@ -490,15 +482,15 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                 </Card>
 
                 {/* Order Distribution Pie */}
-                <Card className="bg-[#FAF9F6] border-none shadow-sm">
+                <Card className="bg-[#0B2118] border border-white/10 shadow-xl text-[#F5F3EC]">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center gap-2 text-[#2D3748]">
-                            <span className="text-green-600">📦</span> Order Distribution ({format(selectedMonth, "MMM")})
+                        <CardTitle className="text-lg flex items-center gap-2 text-[#F5F3EC]">
+                            <span>📦</span> Order Distribution ({format(selectedMonth, "MMM")})
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="flex justify-center items-center">
                         {statusPieData.length === 0 ? (
-                            <div className="h-[250px] flex items-center justify-center text-gray-400 text-sm">
+                            <div className="h-[250px] flex items-center justify-center text-[#AAB8B0] text-sm">
                                 No orders in {format(selectedMonth, "MMMM")}
                             </div>
                         ) : (
@@ -513,17 +505,7 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                                             outerRadius={90}
                                             paddingAngle={4}
                                             dataKey="value"
-                                            label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
-                                                const rad = Math.PI / 180;
-                                                const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                                                const x = cx + radius * Math.cos(-midAngle * rad);
-                                                const y = cy + radius * Math.sin(-midAngle * rad);
-                                                return (
-                                                    <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={10} fontWeight="900">
-                                                        {`${(percent * 100).toFixed(0)}%`}
-                                                    </text>
-                                                );
-                                            }}
+                                            label={({ percent }: any) => `${(percent * 100).toFixed(0)}%`}
                                         >
                                             {statusPieData.map((entry: any, index: number) => (
                                                 <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
@@ -532,10 +514,9 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                                         <RechartsTooltip 
                                             contentStyle={{ 
                                                 borderRadius: "12px", 
-                                                border: "1px solid hsl(45 20% 85%)", 
-                                                boxShadow: "var(--shadow-soft)",
-                                                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                                                backdropFilter: "blur(4px)"
+                                                border: "1px solid rgba(255,255,255,0.12)", 
+                                                backgroundColor: "#061A13",
+                                                color: "#F5F3EC"
                                             }} 
                                         />
                                     </PieChart>
@@ -547,30 +528,30 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
             </div>
 
             {/* Recent Orders */}
-            <Card className="bg-[#FAF9F6] border-none shadow-sm">
+            <Card className="bg-[#0B2118] border border-white/10 shadow-xl text-[#F5F3EC]">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex items-center gap-2 text-[#2D3748]">
-                        <span className="text-green-600">📦</span> Recent Orders ({format(selectedMonth, "MMM")})
+                    <CardTitle className="text-lg flex items-center gap-2 text-[#F5F3EC]">
+                        <span>📦</span> Recent Orders ({format(selectedMonth, "MMM")})
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-3">
                         {filteredOrders.length === 0 ? (
-                            <p className="text-sm text-gray-500 py-4 text-center">No orders found for this month.</p>
+                            <p className="text-sm text-[#AAB8B0] py-4 text-center">No orders found for this month.</p>
                         ) : filteredOrders.slice(0, 5).map((order) => (
-                            <div key={order?.id} className="bg-white p-4 rounded-[10px] flex items-center justify-between border-b last:border-0 border-gray-100 hover:bg-forest/[0.02] transition-colors group">
+                            <div key={order?.id} className="bg-[#10291F] p-4 rounded-xl flex items-center justify-between border border-white/10 hover:border-white/20 transition-all">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-forest/5 rounded-[10px] group-hover:bg-forest/10 transition-colors">
-                                        <ShoppingBag className="h-4 w-4 text-forest" />
+                                    <div className="p-2 bg-[#061A13] rounded-xl border border-white/10 text-[#C98A24]">
+                                        <ShoppingBag className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <p className="font-mono text-xs font-black text-gray-800">
+                                        <p className="font-mono text-xs font-bold text-[#F5F3EC]">
                                             #{order?.id?.slice(0, 8)?.toUpperCase()}
                                         </p>
                                         <div className="flex flex-col gap-0.5 mt-0.5">
-                                            <p className="text-[10px] text-muted-foreground font-bold tracking-tight">{order?.phone}</p>
+                                            <p className="text-[10px] text-[#AAB8B0] font-bold">{order?.phone}</p>
                                             {(order as any)?.razorpay_payment_id && (
-                                                <p className="text-[10px] text-golden-dark font-black tracking-tighter opacity-70">
+                                                <p className="text-[10px] text-[#C98A24] font-bold">
                                                     TXN: {(order as any).razorpay_payment_id}
                                                 </p>
                                             )}
@@ -578,7 +559,7 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                                     </div>
                                 </div>
                                 <div className="text-right flex flex-col items-end gap-1.5">
-                                    <p className="text-sm font-black text-forest">₹{order?.total_amount}</p>
+                                    <p className="text-sm font-black text-[#C98A24]">₹{order?.total_amount}</p>
                                     <OrderStatusBadge status={order?.status} refundId={(order as any).refund_id} />
                                 </div>
                             </div>

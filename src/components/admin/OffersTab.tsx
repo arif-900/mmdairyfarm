@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { Database } from "@/integrations/supabase/types";
 import { useHomepageBanners, useUpdateHomepageBanners, PromoBannerItem } from "@/hooks/useHomepageBanners";
+import { optimizeImageFile } from "@/utils/imageOptimizer";
 
 type PromoCode = Database['public']['Tables']['promo_codes']['Row'];
 
@@ -65,7 +66,7 @@ export const OffersTab = () => {
     try {
       const { data, error } = await (supabase as any)
         .from("promo_codes")
-        .select("*")
+        .select("id, code, description, discount_type, discount_value, is_active, created_at")
         .order("created_at", { ascending: false });
 
       if (error && error.code !== '42P01') throw error;
@@ -103,8 +104,15 @@ export const OffersTab = () => {
 
     setUploadingImage(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `banner-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      // Automatically optimize and convert to WebP client-side before upload
+      const optimizedFile = await optimizeImageFile(file, {
+        maxWidth: 1400,
+        maxHeight: 700,
+        quality: 0.82,
+        format: 'image/webp'
+      });
+
+      const fileName = `banner-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.webp`;
       const filePath = `banners/${fileName}`;
 
       let uploadedUrl: string | null = null;
@@ -114,7 +122,7 @@ export const OffersTab = () => {
         try {
           const { error: uploadErr } = await supabase.storage
             .from(bucketName)
-            .upload(filePath, file, { upsert: true });
+            .upload(filePath, optimizedFile, { upsert: true });
 
           if (!uploadErr) {
             const { data: publicUrlData } = supabase.storage

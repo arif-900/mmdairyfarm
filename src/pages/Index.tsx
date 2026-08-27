@@ -34,7 +34,7 @@ const Index = () => {
             width="1200"
             height="800"
             loading="eager"
-            fetchpriority="high"
+            fetchPriority="high"
             decoding="async"
             className="absolute inset-0 w-full h-full object-cover blur-[1px] scale-105 opacity-40"
           />

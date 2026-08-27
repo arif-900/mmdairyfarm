@@ -44,7 +44,15 @@ export function useHomepageBanners() {
         }
 
         if (Array.isArray(parsed)) {
-          const sorted = parsed.sort(
+          const sanitized = parsed.map((b: PromoBannerItem) => {
+            if (b.imageUrl && b.imageUrl.startsWith("data:image/")) {
+              const cleanPath = `/banners/banner_${b.id}.webp`;
+              return { ...b, imageUrl: cleanPath };
+            }
+            return b;
+          });
+
+          const sorted = sanitized.sort(
             (a: PromoBannerItem, b: PromoBannerItem) =>
               (a.displayOrder || 0) - (b.displayOrder || 0)
           );
@@ -63,16 +71,21 @@ export function useHomepageBanners() {
         if (cached) {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+            return parsed.map((b: PromoBannerItem) => {
+              if (b.imageUrl && b.imageUrl.startsWith("data:image/")) {
+                return { ...b, imageUrl: `/banners/banner_${b.id}.webp` };
+              }
+              return b;
+            });
           }
         }
       } catch (e) {}
       return undefined;
     },
-    staleTime: 1000 * 60 * 15, // 15 Minutes Stale Time
+    staleTime: 1000 * 60 * 5, // 5 Minutes Stale Time
     gcTime: 1000 * 60 * 60 * 24, // 24 Hours Garbage Collection
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnWindowFocus: true, // Revalidate in background when customer returns to tab/PWA
+    refetchOnMount: true,
   });
 
   // Supabase Realtime channel for instant cross-tab and cross-device sync

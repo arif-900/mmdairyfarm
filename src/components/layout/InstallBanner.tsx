@@ -1,47 +1,95 @@
-import { Download, X } from "lucide-react";
-import { useState } from "react";
+import { Download, Share, PlusSquare, X, Smartphone } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
 
+const DISMISS_KEY = "mm_pwa_install_banner_dismissed_v3";
+
 const InstallBanner = () => {
-    const { isInstallable, handleInstall } = usePWAInstall();
-    const [dismissed, setDismissed] = useState(false);
+  const { isInstallable, isIOS, isStandalone, handleInstall } = usePWAInstall();
+  const [dismissed, setDismissed] = useState(false);
 
-    if (!isInstallable || dismissed) return null;
+  useEffect(() => {
+    try {
+      const isDismissed = sessionStorage.getItem(DISMISS_KEY) === "true";
+      setDismissed(isDismissed);
+    } catch (e) {
+      setDismissed(false);
+    }
+  }, []);
 
-    return (
-        <div className="fixed bottom-24 left-4 right-4 z-[100] animate-in slide-in-from-bottom-8 duration-500">
-            <div className="bg-[#1C2533] rounded-[32px] p-4 pr-12 shadow-2xl border border-white/10 relative overflow-hidden group">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-                        <Download className="text-white w-6 h-6" />
-                    </div>
-                    <div>
-                        <h3 className="text-white font-black italic text-sm">Install MM Dairy App</h3>
-                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider">Faster access & offline orders</p>
-                    </div>
-                    <Button 
-                        onClick={handleInstall}
-                        size="sm"
-                        className="ml-auto rounded-xl bg-white text-primary hover:bg-slate-100 font-black text-[10px] uppercase tracking-widest px-6 h-10 relative z-10"
-                    >
-                        Install
-                    </Button>
-                </div>
-                
-                <button 
-                    onClick={() => setDismissed(true)}
-                    className="absolute top-4 right-4 text-white/20 hover:text-white/60 transition-colors z-10"
-                >
-                    <X className="w-4 h-4" />
-                </button>
-                
-                {/* Decorative background element - added pointer-events-none */}
-                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+  if (!isInstallable || isStandalone || dismissed) return null;
 
+  const handleDismiss = () => {
+    setDismissed(true);
+    try {
+      sessionStorage.setItem(DISMISS_KEY, "true");
+    } catch (e) {}
+  };
+
+  const onDirectInstallClick = async () => {
+    await handleInstall();
+    handleDismiss();
+  };
+
+  return (
+    <div className="fixed bottom-20 left-3 right-3 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[100] animate-in slide-in-from-bottom-8 duration-500">
+      <div className="bg-[#0B2118] text-[#F5F3EC] rounded-2xl p-4 shadow-2xl border border-[#C98A24]/40 relative overflow-hidden backdrop-blur-md">
+        <button
+          onClick={handleDismiss}
+          aria-label="Close install prompt"
+          className="absolute top-3 right-3 text-[#9AAFA4] hover:text-[#F5F3EC] p-1 rounded-lg transition-colors z-20"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="flex items-start gap-3 pr-6">
+          <div className="w-11 h-11 rounded-xl bg-[#10291F] border border-[#C98A24]/30 flex items-center justify-center text-[#C98A24] shrink-0 shadow-md mt-0.5">
+            <Smartphone className="w-5 h-5" />
+          </div>
+
+          <div className="space-y-1 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="bg-[#C98A24] text-[#061A13] text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded">
+                MM DAIRY APP
+              </span>
+              <h3 className="font-extrabold text-xs text-[#F5F3EC]">
+                Install App for Faster Orders
+              </h3>
             </div>
+
+            <p className="text-[11px] text-[#9AAFA4] leading-tight">
+              Enjoy 1-tap access, daily morning delivery updates & offline mode.
+            </p>
+
+            {isIOS ? (
+              <div className="pt-2 flex items-center gap-2 text-[10px] text-[#C98A24] font-bold bg-[#10291F] p-2 rounded-lg border border-white/10 mt-2">
+                <span>To Install: Tap</span>
+                <Share className="w-3.5 h-3.5 inline text-[#C98A24]" />
+                <span>Share then</span>
+                <PlusSquare className="w-3.5 h-3.5 inline text-[#C98A24]" />
+                <span>"Add to Home Screen"</span>
+              </div>
+            ) : (
+              <div className="pt-2 flex justify-end">
+                <Button
+                  onClick={onDirectInstallClick}
+                  size="sm"
+                  className="bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black text-xs uppercase tracking-wider h-9 px-5 rounded-xl shadow-lg transition-all"
+                >
+                  <Download className="w-3.5 h-3.5 mr-1.5" />
+                  Install App
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
-    );
+
+        {/* Subtle decorative gold glow */}
+        <div className="absolute -right-8 -bottom-8 w-24 h-24 bg-[#C98A24]/10 rounded-full blur-2xl pointer-events-none" />
+      </div>
+    </div>
+  );
 };
 
 export default InstallBanner;

@@ -23,7 +23,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Package, Plus, Pencil, Trash2, Loader2, Image as ImageIcon, Scale, Info } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { PRODUCTS_QUERY_KEY } from "@/hooks/useProductsQuery";
+import { Package, Plus, Pencil, Trash2, Loader2, Image as ImageIcon, Scale, Info, Upload } from "lucide-react";
+import { optimizeImageFile } from "@/utils/imageOptimizer";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -41,6 +44,7 @@ import { format } from "date-fns";
 type Product = Database["public"]["Tables"]["products"]["Row"];
 
 export function ProductsTab() {
+    const queryClient = useQueryClient();
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -52,6 +56,62 @@ export function ProductsTab() {
 
     // Helper to handle weight array as string
     const [weightsString, setWeightsString] = useState("");
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+    const handleProductImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploadingImage(true);
+        try {
+            const optimizedFile = await optimizeImageFile(file, {
+                maxWidth: 800,
+                maxHeight: 800,
+                quality: 0.82,
+                format: "image/webp"
+            });
+
+            const fileName = `product-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.webp`;
+            const filePath = `products/${fileName}`;
+
+            let uploadedUrl: string | null = null;
+            const bucketsToTry = ["products", "public", "banners"];
+
+            for (const bucketName of bucketsToTry) {
+                try {
+                    const { error: uploadErr } = await supabase.storage
+                        .from(bucketName)
+                        .upload(filePath, optimizedFile, { upsert: true });
+
+                    if (!uploadErr) {
+                        const { data: publicUrlData } = supabase.storage
+                            .from(bucketName)
+                            .getPublicUrl(filePath);
+                        if (publicUrlData?.publicUrl) {
+                            uploadedUrl = publicUrlData.publicUrl;
+                            break;
+                        }
+                    }
+                } catch (err) {}
+            }
+
+            if (uploadedUrl) {
+                setCurrentProduct((prev) => ({ ...prev, image_url: uploadedUrl }));
+                toast({ title: "Image Uploaded", description: "Optimized WebP image ready." });
+            } else {
+                throw new Error("Could not save image to storage.");
+            }
+        } catch (error: any) {
+            console.error("Product image upload failed:", error);
+            toast({
+                title: "Upload Failed",
+                description: error.message || "Failed to upload product image.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -62,7 +122,7 @@ export function ProductsTab() {
             setIsLoading(true);
             const { data, error } = await supabase
                 .from("products")
-                .select("*")
+                .select("id, name, description, price, base_price_per_kg, unit, image_url, stock, is_active, available_weights, unit_type, delivery_days, original_price, background_gif")
                 .order("name", { ascending: true });
 
             if (error) throw error;
@@ -148,6 +208,7 @@ export function ProductsTab() {
             }
 
             setIsDialogOpen(false);
+            queryClient.invalidateQueries({ queryKey: PRODUCTS_QUERY_KEY });
             fetchProducts();
         } catch (error: any) {
             toast({
@@ -182,6 +243,7 @@ export function ProductsTab() {
             }
 
             toast({ title: "Product Deleted", description: `${productToDelete.name} was removed.` });
+            queryClient.invalidateQueries({ queryKey: PRODUCTS_QUERY_KEY });
             fetchProducts();
         } catch (error: any) {
             toast({
@@ -203,6 +265,7 @@ export function ProductsTab() {
                 .eq("id", product.id);
 
             if (error) throw error;
+            queryClient.invalidateQueries({ queryKey: PRODUCTS_QUERY_KEY });
             fetchProducts();
             toast({ title: "Status Updated", description: `${product.name} is now ${newStatus ? 'Active' : 'Disabled'}.` });
         } catch (error: any) {
@@ -472,14 +535,36 @@ export function ProductsTab() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="image_url" className="text-xs font-bold uppercase tracking-widest text-slate-500">Feature Image Link</Label>
-                            <Input
-                                id="image_url"
-                                value={currentProduct?.image_url || ""}
-                                onChange={(e) => setCurrentProduct({ ...currentProduct, image_url: e.target.value })}
-                                className="rounded-[10px] h-12"
-                                placeholder="Paste Unsplash or Direct URL"
-                            />
+                            <Label htmlFor="image_url" className="text-xs font-bold uppercase tracking-widest text-slate-500">Feature Image Link / Upload</Label>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="image_url"
+                                    value={currentProduct?.image_url || ""}
+                                    onChange={(e) => setCurrentProduct({ ...currentProduct, image_url: e.target.value })}
+                                    className="rounded-[10px] h-12 flex-1"
+                                    placeholder="Paste URL or upload below"
+                                />
+                                <label className="cursor-pointer">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        disabled={isUploadingImage}
+                                        className="h-12 rounded-[10px] border-slate-200 hover:bg-slate-100 font-bold text-xs shrink-0"
+                                        asChild
+                                    >
+                                        <span>
+                                            <Upload className="w-4 h-4 mr-1.5" />
+                                            {isUploadingImage ? "Uploading..." : "Upload..."}
+                                        </span>
+                                    </Button>
+                                    <input
+                                        type="file"
+                                        accept="image/webp,image/png,image/jpeg,image/jpg"
+                                        onChange={handleProductImageUpload}
+                                        className="hidden"
+                                    />
+                                </label>
+                            </div>
                         </div>
 
                         <div className="space-y-2 p-4 bg-indigo-50/50 rounded-[10px] border border-indigo-100">
