@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { useStoreProducts, Product } from "@/data/products";
+import { useSingleProductQuery } from "@/hooks/useSingleProductQuery";
+import { Product } from "@/data/products";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { calculatePrice, formatWeight } from "@/utils/pricing";
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils";
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, loading: productsLoading } = useStoreProducts();
+  const { product: fetchedProduct, loading: productsLoading } = useSingleProductQuery(id);
   const { addItem } = useCart();
   const { toast } = useToast();
 
@@ -36,12 +37,11 @@ const ProductDetail = () => {
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    if (!productsLoading && products.length > 0) {
-      const foundProduct = products.find((p) => p.id === id);
-      if (foundProduct) {
-        setProduct(foundProduct);
-        setSelectedWeight(foundProduct.availableWeights?.[0] || 1000);
-      } else {
+    if (!productsLoading) {
+      if (fetchedProduct) {
+        setProduct(fetchedProduct);
+        setSelectedWeight(fetchedProduct.availableWeights?.[0] || 1000);
+      } else if (id) {
         toast({
           title: "Product Not Found",
           description: "The product you're looking for doesn't exist.",
@@ -50,7 +50,7 @@ const ProductDetail = () => {
         navigate("/products");
       }
     }
-  }, [id, products, productsLoading, navigate, toast]);
+  }, [id, fetchedProduct, productsLoading, navigate, toast]);
 
   if (productsLoading || !product) {
     return (

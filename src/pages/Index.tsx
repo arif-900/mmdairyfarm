@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ShoppingBag, ShieldCheck, Heart, Leaf, Award, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
-import { useStoreProducts } from "@/data/products";
+import { useHomepageProductsQuery } from "@/hooks/useHomepageProductsQuery";
 import heroPoster1200 from "@/assets/hero-farm-1200.webp";
 import heroPoster640 from "@/assets/hero-farm-640.webp";
 import TextType from "@/components/ui/TextType";
@@ -12,11 +12,8 @@ import { PromoCarousel } from "@/components/home/PromoCarousel";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { products, loading } = useStoreProducts();
+  const { products: homepageProducts, loading } = useHomepageProductsQuery(4);
   const { addItem } = useCart();
-
-  // Limit to ONLY 4 products for homepage
-  const homepageProducts = products.slice(0, 4);
 
   return (
     <Layout>
