@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
+const PWA_INSTALLED_KEY = "mm_pwa_installed";
+
 export const usePWAInstall = () => {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
@@ -7,25 +9,44 @@ export const usePWAInstall = () => {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. Check if running in standalone PWA window
-    const checkStandalone = () => {
+    // 1. Check if running in standalone PWA window or previously installed on device
+    const checkIsInstalledOnDevice = async () => {
+      // Standalone mode checks
       const isDisplayStandalone =
         window.matchMedia("(display-mode: standalone)").matches ||
         window.matchMedia("(display-mode: fullscreen)").matches ||
         window.matchMedia("(display-mode: minimal-ui)").matches;
       const isIOSStandalone = (window.navigator as any).standalone === true;
       const isTWA = document.referrer.includes("android-app://");
+      const isStoredInstalled = localStorage.getItem(PWA_INSTALLED_KEY) === "true";
 
-      return isDisplayStandalone || isIOSStandalone || isTWA;
+      if (isDisplayStandalone || isIOSStandalone || isTWA || isStoredInstalled) {
+        setIsStandalone(true);
+        setIsInstallable(false);
+        return true;
+      }
+
+      // Check native browser installed apps API (Chrome/Edge desktop & mobile)
+      if ("getInstalledRelatedApps" in navigator) {
+        try {
+          const relatedApps = await (navigator as any).getInstalledRelatedApps();
+          if (relatedApps && relatedApps.length > 0) {
+            setIsStandalone(true);
+            setIsInstallable(false);
+            localStorage.setItem(PWA_INSTALLED_KEY, "true");
+            return true;
+          }
+        } catch (e) {}
+      }
+
+      return false;
     };
 
-    const standalone = checkStandalone();
-    setIsStandalone(standalone);
-
-    // If not in standalone mode, the site IS installable as a PWA
-    if (!standalone) {
-      setIsInstallable(true);
-    }
+    checkIsInstalledOnDevice().then((alreadyInstalled) => {
+      if (!alreadyInstalled) {
+        setIsInstallable(true);
+      }
+    });
 
     // 2. Check if device is iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -46,11 +67,22 @@ export const usePWAInstall = () => {
       setIsInstallable(true);
     };
 
+    // 5. Register appinstalled event listener (triggered when user completes PWA install)
+    const onAppInstalled = () => {
+      setIsStandalone(true);
+      setIsInstallable(false);
+      localStorage.setItem(PWA_INSTALLED_KEY, "true");
+      setInstallPrompt(null);
+      (window as any).deferredPWAInstallPrompt = null;
+    };
+
     (window as any).onPWAInstallable = handler;
     window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", onAppInstalled);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", onAppInstalled);
       delete (window as any).onPWAInstallable;
     };
   }, []);
@@ -62,8 +94,10 @@ export const usePWAInstall = () => {
         prompt.prompt();
         const { outcome } = await prompt.userChoice;
         if (outcome === "accepted") {
+          localStorage.setItem(PWA_INSTALLED_KEY, "true");
           setInstallPrompt(null);
           (window as any).deferredPWAInstallPrompt = null;
+          setIsStandalone(true);
           setIsInstallable(false);
           return true;
         }
