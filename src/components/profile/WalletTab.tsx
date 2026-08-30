@@ -10,12 +10,12 @@ import {
     Sparkles,
     Loader2,
     Calendar,
-    ChevronRight
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { coinsToRupees, formatCoinValue } from "@/utils/coins";
 
 export const WalletTab = () => {
     const { user, profile } = useAuth();
@@ -76,6 +76,7 @@ export const WalletTab = () => {
     }
 
     const currentBalance = profile?.reward_coins || 0;
+    const rupeeEquivalent = coinsToRupees(currentBalance);
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -83,7 +84,7 @@ export const WalletTab = () => {
             <div className="relative group perspective-1000">
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl md:rounded-[40px] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
 
-                <Card className="relative overflow-hidden rounded-2xl md:rounded-[40px] border-none bg-slate-950 text-white shadow-2xl p-5 md:p-12 overflow-hidden ring-1 ring-white/10">
+                <Card className="relative overflow-hidden rounded-2xl md:rounded-[40px] border-none bg-slate-950 text-white shadow-2xl p-5 md:p-12 ring-1 ring-white/10">
                     {/* Animated shapes */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-32 -mt-32 animate-pulse" />
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl -ml-24 -mb-24" />
@@ -94,14 +95,21 @@ export const WalletTab = () => {
                                 <div className="p-2 bg-white/10 rounded-xl border border-white/10">
                                     <Wallet className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
                                 </div>
-                                <h3 className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-emerald-400">Wallet Balance</h3>
+                                <h3 className="text-xs md:text-sm font-black uppercase tracking-[0.2em] text-emerald-400">Reward Balance</h3>
                             </div>
-                            <div className="flex items-baseline gap-2 md:gap-3">
-                                <span className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tighter italic">₹{currentBalance}</span>
-                                <Badge className="bg-emerald-500/20 text-emerald-400 border-none px-2 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg text-[8px] md:text-[10px] font-black uppercase tracking-widest">Available Coins</Badge>
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-baseline gap-3">
+                                    <span className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tighter italic">{currentBalance}</span>
+                                    <Badge className="bg-emerald-500/20 text-emerald-400 border-none px-2 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg text-[8px] md:text-[10px] font-black uppercase tracking-widest">
+                                        Coins
+                                    </Badge>
+                                </div>
+                                <p className="text-emerald-400 font-bold text-sm md:text-base">
+                                    ≈ ₹{rupeeEquivalent.toFixed(2)} Value <span className="text-white/40 text-xs font-normal">(4 Coins = ₹1)</span>
+                                </p>
                             </div>
-                            <p className="text-white/40 text-[9px] md:text-[10px] font-bold uppercase tracking-widest max-w-[280px] leading-relaxed">
-                                Use these coins to pay for your daily milk subscriptions or one-time orders.
+                            <p className="text-white/50 text-[9px] md:text-[10px] font-bold uppercase tracking-widest max-w-[320px] leading-relaxed">
+                                Redeem these coins at checkout for instant discounts on your farm fresh milk & dairy orders.
                             </p>
                         </div>
 
@@ -111,6 +119,7 @@ export const WalletTab = () => {
                                 <div className="absolute inset-0 bg-white/20 animate-shine" />
                             </div>
                             <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">MM Rewards</p>
+                            <p className="text-[9px] text-white/40 font-bold uppercase tracking-wider">4 Coins = ₹1</p>
                         </div>
                     </div>
                 </Card>
@@ -123,7 +132,7 @@ export const WalletTab = () => {
                         <div className="w-8 h-8 bg-[#0B2118] rounded-xl flex items-center justify-center text-[#C98A24] border border-white/10">
                             <History className="w-4 h-4" />
                         </div>
-                        <h4 className="text-xl font-black tracking-tighter text-[#F5F3EC] uppercase">Movement History</h4>
+                        <h4 className="text-xl font-black tracking-tighter text-[#F5F3EC] uppercase">Coin Movement History</h4>
                     </div>
                     <Badge variant="outline" className="rounded-lg text-[10px] font-black uppercase tracking-widest py-1 border-white/10 text-[#AAB8B0] bg-[#0B2118]">
                         {ledger.length} Transactions
@@ -137,50 +146,55 @@ export const WalletTab = () => {
                         </div>
                         <div className="space-y-1">
                             <h5 className="text-base font-black text-[#F5F3EC] uppercase">Your vault is empty</h5>
-                            <p className="text-xs font-bold text-[#AAB8B0] max-w-[200px]">
-                                Once you earn coins or receive a refund, they'll magically appear here.
+                            <p className="text-xs font-bold text-[#AAB8B0] max-w-[220px]">
+                                Once you earn coins or receive refunds, they'll automatically appear here.
                             </p>
                         </div>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                        {ledger.map((entry) => (
-                            <div key={entry.id} className="group bg-[#0B2118] rounded-xl md:rounded-[28px] p-4 md:p-6 border border-white/10 hover:border-[#C98A24]/40 hover:shadow-lg flex items-center justify-between gap-3 md:gap-6">
-                                <div className="flex items-center gap-3 md:gap-5 min-w-0 flex-1">
-                                    <div className={cn(
-                                        "w-9 h-9 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
-                                        entry.type === 'credit' ? "bg-[#0F8A5F]/20 text-[#4ADE80] border border-[#0F8A5F]/30" : "bg-rose-950/40 text-rose-300 border border-rose-900/50"
-                                    )}>
-                                        {entry.type === 'credit' ? <ArrowUpRight className="w-4 h-4 md:w-6 md:h-6" /> : <ArrowDownLeft className="w-4 h-4 md:w-6 md:h-6" />}
-                                    </div>
-                                    <div className="space-y-0.5 md:space-y-1 min-w-0 flex-1">
-                                        <p className="font-black text-[#F5F3EC] leading-tight uppercase tracking-tight text-[10px] md:text-base truncate">{entry.reason}</p>
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-[#AAB8B0] uppercase tracking-widest shrink-0">
-                                                <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
-                                                {format(new Date(entry.created_at), "MMM dd")}
+                        {ledger.map((entry) => {
+                            const coinAmt = Math.abs(Number(entry.amount) || 0);
+                            const rupeeVal = coinsToRupees(coinAmt);
+
+                            return (
+                                <div key={entry.id} className="group bg-[#0B2118] rounded-xl md:rounded-[28px] p-4 md:p-6 border border-white/10 hover:border-[#C98A24]/40 hover:shadow-lg flex items-center justify-between gap-3 md:gap-6">
+                                    <div className="flex items-center gap-3 md:gap-5 min-w-0 flex-1">
+                                        <div className={cn(
+                                            "w-9 h-9 md:w-14 md:h-14 rounded-lg md:rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shrink-0",
+                                            entry.type === 'credit' ? "bg-[#0F8A5F]/20 text-[#4ADE80] border border-[#0F8A5F]/30" : "bg-rose-950/40 text-rose-300 border border-rose-900/50"
+                                        )}>
+                                            {entry.type === 'credit' ? <ArrowUpRight className="w-4 h-4 md:w-6 md:h-6" /> : <ArrowDownLeft className="w-4 h-4 md:w-6 md:h-6" />}
+                                        </div>
+                                        <div className="space-y-0.5 md:space-y-1 min-w-0 flex-1">
+                                            <p className="font-black text-[#F5F3EC] leading-tight uppercase tracking-tight text-[10px] md:text-base truncate">{entry.reason}</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-[#AAB8B0] uppercase tracking-widest shrink-0">
+                                                    <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
+                                                    {format(new Date(entry.created_at), "MMM dd")}
+                                                </div>
+                                                {entry.metadata?.order_id && (
+                                                    <Badge variant="secondary" className="text-[7px] md:text-[8px] font-black uppercase tracking-widest bg-[#10291F] text-[#C98A24] rounded-md px-1 py-0.5 md:px-2 shrink-0 border border-white/10">
+                                                        #{entry.metadata.order_id.slice(0, 6)}
+                                                    </Badge>
+                                                )}
                                             </div>
-                                            {entry.metadata?.order_id && (
-                                                <Badge variant="secondary" className="text-[7px] md:text-[8px] font-black uppercase tracking-widest bg-[#10291F] text-[#C98A24] rounded-md px-1 py-0.5 md:px-2 shrink-0 border border-white/10">
-                                                    #{entry.metadata.order_id.slice(0, 6)}
-                                                </Badge>
-                                            )}
                                         </div>
                                     </div>
+                                    <div className="text-right shrink-0">
+                                        <p className={cn(
+                                            "text-base md:text-2xl font-black tracking-tighter italic leading-none",
+                                            entry.type === 'credit' ? "text-[#4ADE80]" : "text-rose-400"
+                                        )}>
+                                            {entry.type === 'credit' ? '+' : '-'}{coinAmt} Coins
+                                        </p>
+                                        <p className="text-[8px] md:text-[10px] font-bold text-[#718078] mt-1">
+                                            (₹{rupeeVal.toFixed(2)})
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="text-right shrink-0">
-                                    <p className={cn(
-                                        "text-base md:text-3xl font-black tracking-tighter italic leading-none",
-                                        entry.type === 'credit' ? "text-[#4ADE80]" : "text-rose-400"
-                                    )}>
-                                        {entry.type === 'credit' ? '+' : '-'}₹{entry.amount}
-                                    </p>
-                                    <p className="text-[7px] md:text-[9px] font-black uppercase tracking-widest text-[#718078] mt-0.5">
-                                        {entry.type === 'credit' ? 'Credited' : 'Debited'}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
@@ -192,9 +206,9 @@ export const WalletTab = () => {
                         <Info className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div className="space-y-1">
-                        <h5 className="font-black text-[#C98A24] uppercase tracking-tight text-xs sm:text-sm">How to use your coins?</h5>
+                        <h5 className="font-black text-[#C98A24] uppercase tracking-tight text-xs sm:text-sm">How to use your reward coins?</h5>
                         <p className="text-[11px] sm:text-xs font-semibold text-[#AAB8B0] leading-relaxed italic">
-                            Every time you checkout, you'll see an option in the payment summary! Toggle the "Use Wallet Balance" button to get an instant discount. 1 Coin = ₹1.
+                            Every time you checkout, toggle the "Use Reward Coins" button in the payment step to receive an instant discount on your order. <strong className="text-[#F5F3EC]">4 Coins = ₹1</strong> (100 Coins = ₹25 discount).
                         </p>
                     </div>
                 </div>

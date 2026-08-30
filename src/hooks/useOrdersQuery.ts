@@ -14,7 +14,7 @@ export function useOrdersQuery(userId?: string) {
 
       const { data, error } = await supabase
         .from("orders")
-        .select("id, status, total_amount, created_at, delivery_date, is_subscription_order, tracking_number")
+        .select("id, status, total_amount, created_at, expected_delivery_date, delivery_type")
         .eq("user_id", userId)
         .order("created_at", { ascending: false });
 
@@ -34,21 +34,23 @@ export function useOrdersQuery(userId?: string) {
   useEffect(() => {
     if (!userId) return;
 
-    const channel = supabase
-      .channel(`user-orders-sync-${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "orders",
-          filter: `user_id=eq.${userId}`,
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ORDERS_QUERY_KEY });
-        }
-      )
-      .subscribe();
+    const channelName = `user-orders-sync-${userId}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const channel = supabase.channel(channelName);
+
+    channel.on(
+      "postgres_changes" as any,
+      {
+        event: "*",
+        schema: "public",
+        table: "orders",
+        filter: `user_id=eq.${userId}`,
+      },
+      () => {
+        queryClient.invalidateQueries({ queryKey: ORDERS_QUERY_KEY });
+      }
+    );
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);

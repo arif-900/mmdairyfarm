@@ -169,54 +169,57 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const cartId = await getOrCreateCart(user.id);
         
-        channel = supabase
-          .channel(`user-cart-${cartId}-${Date.now()}`)
-          .on(
-            "postgres_changes",
-            {
-              event: "*",
-              schema: "public",
-              table: "cart_items",
-              filter: `cart_id=eq.${cartId}`,
-            },
-            async () => {
-              const { data: dbItems } = await supabase
-                .from('cart_items')
-                .select(`
-                    id,
-                    product_id,
-                    quantity,
-                    selected_weight,
-                    unit_type,
-                    selected,
-                    products (
-                        name,
-                        price,
-                        image_url,
-                        stock,
-                        available_weights
-                    )
-                `)
-                .eq('cart_id', cartId);
+        const channelName = `user-cart-${cartId}-${Date.now()}`;
+        const newChannel = supabase.channel(channelName);
 
-              if (dbItems) {
-                const mappedItems: CartItem[] = dbItems.map((item: any) => ({
-                  id: item.id,
-                  productId: item.product_id,
-                  name: item.products.name,
-                  selectedWeight: item.selected_weight,
-                  calculatedPrice: item.products.price,
-                  quantity: item.quantity,
-                  stock: item.products.stock,
-                  image: item.products.image_url,
-                  unitType: item.unit_type,
-                  selected: item.selected,
-                }));
-                setItems(mappedItems);
-              }
+        newChannel.on(
+          "postgres_changes" as any,
+          {
+            event: "*",
+            schema: "public",
+            table: "cart_items",
+            filter: `cart_id=eq.${cartId}`,
+          },
+          async () => {
+            const { data: dbItems } = await supabase
+              .from('cart_items')
+              .select(`
+                  id,
+                  product_id,
+                  quantity,
+                  selected_weight,
+                  unit_type,
+                  selected,
+                  products (
+                      name,
+                      price,
+                      image_url,
+                      stock,
+                      available_weights
+                  )
+              `)
+              .eq('cart_id', cartId);
+
+            if (dbItems) {
+              const mappedItems: CartItem[] = dbItems.map((item: any) => ({
+                id: item.id,
+                productId: item.product_id,
+                name: item.products.name,
+                selectedWeight: item.selected_weight,
+                calculatedPrice: item.products.price,
+                quantity: item.quantity,
+                stock: item.products.stock,
+                image: item.products.image_url,
+                unitType: item.unit_type,
+                selected: item.selected,
+              }));
+              setItems(mappedItems);
             }
-          )
-          .subscribe();
+          }
+        );
+
+        newChannel.subscribe();
+        channel = newChannel;
       } catch (err) {
         console.error("Error setting up realtime cart:", err);
       }

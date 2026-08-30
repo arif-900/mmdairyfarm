@@ -19,7 +19,7 @@ export const createOrder = async (req, res) => {
       total_amount,
       status: 'pending',
       delivery_type: req.body.delivery_type || 'one-time',
-      payment_method: req.body.payment_method || 'online',
+      payment_method: 'online',
       shipping_address: shipping_address || 'Test Address', // Ensure not null
       created_at: req.body.created_at || new Date().toISOString() // Allow backdating
     };

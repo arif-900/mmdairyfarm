@@ -2,14 +2,17 @@ import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
-const TOAST_LIMIT = 1;
+const TOAST_LIMIT = 4;
 const TOAST_REMOVE_DELAY = 1000000;
+
+export type ToastVariant = "default" | "destructive" | "success" | "warning" | "info" | "error";
 
 type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  variant?: ToastVariant;
 };
 
 const actionTypes = {
@@ -162,6 +165,31 @@ function toast({ ...props }: Toast) {
     update,
   };
 }
+
+// Helper methods for direct toast calls (e.g. toast.success(...))
+toast.success = (title: React.ReactNode, options?: Omit<Toast, "title"> | string) => {
+  const opts = typeof options === "string" ? { description: options } : options;
+  return toast({ title, variant: "success", ...opts });
+};
+
+toast.error = (title: React.ReactNode, options?: Omit<Toast, "title"> | string) => {
+  const opts = typeof options === "string" ? { description: options } : options;
+  return toast({ title, variant: "destructive", ...opts });
+};
+
+toast.warning = (title: React.ReactNode, options?: Omit<Toast, "title"> | string) => {
+  const opts = typeof options === "string" ? { description: options } : options;
+  return toast({ title, variant: "warning", ...opts });
+};
+
+toast.info = (title: React.ReactNode, options?: Omit<Toast, "title"> | string) => {
+  const opts = typeof options === "string" ? { description: options } : options;
+  return toast({ title, variant: "info", ...opts });
+};
+
+toast.dismiss = (toastId?: string) => {
+  dispatch({ type: "DISMISS_TOAST", toastId });
+};
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);

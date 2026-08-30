@@ -15,7 +15,7 @@ const Terms = () => {
         {
             icon: CreditCard,
             title: "Prepaid Subscriptions & Wallet Coins",
-            content: "Subscriptions for products (e.g. Milk, Curd, Ghee) are governed by a strictly prepaid model. Balance refunds resulting from subscription pauses, adjustments, or cancellations are credited automatically to your digital wallet as Reward Coins. Reward Coins carry a valuation of 1 Coin = ₹1, are non-transferable, cannot be redeemed for cash, and can only be used as checking discounts on this platform."
+            content: "Subscriptions for products (e.g. Milk, Curd, Ghee) are governed by a strictly prepaid model. Balance refunds resulting from subscription pauses, adjustments, or cancellations are credited automatically to your digital wallet as Reward Coins. Reward Coins carry a valuation of 4 Coins = ₹1 (1 Coin = ₹0.25), are non-transferable, cannot be redeemed for cash, and can only be used as checkout discounts on this platform."
         },
         {
             icon: Truck,

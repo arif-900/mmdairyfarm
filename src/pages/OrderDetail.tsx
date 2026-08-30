@@ -562,8 +562,11 @@ const OrderDetail = () => {
                     </p>
                   </div>
 
-                  <Badge className="bg-[#10291F] text-[#F5F3EC] border border-white/10 font-bold uppercase text-[10px] px-3 py-1">
-                    {order.payment_method === "cod" ? "Cash on Delivery" : "Paid Online"}
+                  <Badge className={cn(
+                    "font-bold uppercase text-[10px] px-3 py-1 border",
+                    (order.payment_method === "wallet" || order.payment_method === "coins" || order.total_amount === 0) ? "bg-[#C98A24]/20 text-[#C98A24] border-[#C98A24]/40" : "bg-[#10291F] text-[#F5F3EC] border-white/10"
+                  )}>
+                    {order.payment_method === "wallet" || order.payment_method === "coins" || order.total_amount === 0 ? "Paid via Wallet" : order.payment_method === "cod" ? "Cash on Delivery" : "Paid Online"}
                   </Badge>
                 </div>
               </div>
@@ -627,9 +630,9 @@ const OrderDetail = () => {
                         <AlertDialogDescription className="text-xs text-[#AAB8B0] pt-2 leading-relaxed">
                           Are you sure you want to cancel order #{order.id.slice(0, 8).toUpperCase()}? This action cannot be undone.
                           {order.payment_method === 'online' && order.status !== 'pending' && (
-                            <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-[11px] font-bold">
+                            <span className="block mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-300 text-[11px] font-bold">
                               Note: A full refund will be initiated automatically.
-                            </div>
+                            </span>
                           )}
                         </AlertDialogDescription>
                       </AlertDialogHeader>

@@ -12,7 +12,11 @@ serve(async (req) => {
     }
 
     try {
-        const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET") || "md7Ula9YJgTJdoWvXNC3g6PI";
+        const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
+        if (!razorpayKeySecret) {
+            return new Response(JSON.stringify({ error: "Server secret configuration missing" }), { status: 500 });
+        }
+
         const signature = req.headers.get("x-razorpay-signature");
 
         if (!signature) {
@@ -46,20 +50,42 @@ serve(async (req) => {
         }
 
         const event = JSON.parse(body);
-
+        const eventId = event.event_id || event.payload?.payment?.entity?.id || `${event.event}_${Date.now()}`;
 
         const supabaseAdmin = createClient(
             Deno.env.get("SUPABASE_URL") ?? "",
             Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
         );
 
+        // 🔒 DATABASE-BACKED IDEMPOTENCY CHECK
+        const { data: existingEvent } = await supabaseAdmin
+            .from("webhook_events")
+            .select("event_id")
+            .eq("event_id", eventId)
+            .maybeSingle();
+
+        if (existingEvent) {
+            // Already processed this exact webhook payload
+            return new Response(JSON.stringify({ received: true, idempotent: true }), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+                status: 200
+            });
+        }
+
+        // Record incoming webhook event
+        await supabaseAdmin
+            .from("webhook_events")
+            .insert({
+                event_id: eventId,
+                event_type: event.event || "unknown",
+                payload: event
+            });
+
         if (event.event === "payment.captured") {
-            const payment = event.payload.payment.entity;
-            const orderId = payment.notes.order_id;
+            const payment = event.payload?.payment?.entity;
+            const orderId = payment?.notes?.order_id || payment?.description;
 
             if (orderId) {
-
-
                 const { error: updateError } = await supabaseAdmin
                     .from("orders")
                     .update({
@@ -68,12 +94,10 @@ serve(async (req) => {
                         updated_at: new Date().toISOString()
                     })
                     .eq("id", orderId)
-                    .neq("status", "paid"); // Only update if not already paid
+                    .neq("status", "paid");
 
                 if (updateError) {
                     console.error("Error updating order via webhook:", updateError);
-                } else {
-
                 }
             }
         }

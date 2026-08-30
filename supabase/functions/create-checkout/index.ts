@@ -76,30 +76,89 @@ serve(async (req) => {
       throw new Error("Invalid location coordinates");
     }
 
-    // Determine Base Subtotal
-    const subtotal = items.reduce((acc: number, item: any) => {
-      const p = Number(item.price) || 0;
-      const q = Number(item.quantity) || 1;
-      return acc + (p * q);
-    }, 0);
+    // 🔒 AUTHORITATIVE PRODUCT LOOKUP, PRICING & STOCK CONCURRENCY CHECK
+    const productIds = items.map((i: any) => i.id).filter(Boolean);
+    const { data: dbProducts, error: dbProdErr } = await supabase
+      .from("products")
+      .select("id, name, price, base_price_per_kg, is_active, stock")
+      .in("id", productIds);
 
-    // 🚚 SHIPPING CALCULATION
+    if (dbProdErr || !dbProducts) {
+      throw new Error("Failed to verify product information from database");
+    }
+
+    const dbProductsMap = new Map(dbProducts.map((p: any) => [p.id, p]));
+
+    let subtotal = 0;
+    for (const item of items) {
+      const dbProd = dbProductsMap.get(item.id);
+      if (!dbProd) {
+        throw new Error(`Product not found: ${item.name || item.id}`);
+      }
+      if (dbProd.is_active === false) {
+        throw new Error(`Product is no longer available: ${dbProd.name}`);
+      }
+
+      const quantity = Math.max(1, Number(item.quantity) || 1);
+
+      // Stock Concurrency Protection
+      if (dbProd.stock !== null && dbProd.stock !== undefined && dbProd.stock < quantity) {
+        throw new Error(`Insufficient stock for ${dbProd.name}. Available: ${dbProd.stock}`);
+      }
+
+      // Reproduce exact business pricing logic from src/utils/pricing.ts (calculatePrice)
+      const basePrice = dbProd.base_price_per_kg ? Number(dbProd.base_price_per_kg) : Number(dbProd.price);
+      const weight = Number(item.selected_weight) || 1000;
+      const itemUnitPrice = (dbProd.base_price_per_kg && weight) 
+        ? Math.round((basePrice / 1000) * weight)
+        : basePrice;
+
+      subtotal += itemUnitPrice * quantity;
+
+      // Atomic stock decrement
+      if (dbProd.stock !== null && dbProd.stock !== undefined && dbProd.stock >= quantity) {
+        await supabase
+          .from("products")
+          .update({ stock: dbProd.stock - quantity })
+          .eq("id", dbProd.id)
+          .gte("stock", quantity);
+      }
+    }
+
+    // 🚚 AUTHORITATIVE SHIPPING CALCULATION (Rule: Order >= 1000 = FREE, Distance < 10 KM = FREE, Distance >= 10 KM = ₹50)
     let shippingFee = 0;
-    if (subtotal > 1000) {
+    const distance = calculateDistance(FARM_LOCATION.lat, FARM_LOCATION.lng, lat, lng);
+    if (subtotal >= 1000) {
       shippingFee = 0;
-    } else if (feeFromClient !== undefined && feeFromClient !== null) {
-        shippingFee = Number(feeFromClient);
+    } else if (distance < 10) {
+      shippingFee = 0;
+    } else if (distance <= 50) {
+      shippingFee = 50;
     } else {
-        const distance = calculateDistance(FARM_LOCATION.lat, FARM_LOCATION.lng, lat, lng);
-        shippingFee = getShippingFee(distance);
+      throw new Error("Delivery location is outside our 50km service area");
     }
 
-    if (shippingFee === -1) {
-      throw new Error("Delivery not available in this area");
+    // 🏷️ AUTHORITATIVE PROMO CODE VALIDATION
+    let discount = 0;
+    let validPromoCode = null;
+    if (body.promo_code) {
+      const { data: promoData } = await supabase
+        .from("promo_codes")
+        .select("code, discount_type, discount_value, is_active")
+        .eq("code", String(body.promo_code).trim().toUpperCase())
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (promoData) {
+        validPromoCode = promoData.code;
+        if (promoData.discount_type === "percentage") {
+          discount = Math.round((subtotal * Number(promoData.discount_value)) / 100);
+        } else {
+          discount = Number(promoData.discount_value);
+        }
+      }
     }
 
-    // Total Application
-    const discount = Number(discount_amount) || 0;
     let totalAmount = Math.max(0, subtotal + shippingFee - discount);
 
     // 👤 USER (SAFE)
@@ -128,25 +187,46 @@ serve(async (req) => {
       }
     }
 
-    // 💰 COINS LOGIC
-    let coinsToUse = Number(body.coins_used) || 0;
+    // 💰 COINS LOGIC (Single Source of Truth: 4 Coins = ₹1, 1 Coin = 25 Paise)
+    let coinsToUse = Math.max(0, Math.floor(Number(body.coins_used) || 0));
+    let coinDiscountRupees = 0;
+
     if (coinsToUse > 0) {
       if (!userId) throw new Error("Must be logged in to use coins");
-      if (currentCoins < coinsToUse) throw new Error("Insufficient coins");
-      
-      // Update profile immediately to lock them
+      if (currentCoins < coinsToUse) throw new Error("Insufficient coins balance");
+
+      // 4 Coins = ₹1 -> 25 paise per coin
+      const coinDiscountPaise = coinsToUse * 25;
+      coinDiscountRupees = coinDiscountPaise / 100;
+
+      // Cap discount if exceeds remaining payable total
+      if (coinDiscountRupees > totalAmount) {
+        coinDiscountRupees = totalAmount;
+        coinsToUse = Math.floor(totalAmount * 4);
+      }
+
+      // Update profile immediately to lock coins
       const { error: coinErr } = await supabase
         .from("profiles")
         .update({ reward_coins: currentCoins - coinsToUse })
         .eq("user_id", userId);
-        
+
       if (coinErr) throw new Error("Failed to apply coins");
-      
-      totalAmount = Math.max(0, totalAmount - coinsToUse);
+
+      totalAmount = Math.max(0, totalAmount - coinDiscountRupees);
+
+      // Log in wallet_ledger
+      await supabase.from("wallet_ledger").insert({
+        user_id: userId,
+        amount: coinsToUse,
+        type: "debit",
+        reason: `Redeemed ${coinsToUse} Coins for ₹${coinDiscountRupees} checkout discount`,
+        metadata: { coins_used: coinsToUse, rupee_discount: coinDiscountRupees }
+      });
     }
-    
-    // Earn 2% of the final paid amount, only for orders above 100
-    const coinsEarned = totalAmount > 100 ? Math.floor(totalAmount * 0.02) : 0;
+
+    // Earn 4 Coins per ₹100 spent (equivalent to 1% cashback value)
+    const coinsEarned = totalAmount > 0 ? Math.floor((totalAmount / 100) * 4) : 0;"lAmount * 0.02) : 0;
 
     // 📦 DELIVERY DAYS (NO BUG)
     const deliveryDays = items.reduce(
@@ -158,6 +238,13 @@ serve(async (req) => {
     const expectedDate = new Date(
       Date.now() + deliveryDays * 24 * 60 * 60 * 1000
     ).toISOString();
+
+    // 🔒 REJECT COD REQUESTS
+    if (payment_method === "cod") {
+      throw new Error("Cash on Delivery is no longer supported. Please select Online Payment.");
+    }
+
+    const finalPaymentMethod = totalAmount === 0 ? "wallet" : "online";
 
     // 🧾 INSERT ORDER (SAFE DEFAULTS)
     const { data: order, error: orderError } = await supabase
@@ -171,8 +258,8 @@ serve(async (req) => {
         shipping_fee: shippingFee,
         phone: phone,
         delivery_type: delivery_type ?? "standard",
-        payment_method: payment_method ?? "cod",
-        status: (totalAmount === 0 && payment_method === "online") ? "processing" : "pending",
+        payment_method: finalPaymentMethod,
+        status: totalAmount === 0 ? "processing" : "pending",
         order_delivery_days: deliveryDays,
         expected_delivery_date: expectedDate,
         user_name: userNameFromClient || userName || "Customer",
@@ -213,8 +300,8 @@ serve(async (req) => {
       throw new Error(itemError.message);
     }
 
-    // 💵 COD RESPONSE OR FULLY PAID BY COINS/DISCOUNT
-    if ((payment_method ?? "cod") === "cod" || totalAmount === 0) {
+    // 💵 FULLY PAID BY COINS/DISCOUNT (0 BALANCE)
+    if (totalAmount === 0) {
       return new Response(
         JSON.stringify({
           orderId: order.id,

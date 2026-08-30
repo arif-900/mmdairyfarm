@@ -18,6 +18,7 @@ import {
   Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CheckoutRecommendations } from "@/components/checkout/CheckoutRecommendations";
 
 interface CartItemCardProps {
   item: any;
@@ -194,77 +195,12 @@ const Cart = () => {
                     ))}
                 </div>
 
-                {suggestions.length > 0 && (
-                  <div className="bg-[#0B2118] rounded-[32px] p-6 border border-white/10 space-y-4 font-body">
-                    <div>
-                      <h3 className="font-display text-sm font-black text-[#F5F3EC] uppercase tracking-wider">Suggested Add-ons</h3>
-                      <p className="text-[10px] font-bold text-[#AAB8B0] uppercase tracking-widest">Recommended pairings & nutrition analysis</p>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4">
-                      {suggestions.map((prod) => {
-                        const qty = quantities[prod.id] || 1;
-                        const activeWeight = selectedWeights[prod.id] || prod.availableWeights?.[0] || 1000;
-                        const currentPrice = calculatePrice(prod.basePricePerKg || prod.price, activeWeight);
-
-                        return (
-                          <div key={prod.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-[#10291F] rounded-2xl border border-white/5 gap-4">
-                            <div className="flex items-start gap-4">
-                              <div className="w-14 h-14 rounded-xl overflow-hidden bg-white border border-white/10 shrink-0">
-                                <img src={prod.image} loading="lazy" decoding="async" className="w-full h-full object-cover" alt={prod.name} />
-                              </div>
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-2">
-                                  <p className="font-black text-[#F5F3EC] text-xs">{prod.name}</p>
-                                </div>
-                                <p className="text-[9px] font-bold text-[#AAB8B0] uppercase tracking-wider">
-                                  ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end shrink-0">
-                              <div className="flex items-center bg-[#0B2118] rounded-lg p-0.5 border border-white/10">
-                                <button 
-                                  onClick={() => adjustQty(prod.id, -1)}
-                                  className="w-6 h-6 rounded-md bg-[#10291F] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors"
-                                >
-                                  <Minus className="w-3 h-3" />
-                                </button>
-                                <span className="w-6 text-center text-xs font-bold text-[#F5F3EC]">{qty}</span>
-                                <button 
-                                  onClick={() => adjustQty(prod.id, 1)}
-                                  className="w-6 h-6 rounded-md bg-[#10291F] flex items-center justify-center text-[#F5F3EC] hover:text-[#C98A24] transition-colors"
-                                >
-                                  <Plus className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  addItem({
-                                    productId: prod.id,
-                                    name: prod.name,
-                                    selectedWeight: activeWeight,
-                                    calculatedPrice: currentPrice,
-                                    quantity: qty,
-                                    image: prod.image,
-                                    unitType: prod.unitType || "g",
-                                    deliveryDays: prod.deliveryDays || 0
-                                  });
-                                  setQuantities(prev => ({ ...prev, [prod.id]: 1 }));
-                                }}
-                                className="h-8 px-3 bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] text-[9px] font-bold uppercase tracking-wider rounded-lg shrink-0 shadow-sm"
-                              >
-                                + Add to Cart
-                              </Button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                <div className="bg-[#0B2118] rounded-[32px] p-6 border border-white/10">
+                  <CheckoutRecommendations 
+                    cartItems={items} 
+                    onAddItem={addItem} 
+                  />
+                </div>
 
                 <div className="pt-2 flex justify-between items-center">
                   <Button 
@@ -290,8 +226,8 @@ const Cart = () => {
                   {selectedItems.length > 0 && (
                     <div className="p-4 bg-[#10291F] border border-white/10 rounded-2xl space-y-2">
                       <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider text-[#C98A24]">
-                        <span>Free Delivery Progress</span>
-                        <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
+                        <span>Free Delivery Threshold</span>
+                        <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1,000`}</span>
                       </div>
                       <div className="w-full bg-[#0B2118] rounded-full h-2 overflow-hidden border border-white/10">
                         <div 
@@ -301,13 +237,11 @@ const Cart = () => {
                       </div>
                       <p className="text-[10px] text-[#AAB8B0] leading-relaxed pt-1">
                         {subtotal >= 1000 ? (
-                          <span className="font-bold text-[#4ADE80]">
-                            🎉 Your order qualifies for FREE delivery!
+                          <span className="font-bold text-[#3BC77B] flex items-center gap-1">
+                            🎉 FREE DELIVERY UNLOCKED! (Orders ₹1,000+)
                           </span>
                         ) : (
-                          <span>
-                            Add <strong className="text-[#C98A24]">₹{(1000 - subtotal).toFixed(0)}</strong> more for <strong className="text-[#C98A24]">FREE Delivery</strong>!
-                          </span>
+                          `Add ₹${1000 - subtotal} more to unlock FREE DELIVERY on any distance, or enjoy free delivery if your location is within 10 km.`
                         )}
                       </p>
                     </div>

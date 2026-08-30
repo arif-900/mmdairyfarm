@@ -63,7 +63,6 @@ const CommissionsTab = lazy(() => import("@/components/admin/CommissionsTab").th
 const DeliveryBoysTab = lazy(() => import("@/components/admin/DeliveryBoysTab").then(m => ({ default: m.DeliveryBoysTab })));
 const WhatsAppTab = lazy(() => import("@/components/admin/WhatsAppTab").then(m => ({ default: m.WhatsAppTab })));
 const MakingVideosTab = lazy(() => import("@/components/admin/MakingVideosTab").then(m => ({ default: m.MakingVideosTab })));
-const CodLedgerTab = lazy(() => import("@/components/admin/CodLedgerTab").then(m => ({ default: m.CodLedgerTab })));
 const SmartScannerModal = lazy(() => import("@/components/shared/SmartScannerModal").then(m => ({ default: m.SmartScannerModal })));
 const SubscriptionsTab = lazy(() => import("@/components/admin/SubscriptionsTab").then(m => ({ default: m.SubscriptionsTab })));
 const DeliveryTrackingTab = lazy(() => import("@/components/admin/DeliveryTrackingTab").then(m => ({ default: m.DeliveryTrackingTab })));
@@ -130,7 +129,6 @@ const AdminDashboard = () => {
     {
       label: "Finance",
       items: [
-        { value: "settlements", label: "COD Ledger", icon: Receipt, show: isAdmin },
         { value: "commissions", label: "Commissions", icon: DollarSign, show: true },
       ]
     },
@@ -157,13 +155,21 @@ const AdminDashboard = () => {
     }
   ];
 
-  const fetchOrders = async () => {
+  const [orderPage, setOrderPage] = useState(0);
+  const PAGE_SIZE = 20;
+
+  const fetchOrders = async (pageArg?: any) => {
     setLoading(true);
     try {
+      const pageNum = (typeof pageArg === "number" && !isNaN(pageArg) && pageArg >= 0) ? pageArg : orderPage;
+      const from = pageNum * PAGE_SIZE;
+      const to = (pageNum + 1) * PAGE_SIZE - 1;
+
       const { data, error } = await supabase
         .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("id, created_at, user_id, phone, shipping_address, total_amount, status, refund_id, payment_method, order_delivery_days, expected_delivery_date")
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
 
@@ -284,7 +290,6 @@ const AdminDashboard = () => {
       case "tracking": return <DeliveryTrackingTab />;
       case "analytics": return <AnalyticsTab />;
       case "staff": return isSuperAdmin ? <StaffTab /> : null;
-      case "settlements": return isAdmin ? <CodLedgerTab /> : null;
       case "delivery": return isAdmin ? <DeliveryBoysTab /> : null;
       case "products": return <ProductsTab />;
       case "chat": return <ChatHistoryTab />;
@@ -321,7 +326,7 @@ const AdminDashboard = () => {
                 <SelectItem value="refunded">Refunded</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" onClick={fetchOrders} className="h-12 rounded-[10px] border-forest/10">
+            <Button variant="outline" onClick={() => fetchOrders()} className="h-12 rounded-[10px] border-forest/10">
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} /> Refresh
             </Button>
           </div>
@@ -359,6 +364,41 @@ const AdminDashboard = () => {
                 ))}
               </TableBody>
             </Table>
+
+            {/* Range Pagination Controls */}
+            <div className="p-4 bg-[#082D20] border-t border-white/10 flex items-center justify-between">
+              <span className="text-xs text-[#9AAFA4] font-medium">
+                Page <strong className="text-[#F5F3EC]">{orderPage + 1}</strong> (Showing {orders.length} orders)
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={orderPage === 0 || loading}
+                  onClick={() => {
+                    const newPage = Math.max(0, orderPage - 1);
+                    setOrderPage(newPage);
+                    fetchOrders(newPage);
+                  }}
+                  className="h-9 px-3 rounded-lg border-white/10 text-xs font-bold bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431]"
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={orders.length < PAGE_SIZE || loading}
+                  onClick={() => {
+                    const newPage = orderPage + 1;
+                    setOrderPage(newPage);
+                    fetchOrders(newPage);
+                  }}
+                  className="h-9 px-3 rounded-lg border-white/10 text-xs font-bold bg-[#10291F] text-[#F5F3EC] hover:bg-[#164431]"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       );

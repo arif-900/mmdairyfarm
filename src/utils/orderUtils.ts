@@ -14,12 +14,12 @@ export interface CreateOrderRequest {
   deliveryType: "one-time" | "daily";
   shippingAddress: string;
   phone: string;
-  paymentMethod: "online" | "cod";
+  paymentMethod: "online";
   convenienceFee?: number;
 }
 
 export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
-  const { items, deliveryType, shippingAddress, phone, paymentMethod, convenienceFee = 0 } = orderData;
+  const { items, deliveryType, shippingAddress, phone, paymentMethod = "online", convenienceFee = 0 } = orderData;
 
   // Get current user
   const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -29,7 +29,7 @@ export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
 
   // Calculate total
   const baseAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const totalAmount = paymentMethod === "online" ? baseAmount + convenienceFee : baseAmount;
+  const totalAmount = baseAmount + convenienceFee;
 
   // Create order
   const { data: order, error: orderError } = await supabase
@@ -40,8 +40,8 @@ export const createOrderDirectly = async (orderData: CreateOrderRequest) => {
       shipping_address: shippingAddress,
       phone: phone,
       delivery_type: deliveryType,
-      status: paymentMethod === "cod" ? "pending" : "pending",
-      payment_method: paymentMethod,
+      status: "pending",
+      payment_method: "online",
     })
     .select()
     .single();

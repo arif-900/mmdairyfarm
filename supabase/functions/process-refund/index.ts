@@ -63,24 +63,22 @@ serve(async (req) => {
       throw new Error(`Order cannot be cancelled in status: ${order.status}`);
     }
 
-    // 5. Refund Processing
-    const isOnlinePayment = order.payment_method === "online" && (order.status === "paid" || order.status === "processing");
+    // 5. Gateway Refund Processing via Razorpay
+    const requiresGatewayRefund = order.status === "paid" || order.status === "processing";
     let refundId = null;
 
-    if (isOnlinePayment) {
+    if (requiresGatewayRefund) {
       const razorpayPaymentId = order.razorpay_payment_id;
       if (!razorpayPaymentId) {
-        throw new Error("No payment ID found for online order");
+        throw new Error("Cannot process refund: missing Razorpay payment transaction ID for this order.");
       }
 
       const rzpKey = Deno.env.get("RAZORPAY_KEY_ID");
       const rzpSecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
       if (!rzpKey || !rzpSecret) {
-        throw new Error("Razorpay credentials not configured");
+        throw new Error("Razorpay credentials not configured on server.");
       }
-
-
 
       const response = await fetch(`https://api.razorpay.com/v1/payments/${razorpayPaymentId}/refund`, {
         method: "POST",
@@ -89,10 +87,10 @@ serve(async (req) => {
           Authorization: `Basic ${btoa(`${rzpKey}:${rzpSecret}`)}`,
         },
         body: JSON.stringify({
-          amount: Math.round(order.total_amount * 100), // Full refund
+          amount: Math.round(order.total_amount * 100), // Full refund to original payment method
           notes: {
             order_id: order.id,
-            reason: "Customer requested cancellation",
+            reason: "Order cancellation refund to original payment method",
           },
         }),
       });
@@ -100,12 +98,11 @@ serve(async (req) => {
       const refundData = await response.json();
 
       if (!response.ok) {
-        console.error("Razorpay refund failed:", refundData);
-        throw new Error(`Razorpay refund failed: ${refundData.error.description || "Unknown error"}`);
+        console.error("Razorpay gateway refund failed:", refundData);
+        throw new Error(`Razorpay refund failed: ${refundData.error?.description || "Gateway error"}`);
       }
 
       refundId = refundData.id;
-
     }
 
     // 6. Update DB Status

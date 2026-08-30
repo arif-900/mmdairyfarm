@@ -52,9 +52,45 @@ const NavigationHandler = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const handleBackButton = () => {
-          if (location.pathname === '/') {
-            // Potential exit logic here
+        const handleBackButton = (e: PopStateEvent) => {
+          // Priority 1: Open Radix Dialog / Modal close
+          const openModalCloseBtn = document.querySelector<HTMLButtonElement>(
+            '[role="dialog"] button[aria-label="Close"], [role="dialog"] button.close-modal, .radix-dialog-content button'
+          );
+          if (openModalCloseBtn) {
+            e.preventDefault();
+            openModalCloseBtn.click();
+            return;
+          }
+
+          // Priority 2: Open Mobile Menu Drawer close
+          const openDrawerCloseBtn = document.querySelector<HTMLButtonElement>(
+            '.mobile-menu-popover button[aria-label="Close menu"], button.mobile-menu-close'
+          );
+          if (openDrawerCloseBtn) {
+            e.preventDefault();
+            openDrawerCloseBtn.click();
+            return;
+          }
+
+          // Priority 3: Multi-step checkout back step
+          if (location.pathname === '/order') {
+            const checkoutPrevBtn = document.querySelector<HTMLButtonElement>('.checkout-prev-step-btn');
+            if (checkoutPrevBtn) {
+              e.preventDefault();
+              checkoutPrevBtn.click();
+              return;
+            }
+          }
+
+          // Priority 4: Direct deep-link entry protection (fall back cleanly to parent route)
+          if (window.history.length <= 2 && location.pathname !== '/') {
+            e.preventDefault();
+            if (location.pathname.startsWith('/product/')) {
+              navigate('/products');
+            } else {
+              navigate('/');
+            }
           }
         };
 

@@ -248,14 +248,7 @@ export const ShippingLabelModal: React.FC<ShippingLabelModalProps> = ({ order, i
                   {/* Total Summary */}
                   <div className="mt-auto flex border-t-[2px] border-black text-[9px] bg-slate-50/50">
                      <div className="w-[65%] p-2 border-r-[2px] border-black font-black flex items-center text-[9px] uppercase">
-                        {isPrepaid ? (
-                           <div className="text-emerald-700">✓ FULLY PAID ONLINE</div>
-                        ) : (
-                           <div className="flex flex-col gap-1">
-                             <div className="text-[7px] text-slate-500">Instruction:</div>
-                             <div className="text-black">COLLECT CASH ON DELIVERY</div>
-                           </div>
-                        )}
+                        <div className="text-emerald-700">✓ ONLINE PAYMENT ONLY / PAID ONLINE</div>
                      </div>
                      <div className="w-[35%] p-2 flex flex-col justify-center gap-1">
                         <div className="flex justify-between w-full opacity-80 text-[8px] font-bold">

@@ -185,13 +185,12 @@ async function getWebsiteInfo() {
       oneTime: 'One-time orders delivered based on availability'
     },
     payments: {
-      methods: ['UPI', 'Credit Card', 'Debit Card', 'Net Banking', 'Cash on Delivery (COD)'],
-      onlineFee: '1.5% convenience fee on all online payments',
-      codFee: 'No extra fee for Cash on Delivery',
+      methods: ['UPI', 'Credit Card', 'Debit Card', 'Net Banking'],
+      onlineFee: 'Online payment via Razorpay',
       processor: 'Razorpay (secure payment gateway)'
     },
     returns: {
-      policy: 'Report quality issues within 24 hours of delivery via WhatsApp or email.',
+      policy: 'Report quality issues within 24 hours of delivery via WhatsApp or email. Refunds are returned to the original payment method.',
       contact: 'WhatsApp: +91 63098 35752 or mmvalidairyfarm@gmail.com'
     },
     rewards: {
@@ -201,9 +200,8 @@ async function getWebsiteInfo() {
       'Farm-fresh dairy products sourced daily',
       'Morning doorstep delivery within 65 km',
       'Flexible one-time or daily subscription orders',
-      'Cash on Delivery with no extra charges',
-      'WhatsApp order notifications and tracking',
       'Secure online payments via Razorpay',
+      'WhatsApp order notifications and tracking',
       'Loyalty coins reward system',
       'PWA — installable on mobile as an app',
       'Real-time AI chat assistant'

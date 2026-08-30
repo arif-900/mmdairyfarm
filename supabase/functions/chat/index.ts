@@ -1,9 +1,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { createClient } from "npm:@supabase/supabase-js@2.39.0"
 
-// Import OpenAI SDK or use fetch directly
-const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") || Deno.env.get("VITE_OPENAI_API_KEY")
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || Deno.env.get("VITE_SUPABASE_URL")
+// Import Supabase SDK
+const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || Deno.env.get("VITE_GEMINI_API_KEY");
+const GEMINI_MODEL = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || Deno.env.get("VITE_SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || Deno.env.get("VITE_SUPABASE_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY");
 
 // Initialize Supabase client
@@ -14,100 +15,22 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// System Prompt defined in the requirements
+"// System Prompt defined in the requirements
 const SYSTEM_PROMPT = `
-You are an AI CUSTOMER SUPPORT AGENT for MMVALI Dairy Farm.
-This is a REAL BUSINESS WEBSITE. This is NOT a demo or toy chatbot.
+You are \"MM Assistant\", the official intelligent customer assistant for MM Dairy Farm.
+You operate on a LIVE production e-commerce website.
+Your job is to understand the customer's intent, retrieve accurate information when necessary, and provide a concise, natural, useful response.
 
-=== CORE RESPONSIBILITY ===
-Your primary job is to help customers successfully understand, order, and receive dairy products from MMVALI Dairy Farm.
-
-You must:
-• Analyze the customer's message carefully
-• Identify the user’s INTENT
-• Respond ONLY if your response helps the user move forward
-• Avoid unnecessary explanations, filler text, or generic help
-
-If the user message does not require a response, ask ONE short clarifying question.
-
-=== BUSINESS SCOPE (STRICT) ===
-MMVALI Dairy Farm sells ONLY:
-• Cow milk
-• Buffalo milk
-• Curd
-• Ghee (on request)
-
-You MUST NOT:
-• Talk about selling cows or buffaloes
-• Invent prices, offers, or delivery areas
-• Answer unrelated questions
-• Provide general knowledge outside this business
-
-=== KNOWLEDGE BASE ===
-Products:
-- Fresh Cow Milk: Pure and fresh cow milk from our farm. Price: ₹60/liter
-- Buffalo Milk: Rich and creamy buffalo milk. Price: ₹80/liter
-- Fresh Curd: Homemade fresh curd. Price: ₹70/kg
-- Pure Ghee: Traditional pure ghee made from cow milk. Price: ₹500/kg
-
-Delivery:
-- Maximum 65km from farm location
-- Morning delivery time only
-- Daily subscriptions start from tomorrow morning
-
-Payments:
-- Online payments (UPI/Cards/Net Banking) incur a 1.5% convenience fee
-- Cash on Delivery (COD) has no extra fee
-
-Contact:
-- WhatsApp: +91 9959091618
-- Email: admin@mmvali.com
-
-=== WEBSITE AWARENESS ===
-Assume the chatbot is embedded on the MMVALI Dairy Farm website.
-The user can already see products, prices, order button, and contact options.
-Therefore:
-• Do NOT repeat visible website content unless asked
-• Do NOT give marketing speeches
-• Do NOT explain obvious UI actions
-• Be concise and context-aware
-
-=== RESPONSE INTELLIGENCE ===
-Before responding, classify the message into ONE category:
-1) Product inquiry
-2) Price inquiry
-3) Delivery inquiry
-4) Order guidance
-5) Payment inquiry
-6) Order status / support
-7) Outside scope
-
-Respond ONLY based on the category using the Knowledge Base.
-
-If category = Outside scope:
-Respond with EXACTLY:
-"I can assist with MMVALI Dairy Farm products, prices, delivery, and orders.  
-For other queries, please contact us on WhatsApp: +919959091618."
-
-=== PROMPT ENGINEERING RULES (CRITICAL) ===
-• Output ONLY clean, customer-facing text
-• Never include internal words, tokens, debug terms, or partial phrases
-• Never mention AI, LLMs, prompts, or system rules
-• Never hallucinate or guess
-• If unsure, ask ONE clarifying question
-• If confidence < 80%, escalate to WhatsApp (+919959091618)
-
-=== OUTPUT STYLE ===
-• Short sentences
-• Simple English
-• Friendly but professional
-• No emojis
-• No bullet points unless listing prices
-
-=== FAILURE HANDLING ===
-If information is missing, unavailable, or unclear:
-Say so clearly and redirect to WhatsApp or call support.
-`
+=== CORE PRINCIPLES ===
+1. Understand what the customer actually wants.
+2. Answer ONLY what is relevant to the customer's current question.
+3. Do not provide unnecessary information, dump product catalogs, or repeat information unnecessarily.
+4. Live database data is the primary source of truth for products, prices, stock, delivery, coin rewards, and subscriptions.
+5. Prefer short, accurate answers (1-3 sentences).
+6. Represent MM Dairy Farm professionally with warmth and clarity.
+7. Currency: ₹. 4 Coins = ₹1. Cash on Delivery is NOT accepted.
+8. Support: WhatsApp +91 63098 35752 | mmvalidairyfarm@gmail.com
+`;
 
 Deno.serve(async (req) => {
     // Handle CORS preflight requests
@@ -116,67 +39,107 @@ Deno.serve(async (req) => {
     }
 
     try {
-        const { messages, sessionId, userId } = await req.json();
+        const payload = await req.json();
+        const { messages, message, history, sessionId, userId } = payload;
 
-        if (!messages || !Array.isArray(messages)) {
-            throw new Error("Missing or invalid messages array");
+        if (!GEMINI_API_KEY) {
+            throw new Error("GEMINI_API_KEY not configured in environment");
         }
 
-        if (!OPENAI_API_KEY) {
-            throw new Error("OpenAI API key not configured");
+        // Build Gemini payload contents array
+        let geminiContents: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+
+        if (Array.isArray(messages) && messages.length > 0) {
+            geminiContents = messages
+                .filter((m: any) => m.role !== 'system')
+                .map((m: any) => ({
+                    role: m.role === 'assistant' ? 'model' : 'user',
+                    parts: [{ text: m.content }]
+                }));
+        } else if (message) {
+            if (Array.isArray(history) && history.length > 0) {
+                geminiContents = history.map((h: any) => ({
+                    role: h.role === 'assistant' ? 'model' : 'user',
+                    parts: [{ text: h.content }]
+                }));
+            }
+            const userText = userId ? `[User ID: ${userId}]\n\n${message}` : message;
+            geminiContents.push({
+                role: 'user',
+                parts: [{ text: userText }]
+            });
+        } else {
+            throw new Error("Missing message or messages array in payload");
         }
 
-        // Call OpenAI API directly
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Fetch real-time products from database for dynamic AI knowledge
+        let dynamicSystemPrompt = SYSTEM_PROMPT;
+        try {
+            const { data: dbProducts } = await supabase
+                .from('products')
+                .select('name, price, base_price_per_kg, description, unit, unit_type, is_active')
+                .eq('is_active', true);
+            
+            if (dbProducts && dbProducts.length > 0) {
+                const productListStr = dbProducts.map((p: any) => 
+                    `• ${p.name}: ${p.base_price_per_kg ? `₹${p.base_price_per_kg}/kg` : `₹${p.price}/${p.unit || 'unit'}`} - ${p.description || ''}`
+                ).join('\n');
+                dynamicSystemPrompt += `\n\n=== LIVE REAL-TIME DATABASE PRODUCTS & PRICES ===\n${productListStr}\n`;
+            }
+        } catch (dbErr) {
+            console.warn("Could not fetch DB products for edge context:", dbErr);
+        }
+
+        // Call Google Gemini REST API directly
+        const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+        const geminiRes = await fetch(geminiEndpoint, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                model: 'gpt-4o-mini', // Using cost-effective model as default
-                messages: [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    ...messages
-                ],
-                temperature: 0.1, // Low temperature for high precision/low hallucination
-                max_tokens: 300,
+                system_instruction: {
+                    parts: [{ text: dynamicSystemPrompt }]
+                },
+                contents: geminiContents,
+                generationConfig: {
+                    temperature: 0.2,
+                    maxOutputTokens: 1024,
+                },
             }),
         });
 
-        if (!openaiResponse.ok) {
-            const errorText = await openaiResponse.text();
-            throw new Error(`OpenAI Error: ${errorText}`);
+        if (!geminiRes.ok) {
+            const errorText = await geminiRes.text();
+            throw new Error(`Gemini API Error (${geminiRes.status}): ${errorText}`);
         }
 
-        const data = await openaiResponse.json();
-        const assistantMessage = data.choices[0].message.content;
+        const data = await geminiRes.json();
+        const assistantMessage = data.candidates?.[0]?.content?.parts?.[0]?.text || "I am here to help you with MMVALI Dairy Farm products and orders. How can I assist you today?";
 
-        // Log the user's latest message to the database
-        const latestUserMessage = messages[messages.length - 1];
-        if (sessionId) {
-            // Async fire-and-forget logging to not block the response
+        // Log the conversation to database async if sessionId provided
+        const userPrompt = message || (Array.isArray(messages) ? messages[messages.length - 1]?.content : "");
+        if (sessionId && userPrompt) {
             supabase.from('chat_history').insert([
-                { session_id: sessionId, user_id: userId || null, role: 'user', content: latestUserMessage.content },
+                { session_id: sessionId, user_id: userId || null, role: 'user', content: userPrompt },
                 { session_id: sessionId, user_id: userId || null, role: 'assistant', content: assistantMessage }
             ]).then(({ error }) => {
                 if (error) console.error("Error logging chat:", error);
             });
         }
 
-        return new Response(JSON.stringify({ response: assistantMessage }), {
+        return new Response(JSON.stringify({ reply: assistantMessage, response: assistantMessage }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Chat Error:", error);
 
-        // Provide a safe fallback response per prompt.txt failure handling instructions
         const fallbackMessage = "I am currently unable to process your request. For immediate assistance, please contact us on WhatsApp: +919959091618.";
 
-        return new Response(JSON.stringify({ error: error.message, response: fallbackMessage }), {
+        return new Response(JSON.stringify({ error: error.message, reply: fallbackMessage, response: fallbackMessage }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 200, // Return 200 so UI can show the fallback gracefully
+            status: 200,
         });
     }
 })

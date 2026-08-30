@@ -25,10 +25,7 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Note: SDK 0.21.0 defaults to v1beta for some features; if errors occur, ensure model IDs are stable.
 
-// gemini-1.5-flash → free tier, supports function calling, very fast
-// gemini-1.5-flash → free tier, supports function calling, very fast
-// Use gemini-flash-latest as confirmed working in manual curl test
-const MODEL_NAME = 'gemini-flash-latest';
+const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
 // REDUCED for free tier quota (Limit: 20 per day)
 const MAX_ITER   = 2; // safety cap on agentic loop

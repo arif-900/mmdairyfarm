@@ -306,18 +306,8 @@ const DeliveryDashboard = () => {
   const updateStatus = async (orderId: string, status: string, providedOtp?: string) => {
     const order = orders.find(o => o.id === orderId);
 
-    // Security check for COD orders
-    if (status === 'delivered' && order?.payment_method === 'cod' && !order?.is_cash_collected) {
-      toast({
-        title: "Confirm Cash Collection",
-        description: "You must mark the cash as collected before completing this delivery.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Only enforce OTP if it's NOT a COD order
-    if (status === 'delivered' && order && order.delivery_otp && order.payment_method !== 'cod') {
+    // Require OTP verification for completed deliveries
+    if (status === 'delivered' && order && order.delivery_otp) {
       const entered = providedOtp?.trim() || "";
       const stored = order.delivery_otp?.trim() || "";
 
@@ -1253,38 +1243,32 @@ const OrderCard = ({
               )}
               {order.status === 'out_for_delivery' && (
                 <div className="space-y-3 animate-in fade-in zoom-in-95 duration-500">
-                  {order.payment_method !== 'cod' ? (
-                    <div className="bg-cream/50 rounded-[10px] p-5 border border-forest/10 space-y-3">
-                      <Label className="text-[9px] font-bold uppercase tracking-[0.2em] text-earth-light block text-center">Verify OTP</Label>
-                      <div className="flex gap-2 justify-center">
-                        <Input
-                          placeholder="······"
-                          className="h-14 w-[160px] rounded-[10px] border-none bg-white shadow-md text-center text-2xl font-bold tracking-[0.3em] focus:ring-4 focus:ring-forest/10 transition-all font-mono"
-                          maxLength={6}
-                          value={otpInput}
-                          onChange={(e) => setOtpInput(e.target.value)}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-14 w-14 rounded-[10px] border border-earth-light/20 bg-white shadow-sm active:scale-90 transition-all"
-                          onClick={() => onRegenerateOtp(order.id)}
-                        >
-                          <RefreshCw className="h-5 w-5 text-forest" />
-                        </Button>
-                      </div>
+                  <div className="bg-cream/50 rounded-[10px] p-5 border border-forest/10 space-y-3">
+                    <Label className="text-[9px] font-bold uppercase tracking-[0.2em] text-earth-light block text-center">Verify Delivery OTP</Label>
+                    <div className="flex gap-2 justify-center">
+                      <Input
+                        placeholder="······"
+                        className="h-14 w-[160px] rounded-[10px] border-none bg-white shadow-md text-center text-2xl font-bold tracking-[0.3em] focus:ring-4 focus:ring-forest/10 transition-all font-mono"
+                        maxLength={6}
+                        value={otpInput}
+                        onChange={(e) => setOtpInput(e.target.value)}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-14 w-14 rounded-[10px] border border-earth-light/20 bg-white shadow-sm active:scale-90 transition-all"
+                        onClick={() => onRegenerateOtp(order.id)}
+                      >
+                        <RefreshCw className="h-5 w-5 text-forest" />
+                      </Button>
                     </div>
-                  ) : (
-                    <div className="bg-forest-light/8 rounded-[10px] p-5 border border-forest-light/20 border-dashed text-center">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-forest">COD — No OTP Needed</p>
-                    </div>
-                  )}
+                  </div>
                   <div className="flex justify-center">
                     <Button
                       className="bg-forest hover:bg-forest-dark h-12 px-8 rounded-[10px] text-white font-bold text-sm tracking-[0.15em] shadow-md shadow-forest/20 transition-all"
                       onClick={() => onUpdateStatus(order.id, 'delivered', otpInput)}
                     >
-                      {order.payment_method === 'cod' ? "COMPLETE DELIVERY" : "VERIFY & FINISH"}
+                      VERIFY &amp; FINISH
                     </Button>
                   </div>
                 </div>

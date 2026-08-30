@@ -159,7 +159,7 @@ export function PromoCarousel() {
                         width="1400"
                         height="600"
                         loading={index === 0 ? "eager" : "lazy"}
-                        fetchPriority={index === 0 ? "high" : "low"}
+                        fetchpriority={index === 0 ? "high" : "low"}
                         decoding="async"
                         onError={() => handleImageError(banner.id)}
                         className="w-full h-auto block object-cover rounded-2xl sm:rounded-3xl"

@@ -32,8 +32,8 @@ app.post('/api/chat', async (req, res) => {
 
   } catch (err) {
     console.error('[/api/chat] Error:', err.message);
-    return res.status(500).json({
-      reply: "I'm having trouble right now. Please try again or contact us on WhatsApp: +91 63098 35752",
+    return res.status(200).json({
+      reply: "I'm having trouble right now. Please try again or contact us on WhatsApp: +91 99590 91618",
       error: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
   }

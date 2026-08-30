@@ -40,7 +40,6 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
     const [activeSubs, setActiveSubs] = useState(0);
     const [lowStock, setLowStock] = useState(0);
     const [unreadFeedbacks, setUnreadFeedbacks] = useState(0);
-    const [codPending, setCodPending] = useState(0);
 
     const fetchDashboardData = async () => {
         try {
@@ -85,19 +84,9 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
 
             // Fetch Unread Feedback count
             const { count: feedbackCount } = await supabase
-                .from("feedbacks")
-                .select("*", { count: "exact", head: true })
-                .neq("status", "resolved");
+                .from("order_feedback")
+                .select("*", { count: "exact", head: true });
             setUnreadFeedbacks(feedbackCount || 0);
-
-            // Fetch COD pending amount
-            const { data: codPendingData } = await supabase
-                .from("orders")
-                .select("total_amount")
-                .eq("payment_method", "cod")
-                .not("status", "in", '("delivered","cancelled")');
-            const codPendingSum = codPendingData?.reduce((sum, o) => sum + Number(o.total_amount || 0), 0) || 0;
-            setCodPending(codPendingSum);
 
         } catch (err) {
             console.error("Dashboard fetch error:", err);
@@ -295,19 +284,7 @@ export function OverviewTab({ onTabChange }: { onTabChange?: (tab: string) => vo
                     </CardContent>
                 </Card>
 
-                {/* 5. COD Collections Pending */}
-                <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">
-                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
-                        <HandCoins className="h-10 w-10 text-[#C98A24]" />
-                    </div>
-                    <CardHeader className="pb-1 pt-4 px-4">
-                        <p className="text-[9px] font-bold uppercase tracking-wider text-[#AAB8B0]">COD Pending</p>
-                    </CardHeader>
-                    <CardContent className="pb-4 px-4">
-                        <h3 className="text-xl font-black text-[#C98A24]">₹{codPending.toFixed(0)}</h3>
-                        <p className="text-[8px] text-[#AAB8B0] font-bold mt-0.5">Outstanding in field</p>
-                    </CardContent>
-                </Card>
+
 
                 {/* 6. Unread Feedback */}
                 <Card className="bg-[#0B2118] border border-white/10 overflow-hidden relative group rounded-2xl shadow-xl text-[#F5F3EC]">

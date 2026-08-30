@@ -89,20 +89,22 @@ export function useInfiniteProductsQuery({ searchQuery = "", categoryId = "" }: 
 
   // Real-time channel listener for instant sync on DB updates
   useEffect(() => {
-    const channel = supabase
-      .channel("infinite-products-realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "products",
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["infinite_products"] });
-        }
-      )
-      .subscribe();
+    const channelName = `infinite-products-sync-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const channel = supabase.channel(channelName);
+
+    channel.on(
+      "postgres_changes" as any,
+      {
+        event: "*",
+        schema: "public",
+        table: "products",
+      },
+      () => {
+        queryClient.invalidateQueries({ queryKey: ["infinite_products"] });
+      }
+    );
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);

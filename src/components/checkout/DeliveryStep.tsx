@@ -1,8 +1,9 @@
-import { MapPin, ArrowRight, AlertCircle, Truck, Info } from "lucide-react";
+import { MapPin, ArrowRight, AlertCircle, Truck, Info, Sparkles } from "lucide-react";
 import { CircularBackButton } from "../ui/CircularBackButton";
 import { Button } from "@/components/ui/button";
 import AddressSelector from "@/components/order/AddressSelector";
-import { cn } from "@/lib/utils";
+import { calculateDeliveryFeeDetails } from "@/utils/distance";
+import { FreeDeliveryCelebration } from "./FreeDeliveryCelebration";
 
 interface DeliveryStepProps {
   user: any;
@@ -13,6 +14,7 @@ interface DeliveryStepProps {
   distance: number | null;
   distanceError: string | null;
   shippingFee: number;
+  subtotal?: number;
   onNext: () => void;
   onBack: () => void;
   navigate: (path: string) => void;
@@ -27,10 +29,14 @@ export function DeliveryStep({
   distance,
   distanceError,
   shippingFee,
+  subtotal = 0,
   onNext,
   onBack,
   navigate
 }: DeliveryStepProps) {
+  const deliveryDetails = calculateDeliveryFeeDetails(distance, subtotal);
+  const isFree = deliveryDetails.isFreeDelivery;
+
   return (
     <div className="space-y-6 font-body text-[#F5F3EC]">
       <div className="bg-[#0B2118] rounded-[24px] md:rounded-[40px] p-5 md:p-8 shadow-2xl border border-white/10">
@@ -62,31 +68,56 @@ export function DeliveryStep({
               )}
 
               {selectedAddress && (
-                <div className="p-4 md:p-6 bg-[#10291F] rounded-2xl border border-white/10 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#AAB8B0] mb-1">Shipping Summary</p>
-                      <div className="flex items-center gap-2">
-                        <Truck className="w-4 h-4 text-[#C98A24]" />
-                        <p className="text-sm font-black text-[#F5F3EC]">
-                          {shippingFee === 0 ? "Free Delivery" : `₹${shippingFee} Shipping Fee`}
-                        </p>
+                <div className="space-y-4">
+                  {/* Celebration Trigger (Fires in Step 2 if subtotal < 1000 and within free distance zone) */}
+                  <FreeDeliveryCelebration 
+                    isFreeDelivery={isFree && subtotal < 1000 && !distanceError} 
+                    reason={deliveryDetails.freeDeliveryReason}
+                    distanceKm={distance}
+                  />
+
+                  <div className="p-4 md:p-6 bg-[#10291F] rounded-2xl border border-white/10 space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#AAB8B0] mb-1">Shipping Summary</p>
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4 text-[#C98A24]" />
+                          <p className="text-sm font-black text-[#F5F3EC]">
+                            {isFree ? (
+                              <span className="text-[#3BC77B] flex items-center gap-1">
+                                FREE DELIVERY <Sparkles className="w-3.5 h-3.5" />
+                              </span>
+                            ) : (
+                              `₹${shippingFee} Shipping Fee`
+                            )}
+                          </p>
+                        </div>
                       </div>
+                      {distance !== null && (
+                        <div className="text-right">
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#AAB8B0] mb-1">Distance</p>
+                          <p className="text-sm font-black text-[#C98A24]">{distance.toFixed(1)} km away</p>
+                        </div>
+                      )}
                     </div>
-                    {distance !== null && (
-                      <div className="text-right">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#AAB8B0] mb-1">Distance</p>
-                        <p className="text-sm font-black text-[#C98A24]">{distance.toFixed(1)} km away</p>
+
+                    {/* Progress Indicator to unlock Free Delivery if order < 1000 and distance > 10 */}
+                    {!isFree && deliveryDetails.amountNeededForFreeDelivery > 0 && !distanceError && (
+                      <div className="p-3 bg-[#0B2118] rounded-xl border border-[#C98A24]/20 flex items-center justify-between text-xs">
+                        <span className="text-[#AAB8B0] flex items-center gap-1.5 font-medium">
+                          <Info className="w-4 h-4 text-[#C98A24] shrink-0" />
+                          Add <strong className="text-[#F5F3EC]">₹{deliveryDetails.amountNeededForFreeDelivery}</strong> more for FREE DELIVERY
+                        </span>
+                      </div>
+                    )}
+                    
+                    {distanceError && (
+                      <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-2xl flex items-start gap-3">
+                        <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                        <p className="text-[10px] font-bold text-rose-300 uppercase leading-relaxed">{distanceError}</p>
                       </div>
                     )}
                   </div>
-                  
-                  {distanceError && (
-                    <div className="bg-rose-500/10 border border-rose-500/30 p-4 rounded-2xl flex items-start gap-3">
-                      <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                      <p className="text-[10px] font-bold text-rose-300 uppercase leading-relaxed">{distanceError}</p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>

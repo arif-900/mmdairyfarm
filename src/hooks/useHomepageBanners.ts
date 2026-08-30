@@ -90,21 +90,23 @@ export function useHomepageBanners() {
 
   // Supabase Realtime channel for instant cross-tab and cross-device sync
   useEffect(() => {
-    const channel = supabase
-      .channel("homepage-banners-query-sync")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "app_settings",
-          filter: "key=eq.homepage_banners",
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: PROMO_BANNERS_QUERY_KEY });
-        }
-      )
-      .subscribe();
+    const channelName = `homepage-banners-sync-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const channel = supabase.channel(channelName);
+
+    channel.on(
+      "postgres_changes" as any,
+      {
+        event: "*",
+        schema: "public",
+        table: "app_settings",
+        filter: "key=eq.homepage_banners",
+      },
+      () => {
+        queryClient.invalidateQueries({ queryKey: PROMO_BANNERS_QUERY_KEY });
+      }
+    );
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);

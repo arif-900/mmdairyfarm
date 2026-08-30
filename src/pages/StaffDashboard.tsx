@@ -42,7 +42,6 @@ import { FeedbackTab } from "@/components/admin/FeedbackTab";
 import { ProductsTab } from "@/components/admin/ProductsTab";
 import { DeliveryBoysTab } from "@/components/admin/DeliveryBoysTab";
 import { OffersTab } from "@/components/admin/OffersTab";
-import { CodLedgerTab } from "@/components/admin/CodLedgerTab";
 import { MakingVideosTab } from "@/components/admin/MakingVideosTab";
 import { SmartScannerModal } from "@/components/shared/SmartScannerModal";
 
@@ -149,9 +148,8 @@ const StaffDashboard = () => {
 
             // Fetch unresolved feedbacks count
             const { count: feedbackCount } = await supabase
-                .from("feedbacks")
-                .select("*", { count: "exact", head: true })
-                .neq("status", "resolved");
+                .from("order_feedback")
+                .select("*", { count: "exact", head: true });
             setUnresolvedFeedbackCount(feedbackCount || 0);
 
         } catch (err) {
@@ -512,7 +510,6 @@ const StaffDashboard = () => {
 
                     <TabsContent value="products"><ProductsTab /></TabsContent>
                     <TabsContent value="delivery"><DeliveryBoysTab /></TabsContent>
-                    <TabsContent value="settlements"><CodLedgerTab /></TabsContent>
                     <TabsContent value="chat"><ChatHistoryTab /></TabsContent>
                     <TabsContent value="announcements"><AnnouncementsTab /></TabsContent>
                     <TabsContent value="feedback"><FeedbackTab /></TabsContent>

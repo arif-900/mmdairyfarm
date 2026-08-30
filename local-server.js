@@ -9,6 +9,7 @@ import ordersApp from './api/orders/index.js';
 import adminApp from './api/admin/index.js';
 import chatApp from './api/chat/index.js';
 import whatsappApp from './api/whatsapp/index.js';
+import rankHandler from './api/recommendations/rank.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,6 +25,7 @@ app.use(ordersApp);
 app.use(adminApp);
 app.use(chatApp);
 app.use(whatsappApp);
+app.post('/api/recommendations/rank', rankHandler);
 
 // Root route for health check
 app.get('/', (req, res) => {

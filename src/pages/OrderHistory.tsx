@@ -388,8 +388,16 @@ const OrderHistory = () => {
                         <div>
                           <p className="text-[10px] uppercase font-bold text-[#718078] tracking-wider mb-0.5">Payment</p>
                           <div className="flex items-center gap-1.5 text-[#F5F3EC] font-semibold text-xs sm:text-sm">
-                            {order.payment_method === "cod" ? <Banknote className="w-3.5 h-3.5 text-[#C98A24]" /> : <CreditCard className="w-3.5 h-3.5 text-blue-400" />}
-                            <span className="uppercase text-xs">{order.payment_method === "cod" ? "Cash" : "Online"}</span>
+                            {order.payment_method === "wallet" || order.payment_method === "coins" || order.total_amount === 0 ? (
+                              <Package className="w-3.5 h-3.5 text-[#C98A24]" />
+                            ) : order.payment_method === "cod" ? (
+                              <Banknote className="w-3.5 h-3.5 text-[#C98A24]" />
+                            ) : (
+                              <CreditCard className="w-3.5 h-3.5 text-blue-400" />
+                            )}
+                            <span className="uppercase text-xs">
+                              {order.payment_method === "wallet" || order.payment_method === "coins" || order.total_amount === 0 ? "Wallet" : order.payment_method === "cod" ? "Cash" : "Online"}
+                            </span>
                           </div>
                         </div>
 

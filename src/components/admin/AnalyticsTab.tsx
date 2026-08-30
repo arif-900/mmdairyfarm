@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { 
   BarChart, 
   Bar, 
@@ -8,16 +8,9 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  Cell,
-  PieChart,
-  Pie,
-  LineChart,
-  Line,
-  Legend
+  ResponsiveContainer
 } from "recharts";
 import { 
-  TrendingUp, 
   Users, 
   Package, 
   Activity, 
@@ -25,7 +18,7 @@ import {
   CalendarCheck,
   Loader2
 } from "lucide-react";
-import { format, subDays, startOfMonth, endOfMonth } from "date-fns";
+import { format, subDays } from "date-fns";
 
 export function AnalyticsTab() {
   const [loading, setLoading] = useState(true);
@@ -93,83 +86,89 @@ export function AnalyticsTab() {
     fetchAnalytics();
   }, []);
 
-  if (loading) return <div className="p-20 flex justify-center"><Loader2 className="h-10 w-10 animate-spin text-emerald-600" /></div>;
+  if (loading) return <div className="p-20 flex justify-center"><Loader2 className="h-10 w-10 animate-spin text-[#C98A24]" /></div>;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700 font-sans text-[#F5F3EC]">
       
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="rounded-[10px] border-none shadow-xl bg-slate-900 text-white p-8 relative overflow-hidden group">
-           <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-emerald-600/20 rounded-full blur-3xl group-hover:scale-150 transition-transform" />
+        <Card className="rounded-2xl border border-white/10 shadow-2xl bg-[#0B2118] text-[#F5F3EC] p-8 relative overflow-hidden group">
+           <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-[#3BC77B]/15 rounded-full blur-3xl group-hover:scale-150 transition-transform" />
            <div className="relative z-10">
-              <Wallet className="w-8 h-8 text-emerald-400 mb-4" />
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Monthly Subscription Value</p>
-              <h3 className="text-4xl font-black italic">₹{stats.activeValue.toLocaleString()}</h3>
-              <p className="text-xs font-bold text-emerald-500 mt-2">Active Prepaid Revenue</p>
+              <Wallet className="w-8 h-8 text-[#C98A24] mb-4" />
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#AAB8B0] mb-1">Monthly Subscription Value</p>
+              <h3 className="text-4xl font-black italic text-[#C98A24]">₹{stats.activeValue.toLocaleString()}</h3>
+              <p className="text-xs font-bold text-[#3BC77B] mt-2">Active Prepaid Revenue</p>
            </div>
         </Card>
 
-        <Card className="rounded-[10px] border-none shadow-xl bg-white p-8 group">
-           <Users className="w-8 h-8 text-blue-500 mb-4" />
-           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Active Subscribers</p>
-           <h3 className="text-4xl font-black text-slate-900">{stats.active}</h3>
-           <p className="text-xs font-bold text-slate-400 mt-2">{stats.paused} Paused • {stats.cancelled} Cancelled</p>
+        <Card className="rounded-2xl border border-white/10 shadow-2xl bg-[#0B2118] text-[#F5F3EC] p-8 group">
+           <Users className="w-8 h-8 text-blue-400 mb-4" />
+           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#AAB8B0] mb-1">Active Subscribers</p>
+           <h3 className="text-4xl font-black text-[#F5F3EC]">{stats.active}</h3>
+           <p className="text-xs font-bold text-[#AAB8B0] mt-2">{stats.paused} Paused • {stats.cancelled} Cancelled</p>
         </Card>
 
-        <Card className="rounded-[10px] border-none shadow-xl bg-white p-8 group">
-           <Activity className="w-8 h-8 text-amber-500 mb-4" />
-           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Delivery Success Rate</p>
-           <h3 className="text-4xl font-black text-slate-900">98.4%</h3>
-           <p className="text-xs font-bold text-emerald-500 mt-2">+2.1% from last week</p>
+        <Card className="rounded-2xl border border-white/10 shadow-2xl bg-[#0B2118] text-[#F5F3EC] p-8 group">
+           <Activity className="w-8 h-8 text-[#C98A24] mb-4" />
+           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#AAB8B0] mb-1">Delivery Success Rate</p>
+           <h3 className="text-4xl font-black text-[#F5F3EC]">98.4%</h3>
+           <p className="text-xs font-bold text-[#3BC77B] mt-2">+2.1% from last week</p>
         </Card>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
-         <Card className="md:col-span-8 rounded-[10px] border-none shadow-xl bg-white p-8">
+         <Card className="md:col-span-8 rounded-2xl border border-white/10 shadow-2xl bg-[#0B2118] text-[#F5F3EC] p-8">
             <div className="flex items-center justify-between mb-8">
-               <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic flex items-center gap-2">
-                  <CalendarCheck className="w-5 h-5 text-emerald-600" /> 7-Day Fulfillment Trend
+               <h3 className="text-xl font-black text-[#F5F3EC] uppercase tracking-tight flex items-center gap-2">
+                  <CalendarCheck className="w-5 h-5 text-[#C98A24]" /> 7-Day Fulfillment Trend
                </h3>
             </div>
             <div className="h-[300px]">
                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={trendData}>
-                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
-                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
+                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.08)" />
+                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#AAB8B0' }} />
+                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#AAB8B0' }} />
                      <Tooltip 
-                        contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
-                        cursor={{ fill: '#f8fafc' }}
+                        contentStyle={{ 
+                          backgroundColor: '#10291F', 
+                          borderColor: 'rgba(255,255,255,0.1)', 
+                          color: '#F5F3EC', 
+                          borderRadius: '16px',
+                          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)'
+                        }}
+                        cursor={{ fill: 'rgba(255,255,255,0.04)' }}
                      />
-                     <Bar dataKey="delivered" fill="#10b981" radius={[10, 10, 0, 0]} barSize={24} />
-                     <Bar dataKey="skipped" fill="#f43f5e" radius={[10, 10, 0, 0]} barSize={24} />
+                     <Bar dataKey="delivered" fill="#3BC77B" radius={[8, 8, 0, 0]} barSize={24} />
+                     <Bar dataKey="skipped" fill="#f43f5e" radius={[8, 8, 0, 0]} barSize={24} />
                   </BarChart>
                </ResponsiveContainer>
             </div>
          </Card>
 
-         <Card className="md:col-span-4 rounded-[10px] border-none shadow-xl bg-white p-8">
-            <h3 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic mb-8">Sub Demand</h3>
+         <Card className="md:col-span-4 rounded-2xl border border-white/10 shadow-2xl bg-[#0B2118] text-[#F5F3EC] p-8">
+            <h3 className="text-xl font-black text-[#F5F3EC] uppercase tracking-tight mb-8">Sub Demand</h3>
             <div className="space-y-6">
                {productData.slice(0, 5).map((p, i) => (
                   <div key={p.name} className="flex items-center justify-between">
                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-[10px] bg-slate-50 flex items-center justify-center font-black text-[10px] text-slate-400">
+                        <div className="w-8 h-8 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center font-black text-xs text-[#C98A24]">
                            0{i+1}
                         </div>
-                        <span className="font-bold text-slate-700 text-sm">{p.name}</span>
+                        <span className="font-bold text-[#F5F3EC] text-sm">{p.name}</span>
                      </div>
-                     <span className="font-black text-emerald-600 text-sm">{p.quantity} Units</span>
+                     <span className="font-black text-[#3BC77B] text-sm">{p.quantity} Units</span>
                   </div>
                ))}
             </div>
 
-            <div className="mt-10 p-6 rounded-[10px] bg-emerald-50 border border-emerald-100 flex items-center gap-4">
-               <Package className="w-10 h-10 text-emerald-600 animate-bounce" />
+            <div className="mt-10 p-6 rounded-2xl bg-[#10291F] border border-[#3BC77B]/30 flex items-center gap-4">
+               <Package className="w-10 h-10 text-[#3BC77B] shrink-0" />
                <div>
-                  <p className="text-xs font-black text-emerald-900 uppercase tracking-tighter">Inventory Alert</p>
-                  <p className="text-[10px] font-bold text-emerald-600">Stock coverage is optimal for the next 48 hours.</p>
+                  <p className="text-xs font-black text-[#F5F3EC] uppercase tracking-wider">Inventory Alert</p>
+                  <p className="text-[10px] font-bold text-[#3BC77B] mt-0.5">Stock coverage is optimal for the next 48 hours.</p>
                </div>
             </div>
          </Card>

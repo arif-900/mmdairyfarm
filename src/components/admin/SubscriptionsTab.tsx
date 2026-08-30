@@ -230,7 +230,7 @@ export function SubscriptionsTab() {
 
     const handleCancelSubscription = async (itemId: string) => {
         const confirmCancel = window.confirm(
-            "Are you sure you want to cancel this subscription and refund the remaining balance to the customer's wallet (Milk Coins)?"
+            "Are you sure you want to cancel this subscription and refund the remaining balance (in Reward Coins, 4 Coins = ₹1) to the customer's wallet?"
         );
         if (!confirmCancel) return;
 
@@ -245,9 +245,11 @@ export function SubscriptionsTab() {
             const result = data as any;
             if (!result.success) throw new Error(result.message);
 
+            const coinsCredited = result.coins_credited || Math.floor((result.refunded_amount || 0) * 4);
+
             toast({
                 title: "Subscription Cancelled",
-                description: `₹${result.refunded_amount} was successfully credited to the customer's wallet for ${result.remaining_deliveries} unused deliveries.`,
+                description: `₹${result.refunded_amount} (${coinsCredited} Reward Coins) was successfully credited to the customer's wallet for ${result.remaining_deliveries} unused deliveries.`,
             });
             fetchSubscriptions();
             setSelectedItem(null);
@@ -415,61 +417,61 @@ export function SubscriptionsTab() {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-               <Card className="bg-emerald-50/50 border-emerald-100 shadow-sm rounded-[10px] overflow-hidden relative">
+               <Card className="bg-[#0B2118] border border-white/10 shadow-xl rounded-2xl overflow-hidden relative">
                    <CardContent className="p-4 flex items-center gap-3 relative z-10">
-                       <div className="w-10 h-10 rounded-[10px] bg-white border border-emerald-100 flex items-center justify-center shadow-sm">
-                           <CalendarHeart className="w-5 h-5 text-emerald-600" />
+                       <div className="w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center shadow-sm">
+                           <CalendarHeart className="w-5 h-5 text-[#C98A24]" />
                        </div>
                        <div>
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Total Plans</p>
-                           <p className="text-xl font-black text-slate-900 leading-none">{total}</p>
+                           <p className="text-[9px] text-[#AAB8B0] font-black uppercase tracking-widest leading-none mb-1">Total Plans</p>
+                           <p className="text-xl font-black text-[#F5F3EC] leading-none">{total}</p>
                        </div>
                    </CardContent>
                </Card>
-               <Card className="bg-blue-50/50 border-blue-100 shadow-sm rounded-[10px] overflow-hidden relative">
+               <Card className="bg-[#0B2118] border border-white/10 shadow-xl rounded-2xl overflow-hidden relative">
                    <CardContent className="p-4 flex items-center gap-3 relative z-10">
-                       <div className="w-10 h-10 rounded-[10px] bg-white border border-blue-100 flex items-center justify-center shadow-sm">
-                           <Power className="w-5 h-5 text-blue-600" />
+                       <div className="w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center shadow-sm">
+                           <Power className="w-5 h-5 text-[#3BC77B]" />
                        </div>
                        <div>
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Active</p>
-                           <p className="text-xl font-black text-slate-900 leading-none">{active}</p>
+                           <p className="text-[9px] text-[#AAB8B0] font-black uppercase tracking-widest leading-none mb-1">Active</p>
+                           <p className="text-xl font-black text-[#3BC77B] leading-none">{active}</p>
                        </div>
                    </CardContent>
                </Card>
                <Card className={cn(
-                   "shadow-sm rounded-[10px] overflow-hidden relative",
-                   unassigned > 0 ? "bg-rose-50/50 border-rose-100" : "bg-emerald-50/20 border-emerald-100"
+                   "shadow-xl rounded-2xl overflow-hidden relative bg-[#0B2118] border border-white/10",
+                   unassigned > 0 && "border-rose-500/40 bg-rose-950/20"
                )}>
                    <CardContent className="p-4 flex items-center gap-3 relative z-10">
                        <div className={cn(
-                           "w-10 h-10 rounded-[10px] bg-white border flex items-center justify-center shadow-sm",
-                           unassigned > 0 ? "border-rose-100" : "border-emerald-100"
+                           "w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center shadow-sm",
+                           unassigned > 0 && "border-rose-500/30"
                        )}>
-                           <Bike className={cn("w-5 h-5", unassigned > 0 ? "text-rose-500" : "text-emerald-500")} />
+                           <Bike className={cn("w-5 h-5", unassigned > 0 ? "text-rose-400" : "text-[#3BC77B]")} />
                        </div>
                        <div>
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Missing Rider</p>
-                           <p className={cn("text-xl font-black leading-none", unassigned > 0 ? "text-rose-600" : "text-emerald-600")}>
+                           <p className="text-[9px] text-[#AAB8B0] font-black uppercase tracking-widest leading-none mb-1">Missing Rider</p>
+                           <p className={cn("text-xl font-black leading-none", unassigned > 0 ? "text-rose-400" : "text-[#3BC77B]")}>
                                {unassigned}
                            </p>
                        </div>
                    </CardContent>
                </Card>
                <Card className={cn(
-                   "shadow-sm rounded-[10px] overflow-hidden relative",
-                   expiring > 0 ? "bg-amber-50/50 border-amber-100" : "bg-slate-50/20 border-slate-100"
+                   "shadow-xl rounded-2xl overflow-hidden relative bg-[#0B2118] border border-white/10",
+                   expiring > 0 && "border-amber-500/40 bg-amber-950/20"
                )}>
                    <CardContent className="p-4 flex items-center gap-3 relative z-10">
                        <div className={cn(
-                           "w-10 h-10 rounded-[10px] bg-white border flex items-center justify-center shadow-sm",
-                           expiring > 0 ? "border-amber-100" : "border-slate-100"
+                           "w-10 h-10 rounded-xl bg-[#10291F] border border-white/10 flex items-center justify-center shadow-sm",
+                           expiring > 0 && "border-amber-500/30"
                        )}>
-                           <AlertCircle className={cn("w-5 h-5", expiring > 0 ? "text-amber-500" : "text-slate-300")} />
+                           <AlertCircle className={cn("w-5 h-5", expiring > 0 ? "text-amber-400" : "text-[#AAB8B0]")} />
                        </div>
                        <div>
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest leading-none mb-1">Expiring Soon</p>
-                           <p className={cn("text-xl font-black leading-none", expiring > 0 ? "text-amber-600" : "text-slate-400")}>
+                           <p className="text-[9px] text-[#AAB8B0] font-black uppercase tracking-widest leading-none mb-1">Expiring Soon</p>
+                           <p className={cn("text-xl font-black leading-none", expiring > 0 ? "text-amber-400" : "text-[#AAB8B0]")}>
                                {expiring}
                            </p>
                        </div>
@@ -477,13 +479,13 @@ export function SubscriptionsTab() {
                </Card>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-[10px] border border-slate-100 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-4 items-center bg-[#0B2118] p-4 rounded-2xl border border-white/10 shadow-xl">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px] h-11 rounded-[10px] bg-slate-50 border-slate-100 font-bold uppercase text-[10px] tracking-widest">
-                        <Filter className="w-3 h-3 mr-2 text-slate-400" />
+                    <SelectTrigger className="w-[180px] h-11 rounded-xl bg-[#10291F] border-white/10 font-bold uppercase text-[10px] tracking-widest text-[#F5F3EC]">
+                        <Filter className="w-3 h-3 mr-2 text-[#C98A24]" />
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-[10px] shadow-2xl border-slate-100">
+                    <SelectContent className="rounded-xl bg-[#10291F] border-white/10 text-[#F5F3EC]">
                         <SelectItem value="all">All Items</SelectItem>
                         <SelectItem value="active">Active</SelectItem>
                         <SelectItem value="paused">Paused</SelectItem>
@@ -495,7 +497,7 @@ export function SubscriptionsTab() {
                     variant="outline" 
                     onClick={handleSyncTodayDrops} 
                     disabled={isLoading} 
-                    className="h-11 rounded-[10px] px-6 border-emerald-100 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all font-black uppercase text-[10px] tracking-widest gap-2"
+                    className="h-11 rounded-xl px-6 border-emerald-500/30 bg-emerald-950/40 text-emerald-300 hover:bg-[#3BC77B] hover:text-[#061A13] transition-all font-black uppercase text-[10px] tracking-widest gap-2"
                 >
                     <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin")} />
                     Generate Today's Route
@@ -505,57 +507,57 @@ export function SubscriptionsTab() {
                     variant="outline" 
                     onClick={fetchSubscriptions} 
                     disabled={isLoading} 
-                    className="h-11 rounded-[10px] px-6 border-slate-100 hover:bg-slate-50 transition-all font-black uppercase text-[10px] tracking-widest"
+                    className="h-11 rounded-xl px-6 border-white/10 bg-[#10291F] text-[#F5F3EC] hover:bg-white/10 transition-all font-black uppercase text-[10px] tracking-widest"
                 >
                     <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin")} />
                     Refresh List
                 </Button>
             </div>
 
-            <div className="bg-white rounded-[10px] shadow-xl shadow-emerald-900/5 border border-slate-100 overflow-hidden">
+            <div className="bg-[#0B2118] rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
                 {isLoading ? (
-                    <div className="p-20 flex justify-center text-emerald-600">
+                    <div className="p-20 flex justify-center text-[#C98A24]">
                         <Loader2 className="h-10 w-10 animate-spin" />
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="p-20 text-center text-slate-300">
-                        <CalendarHeart className="h-16 w-16 mx-auto opacity-20 mb-4" />
-                        <p className="font-black uppercase text-xs tracking-widest">No matching subscriptions</p>
+                    <div className="p-20 text-center text-[#AAB8B0]">
+                        <CalendarHeart className="h-16 w-16 mx-auto opacity-20 mb-4 text-[#C98A24]" />
+                        <p className="font-black uppercase text-xs tracking-widest text-[#AAB8B0]">No matching subscriptions</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <Table>
-                            <TableHeader className="bg-slate-50/50 border-b border-slate-100">
-                                <TableRow>
-                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Customer & Product</TableHead>
-                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Shipment Details</TableHead>
-                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Assigned Rider</TableHead>
-                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Status</TableHead>
-                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right">Action</TableHead>
+                            <TableHeader className="bg-[#10291F] border-b border-white/10">
+                                <TableRow className="hover:bg-transparent border-white/10">
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-[#AAB8B0]">Customer & Product</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-[#AAB8B0]">Shipment Details</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-[#AAB8B0]">Assigned Rider</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-[#AAB8B0]">Status</TableHead>
+                                    <TableHead className="px-6 py-4 font-black uppercase text-[10px] tracking-widest text-[#AAB8B0] text-right">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {filtered.map((item) => {
                                     const expiring = isExpiringSoon(item.end_date) && item.status === 'active';
                                     return (
-                                    <TableRow key={item.id} className="hover:bg-slate-50/30 transition-colors border-b border-slate-50 last:border-0 group">
-                                        <TableCell className="px-6 py-5">
-                                            <div className="flex items-center gap-4">
-                                               <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
-                                                  <User className="w-5 h-5 text-slate-400" />
-                                               </div>
-                                               <div className="space-y-0.5">
-                                                  <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">#{item.id.slice(0, 8).toUpperCase()}</p>
-                                                  <div className="flex items-center gap-2">
-                                                    <p className="font-black text-slate-900 uppercase tracking-tight leading-tight">{item.profiles?.full_name || "Unknown"}</p>
-                                                    {expiring && (
-                                                        <Badge className="bg-amber-100 text-amber-700 border-amber-200 text-[8px] font-black uppercase px-2 py-0 h-4">Expires Soon</Badge>
-                                                    )}
-                                                  </div>
-                                                  <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{item.products?.name}</p>
-                                               </div>
-                                            </div>
-                                        </TableCell>
+                                        <TableRow key={item.id} className="hover:bg-white/5 transition-colors border-b border-white/10 last:border-0 group text-[#F5F3EC]">
+                                            <TableCell className="px-6 py-5">
+                                                <div className="flex items-center gap-4">
+                                                   <div className="w-10 h-10 rounded-full bg-[#10291F] flex items-center justify-center shrink-0 border border-white/10">
+                                                      <User className="w-5 h-5 text-[#C98A24]" />
+                                                   </div>
+                                                   <div className="space-y-0.5">
+                                                      <p className="text-[9px] font-black text-[#C98A24] uppercase tracking-widest leading-none">#{item.id.slice(0, 8).toUpperCase()}</p>
+                                                      <div className="flex items-center gap-2">
+                                                        <p className="font-black text-[#F5F3EC] uppercase tracking-tight leading-tight">{item.profiles?.full_name || "Unknown"}</p>
+                                                        {expiring && (
+                                                            <Badge className="bg-amber-950/60 text-amber-300 border-amber-500/30 text-[8px] font-black uppercase px-2 py-0 h-4">Expires Soon</Badge>
+                                                        )}
+                                                      </div>
+                                                      <p className="text-[10px] font-black text-[#3BC77B] uppercase tracking-widest">{item.products?.name}</p>
+                                                   </div>
+                                                </div>
+                                            </TableCell>
                                         <TableCell className="px-6 py-5">
                                             <div className="space-y-1">
                                                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{item.quantity} Units · {formatWeight(item.selected_weight || 1000, (item.unit_type as any) || 'ml')}</p>

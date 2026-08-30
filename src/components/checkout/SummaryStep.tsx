@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { useStoreProducts } from "@/data/products";
 import { Badge } from "@/components/ui/badge";
 import { useState, useMemo, memo } from "react";
+import { CheckoutRecommendations } from "./CheckoutRecommendations";
+import { FreeDeliveryCelebration } from "./FreeDeliveryCelebration";
 
 interface SummaryStepProps {
   items: any[];
@@ -136,7 +138,13 @@ export function SummaryStep({
   return (
     <div className="space-y-4 font-body text-[#F5F3EC]">
       <div className="bg-[#0B2118] rounded-2xl md:rounded-[40px] p-4 sm:p-6 md:p-8 shadow-2xl border border-white/10 overflow-hidden">
-        
+
+        {/* Big Celebration Overlay Trigger for Orders >= ₹1,000 in Step 1 */}
+        <FreeDeliveryCelebration
+          isFreeDelivery={subtotal >= 1000}
+          reason="ORDER_VALUE"
+        />
+
         {/* Header */}
         <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-8">
           <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#10291F] border border-white/10 flex items-center justify-center shrink-0 text-[#C98A24]">
@@ -155,8 +163,8 @@ export function SummaryStep({
             <span>{subtotal >= 1000 ? "Unlocked!" : `₹${subtotal} / ₹1000`}</span>
           </div>
           <div className="w-full bg-[#061A13] rounded-full h-2 overflow-hidden border border-white/10">
-            <div 
-              className="bg-[#C98A24] h-full transition-all duration-500 rounded-full" 
+            <div
+              className="bg-[#C98A24] h-full transition-all duration-500 rounded-full"
               style={{ width: `${Math.min(100, (subtotal / 1000) * 100)}%` }}
             />
           </div>
@@ -180,56 +188,11 @@ export function SummaryStep({
           ))}
         </div>
 
-        {/* Suggested Add-ons */}
-        {suggestions.length > 0 && (
-          <div className="mb-6 md:mb-8 space-y-3 pt-4 border-t border-white/10">
-            <div>
-              <h3 className="font-display text-xs sm:text-sm font-black text-[#F5F3EC] uppercase tracking-wider">Suggested Add-ons</h3>
-              <p className="text-[9px] font-bold text-[#AAB8B0] uppercase tracking-widest">Best pairings & nutrition analysis for your basket</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {suggestions.map((prod) => {
-                const qty = quantities[prod.id] || 1;
-                const activeWeight = selectedWeights[prod.id] || prod.availableWeights?.[0] || 1000;
-                const currentPrice = calculatePrice(prod.basePricePerKg || prod.price, activeWeight);
-
-                return (
-                  <div key={prod.id} className="flex flex-col items-center p-3 bg-[#10291F] rounded-2xl border border-white/10 gap-2 text-center">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#F1EEE7] border border-white/10 flex-shrink-0 p-1 flex items-center justify-center">
-                      <img src={prod.image} loading="lazy" decoding="async" className="w-full h-full object-contain" alt={prod.name} />
-                    </div>
-                    <div className="space-y-0.5 w-full">
-                      <p className="font-bold text-[#F5F3EC] text-[11px] truncate max-w-[120px] mx-auto">{prod.name}</p>
-                      <p className="text-[9px] font-bold text-[#C98A24] uppercase tracking-wider">
-                        ₹{currentPrice} / {formatWeight(activeWeight, prod.unitType || "g")}
-                      </p>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        onAddSuggested({
-                          productId: prod.id,
-                          name: prod.name,
-                          selectedWeight: activeWeight,
-                          calculatedPrice: currentPrice,
-                          quantity: qty,
-                          image: prod.image,
-                          unitType: prod.unitType || "g",
-                          deliveryDays: prod.deliveryDays || 0
-                        });
-                        setQuantities(prev => ({ ...prev, [prod.id]: 1 }));
-                      }}
-                      className="w-full h-7 text-[9px] font-bold uppercase tracking-wider rounded-lg bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] mt-1"
-                    >
-                      + Add Item
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* Data-Driven "RECOMMENDED FOR YOU" Section */}
+        <CheckoutRecommendations 
+          cartItems={items} 
+          onAddItem={onAddSuggested} 
+        />
 
         {/* Pricing & Promo */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pt-6 border-t border-white/10">
@@ -256,7 +219,7 @@ export function SummaryStep({
               <div className="flex items-center justify-between bg-[#10291F] border border-white/10 p-4 rounded-2xl">
                 <div>
                   <p className="text-[10px] font-bold text-[#4ADE80] uppercase tracking-widest flex items-center gap-2">
-                    <span className="w-4 h-4 bg-[#4ADE80] text-[#061A13] rounded-full flex items-center justify-center text-[8px] font-black">✓</span> 
+                    <span className="w-4 h-4 bg-[#4ADE80] text-[#061A13] rounded-full flex items-center justify-center text-[8px] font-black">✓</span>
                     {appliedPromo.code} Applied
                   </p>
                   <p className="text-xs font-bold text-[#F5F3EC] mt-0.5">{appliedPromo.description}</p>
@@ -284,7 +247,7 @@ export function SummaryStep({
           </div>
         </div>
 
-        <Button 
+        <Button
           onClick={onNext}
           className="w-full h-14 md:h-16 rounded-xl bg-[#C98A24] hover:bg-[#D9A441] text-[#061A13] font-black uppercase tracking-widest shadow-xl flex items-center justify-between px-6 mt-6 transition-all hover:-translate-y-0.5"
         >

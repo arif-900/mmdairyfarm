@@ -35,7 +35,7 @@ const Refund = () => {
         {
             icon: CreditCard,
             title: "Secure Reimbursements",
-            content: "Reimbursements are issued with the same security as your initial payment. Online payments return to the source; Cash on Delivery orders are resolved via bank transfer or store credit.",
+            content: "All reimbursements are issued with complete transparency directly to your original payment method via our secure Razorpay payment gateway.",
             list: null
         },
         {

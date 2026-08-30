@@ -63,20 +63,22 @@ export function useProductsQuery() {
 
   // Realtime channel listener for instant synchronization on DB updates
   useEffect(() => {
-    const channel = supabase
-      .channel("products-query-realtime-sync")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "products",
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: PRODUCTS_QUERY_KEY });
-        }
-      )
-      .subscribe();
+    const channelName = `products-query-sync-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const channel = supabase.channel(channelName);
+
+    channel.on(
+      "postgres_changes" as any,
+      {
+        event: "*",
+        schema: "public",
+        table: "products",
+      },
+      () => {
+        queryClient.invalidateQueries({ queryKey: PRODUCTS_QUERY_KEY });
+      }
+    );
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);

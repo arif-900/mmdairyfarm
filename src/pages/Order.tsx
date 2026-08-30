@@ -15,6 +15,7 @@ import { formatWeight } from "@/utils/pricing";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { calculateDistance, FARM_LOCATION, calculateShippingFee } from "@/utils/distance";
+import { calculateMaxCoinDiscount, coinsToRupees } from "@/utils/coins";
 import { Truck, Info } from "lucide-react";
 import { getMaxDeliveryDays, getExpectedDeliveryDate, resolveDeliveryDays } from "@/utils/delivery";
 
@@ -95,7 +96,7 @@ const Order = () => {
   const [shippingFee, setShippingFee] = useState(0);
   const [distance, setDistance] = useState<number | null>(null);
   const [distanceError, setDistanceError] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "cod">("online");
+  const [paymentMethod] = useState<"online">("online");
   const [whatsappOptIn, setWhatsappOptIn] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
@@ -142,7 +143,7 @@ const Order = () => {
         // Calculate fee dynamically if not provided or 0
         const fee = (selectedAddress.shipping_fee && selectedAddress.shipping_fee > 0)
           ? selectedAddress.shipping_fee
-          : (dist !== null ? calculateShippingFee(dist) : 0);
+          : (dist !== null ? calculateShippingFee(dist, activeSubtotal) : 0);
         setShippingFee(fee);
       }
     } else {
@@ -231,7 +232,7 @@ const Order = () => {
         dist = calculateDistance(FARM_LOCATION.lat, FARM_LOCATION.lng, selectedAddress.lat, selectedAddress.lng);
       }
       if (dist !== null) {
-        finalFee = calculateShippingFee(dist);
+        finalFee = calculateShippingFee(dist, activeSubtotal);
       }
     }
     if (activeSubtotal > 1000) {
@@ -240,22 +241,13 @@ const Order = () => {
 
     const totalBeforeCoins = Math.max(0, activeSubtotal + (finalFee > 0 ? finalFee : 0) - discountAmount);
     const availableCoins = profile?.reward_coins || 0;
-    const maxApplicableCoins = Math.min(availableCoins, totalBeforeCoins);
-    const coinsApplied = (useCoins && paymentMethod === 'online') ? maxApplicableCoins : 0;
+    const { coinsToUse } = calculateMaxCoinDiscount(availableCoins, totalBeforeCoins);
+    const coinsApplied = useCoins ? coinsToUse : 0;
 
     if (!selectedAddress || finalFee === -1 || distanceError) {
       toast({
         title: "Address Required",
         description: distanceError || "Please select a delivery address from your address book before proceeding.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!paymentMethod) {
-      toast({
-        title: "Payment Method Missing",
-        description: "Please select a payment method (Online or COD).",
         variant: "destructive"
       });
       return;
@@ -283,7 +275,7 @@ const Order = () => {
           shipping_lng: selectedAddress.lng || 0,
           phone: selectedAddress.phone,
           delivery_type: "one-time",
-          payment_method: paymentMethod,
+          payment_method: "online",
           whatsapp_opt_in: whatsappOptIn,
           shipping_fee: finalFee,
           discount_amount: discountAmount,
@@ -294,9 +286,9 @@ const Order = () => {
 
       if (error) throw error;
 
-      if (paymentMethod === "cod" || totalAmount === 0) {
+      if (totalAmount === 0) {
         if (!buyNowItem) clearOrderedItems();
-        navigate(`/payment-success?order_id=${data.orderId}&cod=${paymentMethod === "cod"}`);
+        navigate(`/payment-success?order_id=${data.orderId}`);
       } else {
         const options = {
           key: data.razorpayKeyId,
@@ -328,15 +320,16 @@ const Order = () => {
     }
   };
 
-  const calculatedShippingFee = activeSubtotal > 1000 ? 0 : shippingFee;
+  const calculatedShippingFee = calculateShippingFee(distance ?? 0, activeSubtotal);
   const totalBeforeCoins = Math.max(0, activeSubtotal + (calculatedShippingFee > 0 ? calculatedShippingFee : 0) - discountAmount);
   const availableCoins = profile?.reward_coins || 0;
-  const maxApplicableCoins = Math.min(availableCoins, totalBeforeCoins);
-  const coinsApplied = (useCoins && paymentMethod === 'online') ? maxApplicableCoins : 0;
-  const totalAmount = Math.max(0, totalBeforeCoins - coinsApplied);
+  const { coinsToUse, discountRupees } = calculateMaxCoinDiscount(availableCoins, totalBeforeCoins);
+  const coinsApplied = useCoins ? coinsToUse : 0;
+  const coinDiscountAmount = useCoins ? discountRupees : 0;
+  const totalAmount = Math.max(0, totalBeforeCoins - coinDiscountAmount);
 
-  // Predict coins to earn (2% of final amount, only for orders above 100)
-  const predictedCoinsEarned = totalAmount > 100 ? Math.floor(totalAmount * 0.02) : 0;
+  // Predict coins to earn (4 Coins per ₹100 spent)
+  const predictedCoinsEarned = totalAmount > 0 ? Math.floor((totalAmount / 100) * 4) : 0;
 
   const maxDeliveryDays = getMaxDeliveryDays(activeItems);
   const expectedDate = getExpectedDeliveryDate(maxDeliveryDays);
@@ -359,7 +352,7 @@ const Order = () => {
   };
 
   const prevStep = () => {
-    if (step > 1) setStep(step - 1);
+    setStep(prev => Math.max(1, prev - 1));
     window.scrollTo(0, 0);
   };
 
@@ -430,7 +423,6 @@ const Order = () => {
             <Step>
               <PaymentStep
                 paymentMethod={paymentMethod}
-                setPaymentMethod={setPaymentMethod}
                 whatsappOptIn={whatsappOptIn}
                 setWhatsappOptIn={setWhatsappOptIn}
                 useCoins={useCoins}
